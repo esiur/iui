@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>IUI 2.0</title>
+	<link href="../css/iui.css" rel="stylesheet">
+	<script src="../src/iui.js" type="module"> </script>
+	<script src="../node_modules/Esyur/Esyur.js" type="module"></script>
+
+	<style>
+		i-link {
+				padding: 20px;
+				text-decoration: underline;
+				cursor: pointer;
+				color:blue;
+			}
+	</style>
+    <script>
+	
+	async function init()
+	{
+		window.home = await wh.get("iip://chat.go.iq:5001/sys/hd", {"username": "admin", "password": "delta"});
+	}
+
+	</script>
+</head>
+<body onload="init()">
+
+	<div style="display: flex; flex-direction: column">
+
+	<div style="display: flex;">
+	<i-link href="/users">Users</i-link>
+	<i-link href="/add_user">Add User</i-link>
+	<i-link href="/rooms">Rooms</i-link>
+	<i-link href="/add_room">Add Room</i-link>
+	</div>
+
+	<i-router type="hash">
+		<i-route path="/login" selected>
+
+			<i-dialog>
+				Hello
+			</i-dialog>
+		
+			<i-login onlogin="console.log('logg')">
+				<span slot="username">Phone</span>
+				<span slot="password">PIN</span>
+			</i-login>
+		</i-route>
+
+		<i-route path="/rooms" src="rooms.html">
+
+		</i-route>
+		<i-route path="/users" title="System Users">
+
+			<i-repeat id="users" :start=" this.start != undefined ? this.start : 0"
+						data=" home.GetUsers(this.start, 10)" 
+						total=" home.UsersCount">
+
+				<div>Showing: ${d.length}</div>
+
+				<table class="repeat">
+					<tr>
+						<td>#${this.start + parseInt(index)}</td>
+						<td>${d.Username}</td>
+						<td>${d.Tel}</td>
+						<td>${d.Email}</td>
+						<td>${d.Online > 0 ? 'Online' : 'Offline'}</td>
+						<td>${d.Permissions}</td>
+						<td>${d.Picture}</td>
+						<td><i-link href="/edit_user">Edit (${d.Username})</i-link></td>
+					</tr>
+				</table>
+			</i-repeat>
+		
+			<button onclick="iui('users').start -= 10; iui('users').update()">Back</button>
+			<button onclick="iui('users').start += 10; iui('users').update()">Next</button>		
+		</i-route>
+
+		<i-route path="/edit_user">
+			<table>
+					<tr>
+						<td>Username:</td>
+						<td>${d.Username}</td>
+					</tr>
+					<tr>
+						<td>Tel:</td>
+						<td>${d.Tel}</td>
+					</tr>
+					<tr>
+						<td>Email:</td>
+						<td>${d.Email}</td>
+					</tr>
+					<tr>
+						<td>Online:</td>
+						<td>${d.Online}</td>
+					</tr>
+					<tr>
+						<td>Permissions</td>
+						<td>${d.Permissions}</td>
+					</tr>
+					<tr>
+						<td>Picture:</td>
+						<td>${d.Picture}</td>
+					</tr>
+				
+				</table>
+		</i-route>
+			
+	</i-router>
+
+
+<!--
+	<i-login>
+		<button slot="title">Title</button>
+		<button slot="title" selected>Title 2</button>
+		<button slot="title">Title 3</button>
+		<section>content panel 1</section>
+		<section>content panel 2</section>
+		<section>content panel 3</section>
+  	</i-login>
+	-->  
+	
+	</div>
+
+</body>
+</html>

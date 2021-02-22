@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html dir="ltr">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>GO Command & Control 1.0</title>
+    <link href="iui.css" rel="stylesheet">
+	<script src="iui.base.js"></script>
+		<script src="iui.window.js"></script>
+
+	<script src="iui.menu.js"></script>
+	<script src="iui.autocomplete.js"></script>
+ 	<script src="iui.selectlist.js"></script>
+ 	<script src="iui.multiselect.js"></script>
+
+	<script src="iui.table.js"></script>
+	<script src="iui.checkbutton.js"></script>
+	<script src="iui.tabs.js"></script>
+	<script src="iui.dialog.js"></script>
+	<script src="iui.panel.js"></script>
+	<script src="iui.radiolist.js"></script>
+	<script src="iui.dropdown.js"></script>
+	<script src="iui.resizer.js"></script>
+	<script src="iui.colorpicker.js"></script>
+	<script src="iui.tooltip.js"></script>
+	<script src="iui.datetimepicker.js"></script>
+
+		<script src="iui.bar.js"></script>
+
+     <script>
+	
+	var g;
+	function init()
+	{
+
+		//var a  = new IUIAutocomplete("s", "s");
+
+			iui("divAutocomplete").autocomplete({layout: {text:{field:"name"}, menu:{field:"name", formatter:function(v){
+				return "<b>" + v + "</b>";
+			}}}}).on("query", function(query, result){
+		
+			console.log(query, result);
+			
+			var res = [];
+			for(var i = 0; i < 1000; i++)
+				res.push({name: query+i, text:query + i});
+				
+			result.success(res);
+		});
+
+ 
+ 				iui("divMultiselect").multiselect().on("query", function(query, result){
+		
+			console.log(query, result);
+			
+			var res = [];
+			for(var i = 0; i < 1000; i++)
+				res.push({action: query+i, text:query + i});
+				
+			result.success(res);
+		});
+
+		iui("divBar").bar();
+		iui("divDialog").dialog().show();	
+		iui("divCheck").checkbutton();	
+		iui("divRadio").radiolist();
+
+		var colors = ["#bbc6ce", "#ff4800","#dbefed","#113f3a","#061715","#17534d","#b3eae5","#e9c392","#c45f2f","#5f2fc4","#94c42f","#b3dd2a","#bf5e75","#5e75bf",
+									  "#bfa85e","#ffd968","#fa9ede","#9edefa","#faba9e","#57144e","#144e57","#571d14", "#5f2602","#34be88","#be8834","#346abe","#4334be","#c51d99",
+									  "#1d99c5","#c5491d","#c03624","#42716d","#424671","#1d1831","#f82758","#2758f8","#f8c727","#c1f827","#58402d","#582d30","#2d5855","#1a635f"];	
+		iui("divColors").colorpicker(colors).on("select", function(color){
+ 			document.getElementById("divPicker").style.backgroundColor = color.action;
+		});
+		
+		iui("divTooltip").tooltip();
+
+		iui("divTabs").tabs();	
+		//iui("divGrid").sort("name");
+		iui("divDrop").dropdown();
+
+		iui("divPicker").dropdown();
+
+		iui("ulMenu").menu();
+		iui("divSelect").selectlist().on("select", function(action){alert(action);});
+		
+		
+		var resizers = document.getElementsByClassName("resizer");
+		for(var i = 0; i < resizers.length; i++)
+			iui(resizers[i]).resizer();
+		
+		var g = iui("divTable").table({layout: 
+				[{name: "name", title:"Object Name", width: "100px", formatter: function(e){return e + " *";}}, 
+				 {name: "iid", width: "50px", title: "iid"}, 
+				 {name: "des", width: "200px", title: "Description", type: "select"}],
+				 data: 
+				 [{iid: 1, name: "Ahmed", des: "IT Director"},
+							{iid: 2, name: "Haydar", des: "CEO"},
+							{iid: 3, name: "Abbas", des: "Technical"},
+							{iid: 4, name: "Laith", des: "Technical"},
+							{iid: 5, name: "Ahmed Mahdi", des: "Programmer"},
+				 ]});
+		var dad = {iid: 6, name: "Ahmed", des: "IT Director"};
+		var mom = {iid: 7, name: "Idrees", des: "IT"};
+		var child = {iid: 8, name: "Abud", des: "Child", parents: [dad, mom]};
+		var grandson = {iid: 9, name: "Ali", des: "Grandson", parents: [child]};
+		var grand2 = {iid: 10, name: "Saif", des: "Grand 2", parents: [grandson]};
+		var child2 = {iid: 11, name: "AAAA", des: "S 4", parents: [mom]};
+		var grandson2 = {iid:12, name: "Layth", des: "Grandson2", parents: [child]};
+
+		g.add(dad);
+		g.add(mom);
+		g.add(child);
+		g.add(child2);
+		g.add(grandson);
+		g.add(grand2);
+		g.add(grandson2);
+
+	g.on("click", function(){
+		iui("divTooltip").show(4,4);
+	});
+
+		g.on("contextmenu", function(item, e){
+			e.preventDefault();
+			iui("ulMenu").show(e.pageX, e.pageY, item);
+			console.log(item, e);
+		});
+
+		iui("divDTP").datetimepicker();
+	}
+	
+	</script>
+</head>
+<body onload="init()" >
+<br>
+
+
+<div >
+   		<div id="divRadio"  style="display: inline-block">
+			<div class="radio">hi</div>
+			<div class="radio">hi</div>
+			<div class="radio">hi</div>
+			<div class="radio">hi</div>
+			<div class="radio">hi</div>
+		</div>
+		<div id="divDrop" style="display: inline-block">
+			<img src="icon.png" width="16px">Hello
+			<div class="dropdown-menu">
+Hi world
+				</div>
+		</div>
+
+		<div id="divPicker" style="display: inline-block; background-image: none">
+
+			<div class="dropdown-menu">
+					<div id="divColors"  style="display: inline-block; width: 10em">
+ 					</div>
+			</div>
+		</div>
+
+		<div id="divCheck" style="display: inline-block">
+			Hello
+		</div>
+
+</div>
+
+ <div class="panel-horizontal" style="width: 100%;  ;">
+
+ 	<div class="panel">
+			<div id="divTabs">
+				<div class="tab" data-content="tab1">Tab 1</div>
+				<div class="tab" data-content="tab2" data-selected="1">Tab 2</div>
+				<div class="tab" data-content="tab3">Tab 3</div>
+				
+				<div class="tab1">
+<div id="divTable" style="height: 500px; width: 500px"></div>
+				</div>
+					<div class="tab2">
+						<div id="divAutocomplete"></div>
+						<div id="divSelect">
+							<ul>
+								<li data-action="hi1">Hi</li>
+								<li data-action="hi2">Hi 2</li>
+								<li data-action="hi3" data-selected="1">Hi 3</li>
+								<li data-action="hi4">Hi 4</li>
+								<li data-action="hi5">Hi 5</li>
+							</ul>
+						</div>
+					</div>
+				<div class="tab3">
+					<div id="divMultiselect"></div>
+				</div>
+			</div>
+
+			<ul id="ulMenu" class='menu'>
+			  <li data-action = "first">First thing</li>
+			  <li data-action = "second">Second thing</li>
+			  <li data-action = "third">Third thing</li>
+			</ul>
+	</div>
+	<div class="resizer"></div>
+	<div class="panel panel-vertical">
+ 			<div class="panel">
+				<div id="divBar">
+					<ul>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+						<li>
+							<img src="icon.png">
+						</li>
+					</ul>
+				</div>	 
+			</div>
+
+			<div id="divDTP"></div>
+			<div class="resizer"></div>
+			<div class="panel" >
+				
+			</div>
+ 	</div>
+
+</div>
+
+
+ 
+<!--
+<div class="panel-vertical" id="divContent">
+	<div class="panel" style="width: 300px; background-color: yellow"></div>
+	<div class="panel" style="background-color: blue">
+		<div class="panel-horizontal">
+			<div class="panel" style="height: 300px; background-color: green"> </div>
+			<div class="panel" style="background-color: pink"> </div>
+		</div>
+	</div>
+</div>
+-->
+ 
+</br>
+		
+		<div id="divDialog" title="Login" style="top: 400px">
+			  <table class="dialog-body">
+			  	  <tr><td>Username: </td><td><input id="txtUsername" /></td></tr>
+				  <tr><td>Password: </td><td><input id="txtPassword" type="password" onkeydown="if (event.keyCode == 13) login()"/></td></tr>
+				  <tr><td></td><td>			  <input type="checkbox" id="chkRemember" checked="checked" /><label for="chkLoginRemember">Remember my ID and password.</label>
+</td></tr>
+			  </table>
+			<div class="dialog-footer">
+			  <a class="button" onclick="login()">Login</a>
+			  <a class="button" onclick="login()">Cancel</a>
+			</div>
+		</div>
+		
+ 		
+		
+		<div id="divTooltip">Hello World</div>
+
+</body>
+</html>
