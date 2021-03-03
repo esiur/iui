@@ -2724,7 +2724,7 @@ html[dir='rtl'] .multiselect-list-remove {
     height: 100%;
 }
 
-.navbar-search
+.navbar-search, .sitebar-search
 {
     margin: 6px;
     background-image: var(--search);
@@ -2734,13 +2734,29 @@ html[dir='rtl'] .multiselect-list-remove {
     padding-left: 30px;
 }
 
+
+.navbar-item > .navbar-menu
+{
+    transition: max-height ease-in-out 0.5s;
+    overflow: hidden;
+    max-height: 800px;
+}
+
+.navbar-item[collapsed] > .navbar-menu
+{
+    max-height: 0;
+    transition: max-height ease-in-out 0.3s;
+}
+
 .navbar-container
 {
     overflow: auto;
     visibility: hidden;
 }
 
-.navbar-container > i-link > span > span 
+
+.navbar i-link > span > span, 
+.sitebar i-link > span > span
 {
     color: black;
     background-color: #fff3d4;
@@ -2783,22 +2799,19 @@ html[dir='rtl'] .multiselect-list-remove {
     visibility: visible;
 }
 
-.navbar-container i-link
-{
-    transition: height ease 0.2s;
-}
 
-.navbar-container i-link[data-level = '1'] {
+.navbar-container[level = '1'] > i-link {
     padding-right: 20px;
     font-size: 14px;
 }
 
-.navbar-container i-link[data-level = '0'] {
+.navbar-container[level = '0'] > i-link, 
+.sitebar-container[level = '0'] > i-link {
     background-color: #e5e5e5;
     /*border: 1px solid #cacaca;*/
 }
 
-.navbar-container i-link[data-level = '2'] {
+.navbar-container[level = '2'] > i-link {
     background-color: #d4d4d4;
     padding-right: 40px;
     font-size: 14px;
@@ -2806,23 +2819,17 @@ html[dir='rtl'] .multiselect-list-remove {
     font-weight: bold;
 }
 
-.navbar-container i-link[hidden] {
-    /* display: none; */
-    padding-top: 0;
-    padding-bottom: 0;
-    height: 0;
-    transition: height ease 0.2s;
-}
-
-
-.navbar-container i-link[selected]
+.navbar-item[selected] > i-link, .navbar-item[selected] > i-link:hover,
+.sitebar-item[selected] > i-link, .sitebar-item[selected] > i-link:hover
 {
     font-weight: bold;
     background:#4ebeec;
     color: white;
 }
 
-.navbar-container i-check {
+
+.navbar-container i-check
+{
     width: 42px;
     background-image: var(--arrow-left);
     background-position: 0px 48%;
@@ -2835,6 +2842,120 @@ html[dir='rtl'] .multiselect-list-remove {
     border-bottom-left-radius: 10px;
 }
 
-.navbar-container i-check[checked='checked'] {
+.sitebar-container i-check
+{
+    width: 34px;
+    background-image: var(--arrow-left);
+    background-position: 0px 48%;
+    background-repeat: no-repeat;
+}
+
+.navbar-container i-check[checked='checked'],
+.sitebar-container i-check[checked='checked'] 
+{
     background-image: var(--arrow-down-active);
 }
+
+.sitebar {
+    display: flex;
+    height: 100%;
+}
+
+.sitebar-container{
+    display: flex;
+}
+
+.sitebar-item
+{
+    position: relative;
+}
+
+.sitebar-item > i-link
+{
+    display: flex;
+    background: #e9e9e9;
+ 
+}
+
+.sitebar-item > i-link:hover
+{
+    border-radius: 0;
+}
+
+.sitebar-menu
+{
+    position: absolute;
+    width: auto;
+    white-space: nowrap;
+    background: #e0e0e080;
+    display: flex;
+    flex-direction: column;
+    /* padding: 5px; */
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: 0px 1px 2px 0px #b5b5b5;
+    min-width: 100%;
+    /* top: calc(100% - 1px);*/
+    overflow: visible;
+}
+
+.sitebar-container > *
+{
+    text-align: center;
+}
+
+.sitebar-item > i-link
+{
+    padding: 10px;
+}
+
+/* .sitebar-item > .sitebar-menu
+{
+    display: none;
+}
+
+.sitebar-item:hover > .sitebar-menu
+{
+    display: block;
+} */
+
+
+.sitebar-item[level='0'] > .sitebar-menu
+{
+    transition: transform ease-in-out 0.2s;
+    transform: scaleY(1);
+    transform-origin: top;
+
+}
+
+
+.sitebar-item[level='0'][collapsed] > .sitebar-menu
+{
+    transition: transform ease-in-out 0.2s;
+    transform: scaleY(0);
+    transform-origin: top;
+
+}
+
+
+.sitebar-item[level='1'] > .sitebar-menu
+{
+    max-width: 800px;
+    left: -100%;
+    top: 0;
+    box-shadow: -1px 1px 1px 0px #c8c8c8;
+    border-bottom-right-radius: 0;
+
+    transition: transform ease-in-out 0.2s;
+    transform: scaleX(1);
+    transform-origin: right;
+
+}
+
+.sitebar-item[level='1'][collapsed] > .sitebar-menu
+{
+    transition: transform ease-in-out 0.2s;
+    transform: scaleX(0);
+    transform-origin: right;
+}
+

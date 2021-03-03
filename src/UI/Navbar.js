@@ -8,9 +8,11 @@ export default IUI.module(class Navbar extends IUIElement
     constructor()
     {
         super();
+
+        this._list = [];
     }
 
-    search(text) {  
+    search_old(text) {  
         for(var i = 0; i < this._container.children.length; i++)
         {
             let el = this._container.children[i];
@@ -45,8 +47,45 @@ export default IUI.module(class Navbar extends IUIElement
         }
     }
 
+    search(text, within) {
+
+        let menu = within == null ? this._container : within.menu;
+        
+        for(var i = 0; i < menu.children.length; i++)
+        {
+            let item = menu.children[i];
+            let link = item.link;
+            if (link.title.toLowerCase().includes(text))
+            {
+                link.text.innerHTML = link.title.replace(new RegExp(text, 'gi'), (str) => `<span>${str}</span>`);
+                item.style.display = "";
+
+                //if (within != null)
+                  //  within.removeAttribute("collapsed");
+                
+                // make parents visible
+                let parent = within;
+
+                while (parent != null && parent != this)
+                {
+                    parent.expand.checked = true;
+                    parent.removeAttribute("collapsed");
+                    parent.style.display = "";
+                    parent = parent.parentElement.parentElement;
+                }
+
+            }
+            else
+            {
+                item.style.display = "none";
+            }
+
+            if (item.menu != null)
+                this.search(text, item);
+        }
+    }
     
-    expand(link, value) {
+    expand_old(link, value) {
         let next = link;// = link.nextElementSibling;
         let level = parseInt(link.getAttribute("data-level"));
 
@@ -71,6 +110,23 @@ export default IUI.module(class Navbar extends IUIElement
         }
     }
 
+    expand(item, value) {
+        if (value)
+            item.removeAttribute("collapsed");
+        else
+            item.setAttribute("collapsed", "");
+
+        item.expand.checked = value;
+    }
+
+    get collapsed(){
+        return this.hasAttribute("collapsed");
+    }
+
+    get auto(){
+        return this.hasAttribute("auto");
+    }
+    
     build(){
 
         this.innerHTML = "";
@@ -90,60 +146,92 @@ export default IUI.module(class Navbar extends IUIElement
         
         this.appendChild(this._container);
 
-        var appendRoutes = (routes, level) => {
+        let collapsed = this.collapsed;
+        let auto = this.auto;
+
+        const filterRoutes = (routes) => 
+            routes.filter(r => {
+                if (r.hasAttribute("private"))
+                    return false;
+            
+                if (this.private instanceof Function)
+                        {
+                            try{
+                            if (this.private(r))
+                            {
+                                return false;
+                            }
+                            } catch(ex){
+                                console.log(ex);
+                                debugger;
+                            }
+
+                            return true;
+                        }
+                    });
+
+        const appendRoutes = (routes, level, container) => {
             for (var i = 0; i < routes.length; i++) {
 
-                if (routes[i].hasAttribute("private"))
-                    continue;
 
-                if (this.private instanceof Function)
-                {
-                    try{
-                   // console.log("F");
-                    if (this.private(routes[i]))
-                    {
-                     //   console.log("private", route[i]);
-                        continue;
-                    }
-                    } catch(ex){
-                        console.log(ex);
-                        debugger;
-                    }
-                }
+                let item = document.createElement("div");
+                item.className = this.cssClass + "-item";
 
-                let el = new Link();// document.createElement("i-link");
-                el.setAttribute("data-level", level);
-                el.link = routes[i].link;
-                el.title = routes[i].caption;
+                let link = new Link();// document.createElement("i-link");
+                item.setAttribute("level", level);
+                link.link = routes[i].link;
+                link.title = routes[i].caption;
                 if (routes[i].icon != null)
-                    el.innerHTML =  "<img src='" + routes[i].icon + "'>";
+                link.innerHTML =  "<img src='" + routes[i].icon + "'>";
                 
-                el.text = document.createElement("span");
-                el.text.innerHTML = el.title;
-                el.appendChild(el.text);
-                
-                this._container.appendChild(el);
+                link.text = document.createElement("span");
+                link.text.innerHTML = link.title;
+                link.appendChild(link.text);
 
-                if (routes[i].routes.length > 0) {
+                item.link = link;
+                
+                item.appendChild(link);
+                container.appendChild(item);
+
+                this._list.push(item);
+
+                let subRoutes = filterRoutes(routes[i].routes);
+
+                if (subRoutes.length > 0) {
                     // append plus
-                    el.expand = new Check({cssClass: this.cssClass + "-check"});// document.createElement("i-check");
-                    el.expand.checked = true;
+                    item.expand = new Check({cssClass: this.cssClass + "-check"});// document.createElement("i-check");
+                    item.expand.checked = this.collapsed ? false : true;
 
+                    item.expand.checked = !collapsed;
 
-                    //plus.className = "expand";#f8f8f8
-                    el.expand.on("click", (e) => {
-                        self.expand(el, el.expand.checked);
+                    if (collapsed)
+                        item.setAttribute("collapsed", "");
+
+                    link.appendChild(item.expand);
+
+                    item.menu = document.createElement("div");
+                    item.menu.className = this.cssClass + "-menu";
+                    item.appendChild(item.menu);
+
+                    item.expand.on("click", (e) => {
+                        self.expand(item, item.expand.checked);
                         e.stopPropagation();
                     });
 
-                    el.appendChild(el.expand);
-                    appendRoutes(routes[i].routes, level + 1);
+
+                    if (auto)
+                    {
+                        item.addEventListener("mouseenter", ()=> self.expand(item, true));
+                        item.addEventListener("mouseleave", ()=> self.expand(item, false));
+                    }
+
+                    appendRoutes(subRoutes, level + 1, item.menu);
                 }
 
             }
         };
 
-        appendRoutes(roots, 0);
+        appendRoutes(filterRoutes(roots), 0, this._container);
     }
 
     created() {
@@ -151,10 +239,11 @@ export default IUI.module(class Navbar extends IUIElement
             window.router.on("created", this.build);
 
         window.router.on("navigate", (e) => { 
-            for(var i = 0; i < this?._container?.children?.length; i++)
+            
+            for(var i = 0; i < this._list.length; i++)
             {
-                var el = this._container.children[i];
-                if (el.link == e.base)
+                var el = this._list[i];
+                if (el.link.link == e.base)
                     el.setAttribute("selected", "");
                 else
                     el.removeAttribute("selected");
