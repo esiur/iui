@@ -126,7 +126,7 @@ export default IUI.module(class Navbar extends IUIElement
     get auto(){
         return this.hasAttribute("auto");
     }
-    
+
     build(){
 
         this.innerHTML = "";
@@ -155,20 +155,22 @@ export default IUI.module(class Navbar extends IUIElement
                     return false;
             
                 if (this.private instanceof Function)
-                        {
-                            try{
-                            if (this.private(r))
-                            {
-                                return false;
-                            }
-                            } catch(ex){
-                                console.log(ex);
-                                debugger;
-                            }
+                {
+                    try{
+                    if (this.private(r))
+                    {
+                        return false;
+                    }
+                    } catch(ex){
+                        console.log(ex);
+                        debugger;
+                    }
 
-                            return true;
-                        }
-                    });
+                    return true;
+                }
+
+                return true;
+            });
 
         const appendRoutes = (routes, level, container) => {
             for (var i = 0; i < routes.length; i++) {
@@ -193,7 +195,7 @@ export default IUI.module(class Navbar extends IUIElement
                 item.appendChild(link);
                 container.appendChild(item);
 
-                this._list.push(item);
+                self._list.push(item);
 
                 let subRoutes = filterRoutes(routes[i].routes);
 
@@ -236,7 +238,7 @@ export default IUI.module(class Navbar extends IUIElement
 
     created() {
         if (!this.hasAttribute("manual"))
-            window.router.on("created", this.build);
+            window.router.on("created", ()=>this.build());
 
         window.router.on("navigate", (e) => { 
             

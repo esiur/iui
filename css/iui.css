@@ -2616,13 +2616,13 @@ html[dir='rtl'] .multiselect-list-remove {
     position: relative;
     overflow: hidden;
 }
- 
 
 .link
 {
     position: relative;
     overflow: hidden;
     display: block;
+    cursor: pointer;
 }
 
 .button:after, .ripple:after, .link:after{
