@@ -7,10 +7,15 @@ export default class IUIElement extends HTMLElement {
 
         this._events = [];
         this._data = null;
+        this._defaults = defaults;
         
         for (var i in defaults)
             if (this[i] == undefined)
-                this[i] = defaults[i];
+                try {
+                    this[i] = defaults[i];
+                } catch {
+                    // mostly because modifying dom attributes are not allowed in custom elements creation
+                }
 
         this._register("data");
     }
@@ -106,12 +111,6 @@ export default class IUIElement extends HTMLElement {
             return;
         }
 
-
-        //console.log("_renderElement " + element.getAttribute("ref"), element);
-
-        //if (element.hasAttribute("debug"))
-          //  debugger;
-
         // render attributes & text nodes
         for (var i = 0; i < element.bindings.length; i++)
             await element.bindings[i].render(data);
@@ -153,11 +152,12 @@ export default class IUIElement extends HTMLElement {
     connectedCallback() {
 
         if (this.hasAttribute("css-class"))
+        {
             this.classList.add(this.getAttribute("css-class"));
+        }
         else
         {
             let className = this.constructor.moduleName;
-
             this.setAttribute("css-class", className);
             this.classList.add(className);
         }
@@ -204,19 +204,23 @@ export default class IUIElement extends HTMLElement {
         // async: Async Field
         // @ Event
 
+
+        // tags to skip
+        if (element instanceof HTMLScriptElement 
+         || element instanceof HTMLTemplateElement)
+            return;
+
         let bindings = [];
 
         
-        //if (element.hasAttribute("debug"))
-          //  debugger;
-
         // compile attributes
         for (var i = 0; i < element.attributes.length; i++) {
 
             let b = Binding.create(element.attributes[i]);
 
             if (b != null) {
-                if (b.type == BindingType.HTMLElementDataAttribute || b.type == BindingType.IUIElementDataAttribute)
+                if (b.type == BindingType.HTMLElementDataAttribute 
+                    || b.type == BindingType.IUIElementDataAttribute)
                     element.dataMap = b;
                 else if (b.type == BindingType.RevertAttribute)
                     element.revertMap = b;
@@ -249,7 +253,7 @@ export default class IUIElement extends HTMLElement {
     _emit(event, values) {
         //var args = Array.prototype.slice.call(arguments, 1);
         var e = new CustomEvent(event, values);
-        for (var i in values) {
+        for (let i in values) {
             if (e[i] === undefined)
                 e[i] = values[i];
         }

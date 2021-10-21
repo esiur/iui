@@ -2,6 +2,7 @@
 import IUIElement from "../Core/IUIElement.js";
 import Tab from "./Tab.js";
 import { IUI } from "../Core/IUI.js";
+import Check from "./Check.js";
 
 export default IUI.module(class Tabs extends IUIElement {
 
@@ -117,8 +118,8 @@ export default IUI.module(class Tabs extends IUIElement {
 
     add(item) {
 
-        var label =  document.createElement("i-check");
-        label.innerHTML = item.title;
+        var label = new Check();// document.createElement("i-check");
+        label.innerHTML = item.caption;
 
         this._ext.insertAdjacentElement("beforebegin", label);
 

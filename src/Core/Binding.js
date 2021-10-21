@@ -274,11 +274,8 @@ export class Binding {
             {
                 let d = await this._execute(this.target.ownerElement, data);
 
-                if (d === undefined)
-                    return false;
-
-                //if (d instanceof Promise)
-                  //  d = await d;
+                //if (d === undefined)
+                //    return false;
 
                 this.target.ownerElement.style.display = d ? "" : "none";
             }

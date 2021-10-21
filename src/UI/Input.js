@@ -32,6 +32,15 @@ export default IUI.module(class Input extends IUIElement {
         return true;
     }
 
+    get caption(){
+        return this.getAttribute("caption");// this._span.innerHTML;
+    }
+
+    set caption(value){
+        this.setAttribute("caption", value);
+        this._span.innerHTML = value;
+    }
+
     create() {
 
         this.isAuto = this.hasAttribute("auto");
@@ -44,7 +53,12 @@ export default IUI.module(class Input extends IUIElement {
             this.setAttribute("async:revert", `d['${this.field}'] = await this.getData()`);
         }
 
+        this._span = document.createElement("span");
+        this._span.innerHTML =  this.getAttribute("caption");
+
         this._input = document.createElement("input");
+        this._input.placeholder = " ";
+
         let self = this;
 
         this._input.addEventListener("input", () => {
@@ -62,6 +76,7 @@ export default IUI.module(class Input extends IUIElement {
         this.accept = this.getAttribute("accept");
 
         this.appendChild(this._input);
+        this.appendChild(this._span);
 
         if (this.type == "password")
         {

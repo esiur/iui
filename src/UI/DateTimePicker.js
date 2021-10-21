@@ -115,7 +115,7 @@ export default IUI.module(class DateTimePicker extends IUIElement {
                     self._value.setMonth(self._month);
                     self.render();
                     self._emit("select", { value: self._value });
-                    self._emit("modified", { value, property: "value" });
+                    self._emit(":value", { value });
                 });
             }
         }

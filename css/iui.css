@@ -192,17 +192,17 @@
     background: var(--textbox-background);
 }
 
-    .textbox-with-label > span {
-        padding: 10px;
-        pointer-events: none;
-        position: absolute;
-        top: 0;
-        transition: 0.4s;
-        transition-timing-function: ease;
-        transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
-        opacity: 0.5;
-        color: var(--default-link-color);
-    }
+.textbox-with-label > span {
+    padding: 10px;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transition: 0.4s;
+    transition-timing-function: ease;
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+    opacity: 0.5;
+    color: var(--default-link-color);
+}
 
 html[dir="rtl"] .textbox-with-label > span {
     right: 0;
@@ -219,29 +219,74 @@ html[dir="ltr"] .textbox-with-label > span {
     background: var(--textbox-background-active);
 }
 
-.textbox-with-label > input {
+.textbox-with-label > input, 
+.textbox-with-label > i-input > input
+{
     padding: 5px;
     border: 0;
     background: var(--textbox-background);
     color: var(--textbox-color);
 }
 
-    .textbox-with-label > input:focus {
-        outline: none;
-        background: var(--textbox-background-active);
-    }
+.textbox-with-label > input:focus, 
+.textbox-with-label > i-input:focus 
+{
+    outline: none;
+    background: var(--textbox-background-active);
+}
 
-        .textbox-with-label > input:focus + span,
-        .textbox-with-label > input:not(:placeholder-shown) + span {
-            opacity: 1;
-            transform: scale(0.75) translateY(-40%) translateX(-20px);
-        }
+.textbox-with-label > input:focus + span,
+.textbox-with-label > input:not(:placeholder-shown) + span
+{
+    opacity: 1;
+    transform: scale(0.75) translateY(-40%) translateX(-20px);
+}
 
 html[dir="rtl"] .textbox-with-label > input:focus + span,
-html[dir="rtl"] .textbox-with-label > input:not(:placeholder-shown) + span {
+html[dir="rtl"] .textbox-with-label > input:not(:placeholder-shown) + span
+{
     opacity: 1;
     transform: scale(0.75) translateY(-40%) translateX(20%);
 }
+
+.input > input:focus + span,
+.input > input:not(:placeholder-shown) + span
+{
+    opacity: 1;
+    transform: scale(0.75) translateY(-40%) translateX(-20px);
+}
+
+html[dir="rtl"] .input > input:focus + span,
+html[dir="rtl"] .input > input:not(:placeholder-shown) + span
+{
+    opacity: 1;
+    transform: scale(0.75) translateY(-40%) translateX(20%);
+}
+
+.input > span {
+    padding: 10px;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    transition: 0.4s;
+    transition-timing-function: ease;
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+    opacity: 0.5;
+    color: var(--default-link-color);
+}
+
+.input[caption] > input {
+    padding: 16px 10px 5px 10;
+}
+
+html[dir="rtl"] .input > span {
+    right: 0;
+}
+
+html[dir="ltr"] .input > span {
+    left: 0;
+}
+
 
 .range2 {
     position: relative;
@@ -1932,6 +1977,9 @@ _:-moz-tree-row(hover), html[dir='rtl'] .autocomplete-menu, html[dir='rtl'] .sel
 
 .input-invalid > input {
     border-color: var(--textbox-border-color-invalid) !important;
+}
+
+.input-invalid > input:focus {
     box-shadow: var(--textbox-box-shadow-invalid) !important;
 }
 
@@ -2555,6 +2603,7 @@ html[dir='rtl'] .multiselect-list-remove {
 
 .router, i-router
 {
+    display: block;
     position: relative;
 }
 
@@ -2897,6 +2946,7 @@ html[dir='rtl'] .multiselect-list-remove {
     min-width: 100%;
     /* top: calc(100% - 1px);*/
     overflow: visible;
+    z-index: 10;
 }
 
 .sitebar-container > *

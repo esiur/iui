@@ -263,9 +263,10 @@ export default IUI.module(class Repeat extends IUIElement
         //super._uiBindings = null;
         //super.updateBindings();
    
-        this._emit("modified", { data: value, property: "data" });
+        // @TODO: check if this works for event names starting with ":"
+        this._emit(":data", { data: value });
+        // this._emit("modified", { data: value, property: "data" });
 
-   //     console.log("SetDataEnd " + this.getAttribute("ref") + " " + id);
    
         this._busy = false;
     }

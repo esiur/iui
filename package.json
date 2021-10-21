@@ -1,0 +1,31 @@
+{
+  "name": "@esiur/iui",
+  "version": "1.1.2",
+  "description": "Interactive User Interface",
+  "main": "iui.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esiur/iui.git"
+  },
+  "keywords": [
+    "Web",
+    "Interface",
+    "User",
+    "Esiur"
+  ],
+  "author": "Ahmed Kh. Zamil",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esiur/iui/issues"
+  },
+  "homepage": "https://github.com/esiur/iui#readme"
+}

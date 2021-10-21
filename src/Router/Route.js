@@ -145,6 +145,8 @@ export default IUI.module(class Route extends IUIElement {
             
             this.setAttribute("selected", "");
             this._emit("show");
+
+            
         }
         else
         {

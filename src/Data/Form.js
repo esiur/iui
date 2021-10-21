@@ -1,10 +1,10 @@
 ﻿import IUIElement from "../Core/IUIElement.js";
 import { IUI } from "../Core/IUI.js";
+import Modifiable from "./Modifiable.js";
 
 export default IUI.module(class Form extends IUIElement {
     constructor() {
         super();
-        //this.form = {};
     }
 
     static _copy(val){
@@ -34,34 +34,23 @@ export default IUI.module(class Form extends IUIElement {
         this.original = value;
         //var copy = {};
         //Object.assign(copy, value);
-        super.setData(Form._copy(this.original));
+        super.setData(new Modifiable(this.original));//  Form._copy(this.original));
         //super.setData({ ...this.original });
     }
 
   
     async reset() {
         //super.setData({ ...this.original });
-        super.setData(Form._copy(this.original));
+        super.setData(new Modifiable(this.original));//Form._copy(this.original));
         return this;
     }
 
-    // @TODO: Remove this when esiur adds suport to partially modified arrays with modified flag
-    static _areEqual(ar1, ar2)
-    {
-        if (!(ar1 instanceof Array) || !( ar2 instanceof Array))
-            return false;
-
-        if (ar1.length != ar2.length)
-            return false;
-
-        for(var i = 0; i < ar1.length; i++)
-            if (ar1[i] != ar2[i])
-                return false;
-        
-        return true;
-    }
+ 
 
     get diff() {
+
+        return this._data._diff;
+
         if (this.original == null)
             return this._data;
 

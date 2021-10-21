@@ -10,8 +10,8 @@ export default IUI.module(class Tab extends IUIElement {
 
     }
 
-    get title() {
-        return this.getAttribute("title");
+    get caption() {
+        return this.getAttribute("caption");
     }
 
     get selected() {

@@ -9,26 +9,35 @@ export default IUI.module(class Include extends IUIElement
         this.refs = {};
     }
 
-    async create()
+    get src(){
+        return this.getAttribute("src");
+    }
+
+    set src(value){
+        this.setAttribute("src", value);
+        this._load(value);
+    }
+
+    async _load(url)
     {
-        //console.log("Create ...", this.getAttribute("src"));
+        if (this._loading)
+            return;
 
-        if (this.getAttribute("src") == "views/studio/realestate.html")
-            console.log("Create include");
+        this._loading = true;
 
-        if (this.hasAttribute("src")) {
+        let src = url.replace(/^\/+|\/+$/g, '');
 
-            let src = this.getAttribute("src").replace(/^\/+|\/+$/g, '');
-            let x = await fetch(src);
+        this.classList.add(this.cssClass + "-loading");
 
-            if (x.status !== 200)
-                return;
+        let x = await fetch(src);
 
+        if (x.status == 200)
+        {
             let t = await x.text();
 
             this.innerHTML = t;
 
-            let xeval = (code) => eval(code);
+            //let xeval = (code) => eval(code);
 
             // call create for the new elements
             var newElements = this.querySelectorAll("*");
@@ -58,11 +67,23 @@ export default IUI.module(class Include extends IUIElement
             }
         }
 
-        //this.updateBindings();
+        this.classList.remove(this.cssClass + "-loading");
+
+        if (window?.app?.loaded)
+        {
+            await IUI.create(this);
+            await IUI.created(this);
+            this.updateBindings();
+            await this.render();
+        }
+
+        this._loading = false;
     }
 
-    get src()
+    async create()
     {
-        return this._src;
+        if (this.hasAttribute("src"))
+            await this._load(this.getAttribute("src"));
     }
+
 });

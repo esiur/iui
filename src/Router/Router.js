@@ -116,7 +116,7 @@ export default IUI.module(class Router extends Target
         return JSON.parse(JSON.stringify(rt));
     }
 
-    async navigate(url, data, target, state)
+    async navigate(url, data, target, state, dataToQuery = true)
     {
         let q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
 
@@ -132,8 +132,8 @@ export default IUI.module(class Router extends Target
         }
         // do we have data ?
         else if (data !== undefined) {
-            path = q[3];
-            url = path + "?" + this._toQuery(data);
+            path = q[3];    
+            url = dataToQuery ?  path + "?" + this._toQuery(data) : path;
         }
         else {
             path = q[3];
@@ -144,13 +144,19 @@ export default IUI.module(class Router extends Target
         let [stateRoute, viewRoute] = this.getRoute(path, data);
 
         if (stateRoute == null)
+        {
+            console.warn("State not found ", path);
             return;
+        }
 
         let ok = this._emit("navigate", { url, stateRoute, viewRoute, base: path, data, cancelable: true });
 
         if (!ok)
+        {
+            console.warn("Route not allowed", path);
             return;
-    
+        }
+
         // destination view not found
         if (viewRoute == null) {
             console.log(`Destination route not found ${stateRoute.dst}`);
@@ -173,10 +179,8 @@ export default IUI.module(class Router extends Target
         //    }
         //}
 
-
         if (!(target instanceof Target))
             target = this;
-
 
         if (state == null) {
             let id = Math.random().toString(36).substr(2, 10); 

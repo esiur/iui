@@ -855,6 +855,7 @@ export default IUI.module(class Table extends IUIElement {
 		if (dynamicLoading)
 			this._createTreeButton(newRow, true, item);
 
+		// @TODO: fix this since modified event is removed
 		if (item.on)
 			if (this.updateOnModification)
 				item.on("modified", function(propertyName){
