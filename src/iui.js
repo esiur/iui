@@ -38,6 +38,8 @@ import './UI/Select.js';
 import './UI/DropDown.js';
 import './UI/Grid.js';
 
+import './UI/Location.js';
+import './UI/CodePreview.js';
 
 window.addEventListener("beforeprint", (e)=>{
    let viewRoute = router.current.viewRoute;

@@ -42,7 +42,6 @@ export default IUI.module(class IUIWindow extends IUIElement {
 
             this.insertAdjacentElement("afterBegin", this._body);
 
-            //super.updateBindings();
         }
         else
             this._body = b[0];

@@ -190,7 +190,8 @@ export default IUI.module(class Repeat extends IUIElement
 
             //console.log("ST4");
 
-            this._make_bindings(e)
+            //this._make_bindings(e)
+            IUI.bind(e, this, "repeat");
             this._container.insertBefore(e, this._beforeNode);
 
             this._assign(e, i);// { view: this.view, route: this.route, index: i });
@@ -260,9 +261,7 @@ export default IUI.module(class Repeat extends IUIElement
         }
 
 
-        //super._uiBindings = null;
-        //super.updateBindings();
-   
+    
         // @TODO: check if this works for event names starting with ":"
         this._emit(":data", { data: value });
         // this._emit("modified", { data: value, property: "data" });

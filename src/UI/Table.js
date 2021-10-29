@@ -907,7 +907,10 @@ export default IUI.module(class Table extends IUIElement {
 				
 			let cl = column.node.cloneNode(true);// tr.insertCell();
 
-			this._make_bindings(cl)
+			//this._make_bindings(cl)
+
+			IUI.bind(cl, this, "table");
+
 			tr.appendChild(cl);
 
 			if (cl.dataMap != null)

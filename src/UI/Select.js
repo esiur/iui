@@ -220,10 +220,13 @@ export default IUI.module(class Select extends IUIElement {
             app.appendChild(this.menu);
             if (app.loaded)
             {
+
                 ///console.log("Append", this.menu);
                 await this.menu.create();
+                IUI.bind(this.menu, this, "menu");
                 await IUI.create(this.menu);
-                this._make_bindings(this.menu);    
+            
+                //this._make_bindings(this.menu);    
             }
         }
 
@@ -313,30 +316,7 @@ export default IUI.module(class Select extends IUIElement {
         await this.menu.setData(res);
 
 
-        // show results
-        //self.menu.clear();
-
-        
-
-        // for (var i = 0; i < res.length; i++) {
-        //     let nodes = this.template.content.cloneNode(true).childNodes;
-
-        //     while (nodes.length > 0) {
-        //         let n = nodes[0];
-        //         if (n instanceof HTMLElement)
-        //             n.setAttribute(":data", `d[${i}]`);
-        //         self.menu.appendChild(n);
-        //     }
-
-        // }
-
-        // self.menu.updateBindings();
-        //self.menu.setData(res);
-
-
-        //}).catch(x => {
-
-        //});
+       
     }
 
 

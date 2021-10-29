@@ -1,4 +1,5 @@
 ﻿import IUIElement from "./IUIElement.js";
+import { IUI } from "./IUI.js";
 
 export const BindingType = {
     IUIElement: 0, // this will never happen !
@@ -260,7 +261,10 @@ export class Binding {
             }
             // Content Attribute
             else if (this.type == BindingType.ContentAttribute) {
-                let d = await this._execute(this.target.ownerElement, data);
+
+                let targetElement = this.target.ownerElement;
+
+                let d = await this._execute(targetElement, data);
 
                 if (d === undefined)
                     return false;
@@ -268,7 +272,17 @@ export class Binding {
                 //if (d instanceof Promise)
                   //  d = await d;
 
-                this.target.ownerElement.innerHTML = d;
+                targetElement.innerHTML = d;
+ 
+                if (window?.app?.loaded)
+                {        
+                    await IUI.create(targetElement);
+                    await IUI.created(targetElement);
+                    IUI.bind(targetElement, targetElement, "content");   
+                    await IUI.render(targetElement, targetElement._data, true);
+                }
+                //await IUI.updateTree(targetElement);
+              
             }
             else if (this.type == BindingType.IfAttribute)
             {

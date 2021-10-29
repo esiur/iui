@@ -1,7 +1,16 @@
 import IUIElement from "./IUIElement.js";
+import { Binding, BindingType } from "./Binding.js";
+//import Route from '../Router/Route.js';
 
-export const IUI = {
-    format: function (input) {
+
+export class IUI {
+
+	static _menus = [];
+	static views = [];
+	static modules = {};
+	static registry = [];
+
+	static format(input) {
         if (typeof input == "string" || input instanceof String) {
             let template = document.createElement("template");
             template.innerHTML = input;
@@ -14,12 +23,9 @@ export const IUI = {
             return [input];
         else
             return [];
-    },
-    _menus: [],
-	views: [],
-	modules: {},
-	registry : [],
-    observer: new IntersectionObserver(function(entries) {
+    }
+
+    static observer = new IntersectionObserver(function(entries) {
 		// isIntersecting is true when element and viewport are overlapping
 		// isIntersecting is false when element and viewport don't overlap
 		for(var i = 0; i < entries.length; i++)
@@ -31,8 +37,10 @@ export const IUI = {
 			}
 		}
 
-	}, { threshold: [0] }),
-    created: async function (element) {
+	}, { threshold: [0] });
+
+
+    static async created (element) {
 
         for (var i = 0; i < element.children.length; i++) {
             let e = element.children[i];
@@ -40,15 +48,15 @@ export const IUI = {
                 await e.created();
             await IUI.created(e);
         }
-    },
-    create: async function(element)
+    }
+
+    static async create(element)
     {
 
         for (let i = 0; i < element.children.length; i++) {
             let e = element.children[i];
             if (e instanceof IUIElement) {
                 await e.create();
-               // e.updateBindings();
             }
 
             await IUI.create(e);
@@ -73,8 +81,9 @@ export const IUI = {
 		//	//await IUI.registry[i].updateAttributes();
 		//}
         //return;
-	},
-	get : function(o)
+	}
+
+	static get(o)
     {
         return document.getElementById(o);
 
@@ -82,12 +91,14 @@ export const IUI = {
 		//	if (IUI.registry[i].id == o)
 		//		return IUI.registry[i];
 		//return null;
-	},
-	put: function(o)
+	}
+
+	static put(o)
 	{
 		IUI.registry.push(o);
-	},
-	remove: function(id)
+	}
+
+	static  remove(id)
 	{
 		for(var i = 0; i < IUI.registry.length; i++)
 			if (IUI.registry[i].el.id == id)
@@ -95,8 +106,9 @@ export const IUI = {
 				IUI.registry.splice(i, 1);
 				break;	
 			}
-	},
-	module: function(objectClass)
+	}
+
+	static module(objectClass)
     {
 		let moduleName = objectClass.moduleName;
 
@@ -110,8 +122,9 @@ export const IUI = {
 		}
 		
 		return objectClass;
-	},
-	extend: function(properties, defaults, force)
+	}
+
+	static extend(properties, defaults, force)
 	{
 		if (properties == null)
 			properties = defaults;
@@ -122,6 +135,135 @@ export const IUI = {
 				else if (properties[i] === undefined)
 					properties[i] = defaults[i];
 		return properties;
+	}
+
+
+	static bind(element, rootElement, sourcePath){
+
+        // ::Attribute
+        // : Field
+        // async:: Async Attribute
+        // async: Async Field
+        // @ Event
+
+        // skip element ?
+        if (element.hasAttribute("skip")
+         || element instanceof HTMLTemplateElement)
+            return;
+
+        // tags to skip
+        //if (element instanceof HTMLScriptElement )
+            //return;
+
+		if (rootElement == null)
+			rootElement = element;
+		
+        let bindings;
+        
+        if (element != rootElement)
+        {
+			element.view = rootElement.view;
+			element.route = rootElement.route;
+
+			bindings = [];
+            // compile attributes
+            for (var i = 0; i < element.attributes.length; i++) {
+
+                let b = Binding.create(element.attributes[i]);
+
+                if (b != null) {
+                    if (b.type == BindingType.HTMLElementDataAttribute 
+                        || b.type == BindingType.IUIElementDataAttribute)
+                        element.dataMap = b;
+                    else if (b.type == BindingType.RevertAttribute)
+                        element.revertMap = b;
+                    else
+                        bindings.push(b);
+                }
+            }
+
+			// add reference
+			if (element.hasAttribute("ref")) {
+				rootElement.refs[el.getAttribute("ref")] = element;
+			}
+        }
+		else
+		{	
+			// remove previous text node bindings
+			bindings = element.bindings == null ? [] : element.bindings.filter(x=> x.type != BindingType.TextNode);
+			element.refs = {};
+		}
+
+        // compile nodes
+        for (var i = 0; i < element.childNodes.length; i++) {
+            let el = element.childNodes[i];
+            if (el instanceof IUIElement) {
+                // @TODO: check if the IUI element handles the binding
+				IUI.bind(el, rootElement, sourcePath);
+            }
+            else if (el instanceof HTMLElement) {
+				IUI.bind(el, rootElement, sourcePath);
+            }
+            else if (el instanceof Text) {
+                let b = Binding.create(el);
+                if (b != null)
+                    bindings.push(b);
+            }
+			else if (el instanceof HTMLScriptElement)
+			{
+				// this because HTML parser don't evaluate script tag
+				let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
+				let rt = func.call(el.parentElement);
+
+				if (typeof (rt) === "object") {
+					for (var k in rt)
+						el.parentElement[k] = rt[k];
+				}
+			}
+        }
+
+        element.bindings = bindings;
+	
+	}
+
+	static async render(element, data, textNodesOnly = false) {
+     
+		if (!element.bindings) {
+            return;
+        }
+
+		if (textNodesOnly) {
+			for (var i = 0; i < element.bindings.length; i++)
+				if (element.bindings[i].type == BindingType.TextNode)
+					await element.bindings[i].render(data);
+		} else {
+			// render attributes & text nodes
+			for (var i = 0; i < element.bindings.length; i++)
+				await element.bindings[i].render(data);
+		}
+
+        // render children
+        for (var i = 0; i < element.children.length; i++) {
+            let el = element.children[i];
+            if (el instanceof IUIElement)
+                // @TODO should check if the element depends on parent or not
+                if (el.dataMap != null) {
+                    // if map function failed to call setData, we will render without it
+                    if (!(await el.dataMap.render(data)))
+                        await el.render();
+                }
+                else
+                    await el.setData(data);
+            else {
+                if (el.dataMap != null)
+                    await el.dataMap.render(data);
+                else
+					el.data = data;
+
+                //let data = e.mapData(data);
+                await IUI.render(el, el.data);
+            }
+        }
 	}
 };
 

@@ -2778,7 +2778,7 @@ html[dir='rtl'] .multiselect-list-remove {
     margin: 6px;
     background-image: var(--search);
     background-repeat: no-repeat;
-    background-size: 25px;
+    background-size: 19px;
     background-position: 2px 50%;
     padding-left: 30px;
 }
@@ -2797,12 +2797,31 @@ html[dir='rtl'] .multiselect-list-remove {
     transition: max-height ease-in-out 0.3s;
 }
 
+.navbar-item[level='1'] {
+    padding-left: 10px;
+}
+
+html[dir='rtl'] .navbar-item[level='1'] {
+    padding-right: 10px;
+    padding-left: unset;
+}
+
+
 .navbar-container
 {
     overflow: auto;
     visibility: hidden;
 }
 
+.navbar-item > i-link
+{
+    display: flex;
+    padding: 3px 10px;
+}
+
+.navbar-item > i-link > span {
+    flex: 1;
+}
 
 .navbar i-link > span > span, 
 .sitebar i-link > span > span
@@ -2811,6 +2830,9 @@ html[dir='rtl'] .multiselect-list-remove {
     background-color: #fff3d4;
     font-weight: bold;
 }
+
+
+
 
 .navbar-container::-webkit-scrollbar {
     width: 6px;
@@ -2879,7 +2901,14 @@ html[dir='rtl'] .multiselect-list-remove {
 
 .navbar-container i-check
 {
-    width: 42px;
+    width: 26px;
+    background-image: var(--arrow-left);
+    background-position: 0px 48%;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+}
+
+    /* width: 42px;
     background-image: var(--arrow-left);
     background-position: 0px 48%;
     background-repeat: no-repeat;
@@ -2888,8 +2917,8 @@ html[dir='rtl'] .multiselect-list-remove {
     align-self: stretch;
     background-color: #d6d6d6;
     border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-}
+    border-bottom-left-radius: 10px; */
+
 
 .sitebar-container i-check
 {
@@ -3009,3 +3038,60 @@ html[dir='rtl'] .multiselect-list-remove {
     transform-origin: right;
 }
 
+
+
+.location
+{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.location > i-link
+{
+    text-decoration: underline;
+}
+
+.location > span::after
+{
+    content: '/';
+}
+
+.codepreview
+{
+    display: flex;
+    flex-flow: column;
+    border: 1px solid #c2c2c2;
+    padding: 10px;
+    margin: 10px;
+    background: #f8f8f8;
+    border-left: 4px solid #4ebeec;
+}
+
+.codepreview-content
+{
+    display: flex;
+}
+
+.codepreview-editor
+{
+    background: #e8e8e8;
+    padding: 10px;
+
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    flex: 1;
+}
+
+.codepreview-preview{
+    flex: 1;
+    background: white;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 10px;
+}
+
+.codepreview-bar
+{
+    
+}

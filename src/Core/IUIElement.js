@@ -40,7 +40,8 @@ export default class IUIElement extends HTMLElement {
     }
 
     async render() {
-        await this._renderElement(this, this._data);
+        await IUI.render(this, this._data);
+        //await IUIElement._renderElement(this, this._data);
     }
 
     _getParentData() {
@@ -54,15 +55,9 @@ export default class IUIElement extends HTMLElement {
     }
 
     async setData(value) {
-        //if (this.bindings === undefined)
-        //    this.updateBindings();
-
-        
         this._data = value;
         this._emit("data", {data: value});
-        await this._renderElement(this, value);
-
-        //console.log("IUI: SetData", value, this.tagName);
+        await IUIElement._renderElement(this, value);
     }
 
     get data() {
@@ -106,7 +101,7 @@ export default class IUIElement extends HTMLElement {
         }
     }
 
-    async _renderElement(element, data) {
+    static async _renderElement(element, data) {
         if (!element.bindings) {
             return;
         }
@@ -134,7 +129,7 @@ export default class IUIElement extends HTMLElement {
                     e.data = data;
 
                 //let data = e.mapData(data);
-                await this._renderElement(e, e.data);
+                await IUIElement._renderElement(e, e.data);
             }
         }
     }
@@ -183,7 +178,7 @@ export default class IUIElement extends HTMLElement {
     }
 
     create() {
-        //this.updateBindings();
+ 
     }
 
     destroy() {
@@ -196,7 +191,7 @@ export default class IUIElement extends HTMLElement {
 
 
 
-    _make_bindings(element) {
+    static _make_bindings(element, isRoot = false) {
 
         // ::Attribute
         // : Field
@@ -204,6 +199,10 @@ export default class IUIElement extends HTMLElement {
         // async: Async Field
         // @ Event
 
+
+        // skip element ?
+        if (element.hasAttribute("skip"))
+            return;
 
         // tags to skip
         if (element instanceof HTMLScriptElement 
@@ -213,19 +212,22 @@ export default class IUIElement extends HTMLElement {
         let bindings = [];
 
         
-        // compile attributes
-        for (var i = 0; i < element.attributes.length; i++) {
+        if (!isRoot)
+        {
+            // compile attributes
+            for (var i = 0; i < element.attributes.length; i++) {
 
-            let b = Binding.create(element.attributes[i]);
+                let b = Binding.create(element.attributes[i]);
 
-            if (b != null) {
-                if (b.type == BindingType.HTMLElementDataAttribute 
-                    || b.type == BindingType.IUIElementDataAttribute)
-                    element.dataMap = b;
-                else if (b.type == BindingType.RevertAttribute)
-                    element.revertMap = b;
-                else
-                    bindings.push(b);
+                if (b != null) {
+                    if (b.type == BindingType.HTMLElementDataAttribute 
+                        || b.type == BindingType.IUIElementDataAttribute)
+                        element.dataMap = b;
+                    else if (b.type == BindingType.RevertAttribute)
+                        element.revertMap = b;
+                    else
+                        bindings.push(b);
+                }
             }
         }
 
@@ -234,10 +236,10 @@ export default class IUIElement extends HTMLElement {
             let e = element.childNodes[i];
             if (e instanceof IUIElement) {
                 // @TODO: check if the IUI element handles the binding
-                this._make_bindings(e);
+                IUIElement._make_bindings(e);
             }
             else if (e instanceof HTMLElement) {
-                this._make_bindings(e);
+                IUIElement._make_bindings(e);
             }
             else if (e instanceof Text) {
                 let b = Binding.create(e);
@@ -268,9 +270,6 @@ export default class IUIElement extends HTMLElement {
         }
     }
 
-    updateBindings() {
-        this._make_bindings(this);
-    }
 
     _encapsulateEvent(code){
         return `try {\r\n ${code} \r\n}\r\n catch(ex) { console.log(ex.name + ":" + ex.message, this); }`;

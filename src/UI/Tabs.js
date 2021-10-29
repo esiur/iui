@@ -132,9 +132,7 @@ export default IUI.module(class Tabs extends IUIElement {
         this._body.append(item);
 
 
-        //this._bar.appendChild(label);
-        //this._bar.insertAdjacentElement("afterBegin", label);
-
+ 
         this.list.push(item);
         var self = this;
         label.on("check", function (v) {
@@ -142,9 +140,7 @@ export default IUI.module(class Tabs extends IUIElement {
             self.select(item);
         });
 
-        //this._updateSize();
-        //this.updateBindings();
-
+ 
         if (item.selected)
             this.select(item);
 

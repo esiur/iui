@@ -80,6 +80,13 @@ export default IUI.module(class Route extends IUIElement {
         return null;
     }
 
+    // get route() {
+    //     return this;
+    // }
+
+    // get view() {
+    //     return this;
+    // }
     
     async create() {
 
@@ -100,41 +107,52 @@ export default IUI.module(class Route extends IUIElement {
             //let xeval = (code) => eval(code);
         }
 
-        // call create for the new elements
-        var newElements = this.querySelectorAll("*");
-        for (var i = 0; i < newElements.length; i++) {
-            // set route for all elements
-            var el = newElements[i];
-            // newElements[i].route = this;
-            el.view = this;
-            el.route = this;
 
-            if (el.hasAttribute("ref")) {
-                this.refs[el.getAttribute("ref")] = el;
-            }
+        if (window?.app?.loaded)
+        {
+            await IUI.create(this);
+            await IUI.created(this);
+            IUI.bind(this, this, "route:" + src);
 
-            if (el instanceof HTMLScriptElement) {
-                // this because HTML parsers don't evaluate script tag
-                // xeval.call(el.parentElement, "//# sourceURL=iui://" + src + "\r\n" + el.text);
-
-                //let func = new Function("//# sourceURL=iui://" +
-                //    src + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
-
-                let func = new Function("//# sourceURL=iui://" + this.link
-                 + "\r\n return " + el.text.trim());
-
-                let rt = func.call(el.parentElement);
-
-                if (typeof (rt) === "object") {
-                    for (var k in rt)
-                        el.parentElement[k] = rt[k];
-                }
-            }
+            await IUI.render(this, this._data, true);
         }
+
+        // // call create for the new elements
+        // var newElements = this.querySelectorAll("*");
+        // for (var i = 0; i < newElements.length; i++) {
+        //     // set route for all elements
+        //     var el = newElements[i];
+        //     // newElements[i].route = this;
+        //     el.view = this;
+        //     el.route = this;
+
+        //     if (el.hasAttribute("ref")) {
+        //         this.refs[el.getAttribute("ref")] = el;
+        //     }
+
+        //     if (el instanceof HTMLScriptElement) {
+        //         // this because HTML parsers don't evaluate script tag
+        //         // xeval.call(el.parentElement, "//# sourceURL=iui://" + src + "\r\n" + el.text);
+
+        //         //let func = new Function("//# sourceURL=iui://" +
+        //         //    src + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
+
+        //         let func = new Function("//# sourceURL=iui://" + this.link
+        //          + "\r\n return " + el.text.trim());
+
+        //         let rt = func.call(el.parentElement);
+
+        //         if (typeof (rt) === "object") {
+        //             for (var k in rt)
+        //                 el.parentElement[k] = rt[k];
+        //         }
+        //     }
+        // }
     }
 
-    created() {
-        //this.updateBindings();
+    created() 
+    {
+    
     }
      
     set(value) {

@@ -12,13 +12,11 @@ export default IUI.module(class App extends IUIElement {
     }
 
     created() {
-        this.updateBindings();
+        IUI.bind(this, this, "/");
+        //IUIElement._make_bindings(this);
         this.render();
         this._emit("load", { app: this });
-
         this.loaded = true;
     }
-
-
 
 });

@@ -1,0 +1,112 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta charset="UTF-8" content="">
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#ffc40d">
+    <meta name="theme-color" content="#ffffff">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+
+    <!--IUI 2.0 -->
+    <link href="../css/iui.css" rel="stylesheet" />
+    <script src="../src/iui.js" type="module"></script>
+    
+    <script src="js/docs.js"></script>
+
+    <style>
+        body {
+            font-family: Segoe UI;
+        }
+
+        pre {
+            border: 3px solid #c2c2c2;
+            box-shadow: green;
+            margin: 0;
+            padding: 10px;
+            background: #f8f8f8;
+        }
+
+        .top {
+            border-bottom: 1px solid silver;
+            flex: 1;
+            padding: 2px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header {
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <i-app>
+        <div class="header">
+            <div class="top">
+                <img src="img/logo.png" style="height: 40;">
+                <h2>Docs</h2>
+                
+            </div>
+            <div style="padding: 10px;">
+                <i-location></i-location>
+            </div>
+        </div>
+
+        <div style="display: flex">
+            <i-navbar style="padding: 10px">
+
+            </i-navbar>
+            <i-router type="hash" style="height: 100vh; width: 100vw;">
+                <i-route name="getting-started" caption="Getting started" :content="load(this)">
+                    <i-route name="install" caption="Install" :content="load(this)">
+                    </i-route>
+
+                    <i-route name="first" caption="First App" :content="load(this)">
+                    </i-route>
+
+                    <i-route name="declarative" caption="Declarative Rendering" :content="load(this)">
+                    </i-route>
+                    <i-route name="data-flow" caption="Data Flow" :content="load(this)">
+                    </i-route>
+
+
+                </i-route>
+
+
+
+                <i-route name="getting-started2" caption="Getting started">
+                    Getting started
+                
+                    <i-route name="install" caption="Install">
+                        
+                    </i-route>
+
+                    <i-index></i-index>
+                </i-route>
+
+
+            </i-router>
+        </div>
+    </i-app>
+</body>
+</html>
