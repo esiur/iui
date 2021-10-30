@@ -3080,7 +3080,7 @@ html[dir='rtl'] .navbar-item[level='1'] {
 
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
-    flex: 1;
+    flex: 2;
 }
 
 .codepreview-preview{

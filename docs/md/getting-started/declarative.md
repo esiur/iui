@@ -49,3 +49,12 @@ Attributes are similar they must start with *async::*
 <i-codepreview>
 <input async::placeholder = "await (await fetch('md/hello.md')).text()">
 </i-codepreview>
+
+# Skip rendering
+Any element with *skip* attribute will not enter the IUI rendering process
+
+<i-codepreview>
+<div skip>
+    ${5 + 6}
+</div>
+</i-codepreview>

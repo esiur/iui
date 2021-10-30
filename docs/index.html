@@ -76,12 +76,12 @@
             <i-navbar style="padding: 10px">
 
             </i-navbar>
-            <i-router type="hash" style="height: 100vh; width: 100vw;">
+            <i-router type="hash" style="height: calc(100vh - 110px); width: 100vw;">
                 <i-route name="getting-started" caption="Getting started" :content="load(this)">
                     <i-route name="install" caption="Install" :content="load(this)">
                     </i-route>
 
-                    <i-route name="first" caption="First App" :content="load(this)">
+                    <i-route name="first" caption="First App" :content="load(this, true)">
                     </i-route>
 
                     <i-route name="declarative" caption="Declarative Rendering" :content="load(this)">
@@ -89,15 +89,16 @@
                     <i-route name="data-flow" caption="Data Flow" :content="load(this)">
                     </i-route>
 
+                    <i-route name="if-content" caption="Conditions and Filling" :content="load(this)">
+                    </i-route>
 
                 </i-route>
 
 
 
-                <i-route name="getting-started2" caption="Getting started">
-                    Getting started
+                <i-route name="IUI Widgets" caption="IUI Widgets">
                 
-                    <i-route name="install" caption="Install">
+                    <i-route name="IUIElement" caption="IUIElement">
                         
                     </i-route>
 

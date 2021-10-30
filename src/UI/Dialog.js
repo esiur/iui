@@ -8,27 +8,27 @@ export default  IUI.module(class IUIDialog extends IUIWindow
 
 	constructor()
 	{
-			super({ 
-                    closeable: true, 
-                    resizeable: true, 
-                    draggable: false,
-                    _dragging: false, 
-                    _expanding: false, 
-                    x: 0, 
-                    y: 0,
-                    visible: false,
-                    modal: false
-                }
-            );
+		super({ 
+				closeable: true, 
+				resizeable: true, 
+				draggable: false,
+				_dragging: false, 
+				_expanding: false, 
+				x: 0, 
+				y: 0,
+				visible: false,
+				modal: false
+			}
+		);
 
-			var self = this;
+		var self = this;
 
-			this._register("visible");
-			this._register("resize");
- 
-			this.on("close", function(){
-				self.hide();
-			});
+		this._register("visible");
+		this._register("resize");
+
+		this.on("close", function(){
+			self.hide();
+		});
  	}
 
 	 create()

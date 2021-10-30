@@ -8,12 +8,10 @@ export default IUI.module(class CodePreview extends IUIElement {
 
     async create() {
 
-
-        
         if (this.hasAttribute("debug"))
             debugger;
 
-        this._code = this.innerHTML;
+        this._code = this.innerHTML.trim();
         this.textContent = '';
         
         // create elements
@@ -31,7 +29,7 @@ export default IUI.module(class CodePreview extends IUIElement {
 
         let self = this;
         this.editor.addEventListener("input", function() {
-            self._code = self.editor.innerText;
+            self._code = self.editor.innerText.trim();
             self.update();
         }, false);
         
