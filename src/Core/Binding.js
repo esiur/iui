@@ -20,7 +20,7 @@ export const AttributeBindingDestination = {
 const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 
 export class Binding {
-    static create(nodeOrAttributeOrIUIElement) {
+    static create(nodeOrAttributeOrIUIElement, scope) {
         var code, isAsync, type, attrType, attrKey, func, script;
 
         //if (nodeOrAttributeOrIUIElement.created)
@@ -100,11 +100,17 @@ export class Binding {
 
         // test the function
 
+        let scopeKeys = Object.keys(scope);
+        let scopeValues = Object.values(scope);
+
         try {
+            let args = ["data", "d", "context", "_test", 
+                        ...scopeKeys]
+                        
             if (isAsync)
-                func = new AsyncFunction("data", "d", "context", "_test", code);
+                func = new AsyncFunction(...args, code);
             else
-                func = new Function("data", "d", "context", "_test", code);
+                func = new Function(...args, code);
         }
         catch (ex) {
             console.log("Test failed: " + ex, code);
@@ -113,7 +119,7 @@ export class Binding {
 
 
         let rt = new Binding();
-        Object.assign(rt, { isAsync, type, attrType, attrKey, func, target: nodeOrAttributeOrIUIElement, checked: false, script });
+        Object.assign(rt, { isAsync, type, attrType, attrKey, func, target: nodeOrAttributeOrIUIElement, checked: false, script, scopeKeys, scopeValues });
         return rt;
     }
 
@@ -144,7 +150,9 @@ export class Binding {
         let proxy = new Proxy(map, detector);
 
         try {
-            let d = this.func.apply(thisArg, [proxy, proxy, {}, true]);
+            let d = this.func.apply(thisArg, [proxy, proxy, {}, true
+                                    , ...this.scopeKeys]);
+
             this.map = map;
             return d;
         }
@@ -158,9 +166,9 @@ export class Binding {
         if (!this.checked)
             this._findMap(thisArg);
 
-            
         let context = {};
-        var rt = this.func.apply(thisArg, [data, data, context, false]);
+        var rt = this.func.apply(thisArg, [data, data, context, false, 
+                                ...this.scopeValues]);
 
         //console.log(rt);
         if (rt instanceof Promise)
@@ -231,9 +239,12 @@ export class Binding {
 
         try {
             if (this.type === BindingType.IUIElement) {
-                let d = this.func.apply(this.target, [data, data]);
-                if (d instanceof Promise)
-                    d = await d;
+                //let d = this.func.apply(this.target, [data, data]);
+                //if (d instanceof Promise)
+                //    d = await d;
+
+                let d = await this._execute(this.target, data);
+
                 await this.target.setData(d);
             }
             else if (this.type === BindingType.TextNode) {
@@ -277,8 +288,10 @@ export class Binding {
                 if (window?.app?.loaded)
                 {        
                     await IUI.create(targetElement);
+                    IUI.bind(targetElement, true, "content", targetElement.__i_bindings?.scope);   
+                    // update references
+                    targetElement.__i_bindings?.scope?.refs?._build();
                     await IUI.created(targetElement);
-                    IUI.bind(targetElement, targetElement, "content");   
                     await IUI.render(targetElement, targetElement._data, true);
                 }
                 //await IUI.updateTree(targetElement);

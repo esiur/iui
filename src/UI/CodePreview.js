@@ -1,9 +1,11 @@
 import IUIElement from "../Core/IUIElement.js";
 import { IUI } from "../Core/IUI.js";
+import RefsCollection from "../Core/RefsCollection.js";
 
 export default IUI.module(class CodePreview extends IUIElement {
-    constructor(properties) {
+    constructor() {
         super();
+        this.refs = new RefsCollection(this);
     }
 
     async create() {
@@ -30,7 +32,7 @@ export default IUI.module(class CodePreview extends IUIElement {
         let self = this;
         this.editor.addEventListener("input", function() {
             self._code = self.editor.innerText.trim();
-            self.update();
+            self.updatePreview();
         }, false);
         
         this.preview = document.createElement("div");
@@ -44,11 +46,18 @@ export default IUI.module(class CodePreview extends IUIElement {
         this.append(this.content);
         this.field = this.getAttribute("field");
 
-        await this.update();
+        //await this.updatePreview();
     }
-   
     
-    async update() {
+    async created(){
+        await this.updatePreview();
+    }
+
+    get scope(){
+        return {view: this, refs: this.refs};
+    }
+    
+    async updatePreview() {
         
         if (this._updating)
             return;
@@ -56,10 +65,15 @@ export default IUI.module(class CodePreview extends IUIElement {
         this._updating = true;
         this.preview.innerHTML = this._code;
 
-        await IUI.create(this.preview);
-        await IUI.created(this.preview);
-        IUI.bind(this.preview, this.preview, "preview");
-        await IUI.render(this.preview, this._data, true);
+   
+        if (window.app?.loaded)
+        {
+            await IUI.create(this.preview);
+            await IUI.created(this.preview);
+            IUI.bind(this.preview, true, "preview", this.scope);
+            this.refs._build();
+            await IUI.render(this.preview, this._data, true);
+        }
 
         this._updating = false;
     }

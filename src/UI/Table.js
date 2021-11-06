@@ -909,7 +909,8 @@ export default IUI.module(class Table extends IUIElement {
 
 			//this._make_bindings(cl)
 
-			IUI.bind(cl, this, "table");
+			IUI.bind(cl, false, "table",
+					 IUI.extend(this.__i_bindings, {index: i}, true));
 
 			tr.appendChild(cl);
 

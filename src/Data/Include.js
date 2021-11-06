@@ -1,12 +1,13 @@
 import IUIElement from "../Core/IUIElement.js";
 import { IUI } from "../Core/IUI.js";
+import RefsCollection from "../Core/RefsCollection.js";
 
 export default IUI.module(class Include extends IUIElement
 {
     constructor()
     {
         super();
-        this.refs = {};
+        this.refs = new RefsCollection();
     }
 
     get src(){
@@ -16,6 +17,11 @@ export default IUI.module(class Include extends IUIElement
     set src(value){
         this.setAttribute("src", value);
         this._load(value);
+    }
+
+    
+    get scope() {
+        return {view: this, refs: this.refs};
     }
 
     async _load(url)
@@ -42,8 +48,11 @@ export default IUI.module(class Include extends IUIElement
             if (window?.app?.loaded)
             {
                 await IUI.create(this);
+                IUI.bind(this, true, "include:" + src, 
+                    IUI.extend(this._i__bindings.scope, this.scope, true));
+            
+                this.refs._build();
                 await IUI.created(this);
-                IUI.bind(this, this, "include:" + src);
                 await IUI.render(this, this._data, true);
             }
 
@@ -97,6 +106,10 @@ export default IUI.module(class Include extends IUIElement
     {
         if (this.hasAttribute("src"))
             await this._load(this.getAttribute("src"));
+    }
+
+    async created() {
+        this.refs._build();
     }
 
 });

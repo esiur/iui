@@ -1,6 +1,7 @@
 import IUIElement from "../Core/IUIElement.js";
 import { IUI } from "../Core/IUI.js";
 import Router from "./Router.js";
+import RefsCollection from "../Core/RefsCollection.js";
 
 export default IUI.module(class Route extends IUIElement {
 
@@ -8,7 +9,7 @@ export default IUI.module(class Route extends IUIElement {
         super();
 
         this.routes = [];
-        this.refs = {};
+        this.refs = new RefsCollection(this);
 
         this._register("show");
         this._register("hide");
@@ -19,6 +20,10 @@ export default IUI.module(class Route extends IUIElement {
             debugger;
 
         return await super.setData(value);
+    }
+
+    get scope(){
+        return {route: this, view: this};
     }
 
     _updateLinks() {
@@ -111,9 +116,9 @@ export default IUI.module(class Route extends IUIElement {
         if (window?.app?.loaded)
         {
             await IUI.create(this);
+            IUI.bind(this, true, "route:" + src, this.scope);
+            this.refs._build();
             await IUI.created(this);
-            IUI.bind(this, this, "route:" + src);
-
             await IUI.render(this, this._data, true);
         }
 
@@ -152,7 +157,7 @@ export default IUI.module(class Route extends IUIElement {
 
     created() 
     {
-    
+        this.refs._build();
     }
      
     set(value) {

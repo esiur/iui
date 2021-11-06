@@ -22,7 +22,7 @@ export default IUI.module(class Repeat extends IUIElement
         //////////////
         /// Create ///
         //////////////
-        
+                
         if (this._created)
             debugger;
 
@@ -53,11 +53,11 @@ export default IUI.module(class Repeat extends IUIElement
         }
 
 
-        var newElements = this.querySelectorAll("*");
-        for (var i = 0; i < newElements.length; i++)
-            newElements[i].repeat = this;
+        // var newElements = this.querySelectorAll("*");
+        // for (var i = 0; i < newElements.length; i++)
+        //     newElements[i].repeat = this;
 
-        var self = this;
+        // var self = this;
 
         /*
         this._repeatModified = function(propertyName, value)
@@ -104,31 +104,6 @@ export default IUI.module(class Repeat extends IUIElement
         return this._data.length;
     }
 
-    _assign(node, index) {
-
-        // update fields
-
-        // this so we won't mess with i-include view
-        if (node.view == undefined)
-            node.view = this.view;
-
-        node.rotue = this.route;
-        node.index = index;
-
-        // update references
-        if (node.hasAttribute("ref"))
-        {
-            let ref = node.getAttribute("ref");
-            // create new array
-            if (!(this.view.refs[ref] instanceof Array))
-                this.view.refs[ref] = [];
-            this.view.refs[ref][index] = node;
-        }
-
-        //Object.assign(node, customFields);
-        for (var i = 0; i < node.children.length; i++) 
-            this._assign(node.children[i], index);
-    }
 
     async setData(value)
     {
@@ -141,18 +116,14 @@ export default IUI.module(class Repeat extends IUIElement
             return false;
         }
 
-        //console.log("RPT: SetData", value);
         this._busy = true;
 
-       // var id = Math.random();
-
-        //console.log("SetData " + this.getAttribute("ref") + " " + id, value);
-        //console.trace();
+ 
         // clear
         this.clear();
 
-        if (value instanceof Structure)
-            value = value.toPairs();
+        if (value?.toArray instanceof Function)
+            value = value.toArray();
         else if (value == null || !(value instanceof Array || value instanceof Int32Array))
             value = [];
 
@@ -163,100 +134,24 @@ export default IUI.module(class Repeat extends IUIElement
         
         for (let i = 0; i < value.length; i++) {
 
-            ///console.log("ST1");
-            //let content = this.template.content.cloneNode(true);
-            //let nodes = content.childNodes;
-
             let e = this._repeatNode.cloneNode(true);
 
             this.list.push(e);
 
+            await IUI.create(e);
 
-            //console.log("ST2");
-
-
-            // Create node
-            if (e instanceof IUIElement)
-                await e.create();
+            IUI.bind(e, false, "repeat", 
+                      IUI.extend(this.__i_bindings?.scope, 
+                                {index: i, repeat: this}, true));
             
-              //  console.log("ST3");
-                // Create children
-                //console.log("Create repeat " + i, this, e);
-
-                await IUI.create(e);
-
-            //console.log("Created repeat " + i, this, e);
-            
-
-            //console.log("ST4");
-
-            //this._make_bindings(e)
-            IUI.bind(e, this, "repeat");
             this._container.insertBefore(e, this._beforeNode);
+            
+            // update referencing
+            this.__i_bindings?.scope?.refs?._build();
 
-            this._assign(e, i);// { view: this.view, route: this.route, index: i });
-
-
-            //console.log("ST5");
-
-            if (e instanceof IUIElement) {
-                // @TODO should check if the element depends on parent or not
-                if (e.dataMap != null) {
-                    // if map function failed to call setData, we will render without it
-                    if (!(await e.dataMap.render(value[i])))
-                        await e.render();
-                }
-                else{
-                    await e.setData(value[i]);
-                   // console.log("ST6.1");
-                }
-            }
-            else {
-                if (e.dataMap != null)
-                    await e.dataMap.render(value[i]);
-                else
-                    e.data = value[i];
-
-              //  console.log("ST6.2", e);
-                await this._renderElement(e, e.data);
-              //  console.log("ST6.3");
-            }
-
-            // if (node.dataMap != null) {
-            //     await node.dataMap.render(value[i]);
-            //     this._renderElement(node, node.data);
-            // }
-            // else {
-
-            //     node.data = value[i];
-            //     this._renderElement(node, node.data);
-            // }
-
-            /*
-
-            var newElements = content.querySelectorAll("*");
-
-            while (nodes.length > 0) {
-                let n = nodes[0];
-                //n.index = i;
-                if (n instanceof HTMLElement)
-                    n.setAttribute(":data", `d[${i}]`);
-                this._container.appendChild(n);
-            }
-
-            // this has to be called after appending the child otherwise node will be HTMLElement and not IUIElement , bug maybe in webkit ?
-            for (var j = 0; j < newElements.length; j++) {
-                let el = newElements[j];
-
-                // set route for all elements
-                el.index = i;
-                el.view = this;
-                el.route = this.route;
-                //newElements[j].route = this.route;
-                if (el instanceof IUIElement)
-                    el.create();
-            }
-            */
+            await IUI.created(e);
+            
+            await IUI.render(e, value[i], false);
         
         }
 

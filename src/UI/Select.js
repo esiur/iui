@@ -223,7 +223,7 @@ export default IUI.module(class Select extends IUIElement {
 
                 ///console.log("Append", this.menu);
                 await this.menu.create();
-                IUI.bind(this.menu, this, "menu");
+                IUI.bind(this.menu, false, "menu");
                 await IUI.create(this.menu);
             
                 //this._make_bindings(this.menu);    

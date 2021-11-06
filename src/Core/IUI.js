@@ -1,6 +1,7 @@
 import IUIElement from "./IUIElement.js";
 import { Binding, BindingType } from "./Binding.js";
 //import Route from '../Router/Route.js';
+import BindingList  from "./BindingList.js";
 
 
 export class IUI {
@@ -124,13 +125,13 @@ export class IUI {
 		return objectClass;
 	}
 
-	static extend(properties, defaults, force)
+	static extend(properties, defaults, overwrite)
 	{
 		if (properties == null)
 			properties = defaults;
 		else
 			for(var i in defaults)
-				if (force)
+				if (overwrite)
 					properties[i] = defaults[i];
 				else if (properties[i] === undefined)
 					properties[i] = defaults[i];
@@ -138,38 +139,55 @@ export class IUI {
 	}
 
 
-	static bind(element, rootElement, sourcePath){
+	static bind(element, skipAttributes, sourcePath, scope) {
 
         // ::Attribute
-        // : Field
+        // : Field 
         // async:: Async Attribute
         // async: Async Field
         // @ Event
 
         // skip element ?
         if (element.hasAttribute("skip")
+		 || element.hasAttribute("i-skip")
          || element instanceof HTMLTemplateElement)
             return;
 
         // tags to skip
         //if (element instanceof HTMLScriptElement )
             //return;
-
-		if (rootElement == null)
-			rootElement = element;
 		
         let bindings;
-        
-        if (element != rootElement)
-        {
-			element.view = rootElement.view;
-			element.route = rootElement.route;
+		
+				
+		if (scope == null)
+		scope = {};
 
-			bindings = [];
+		// get refs before they get overwritten
+		//let refs = scope?.refs;
+
+		// some element extended or overwritten the binding arguments
+		if (element.scope != null)
+			IUI.extend(scope, element.scope, true);
+
+		bindings = new BindingList(element, scope);
+
+        if (skipAttributes)
+		{
+			// copy attributes bindings
+			if (element.__i_bindings != null)
+				for(var i = 0; i < element.__i_bindings.length; i++)
+					if (element.__i_bindings[i].type != BindingType.TextNode)
+						bindings.push(element.__i_bindings[i]);
+		}
+		else
+        {
+
             // compile attributes
             for (var i = 0; i < element.attributes.length; i++) {
 
-                let b = Binding.create(element.attributes[i]);
+                let b = Binding.create(element.attributes[i], 
+										bindings.scope);
 
                 if (b != null) {
                     if (b.type == BindingType.HTMLElementDataAttribute 
@@ -182,37 +200,50 @@ export class IUI {
                 }
             }
 
+			
 			// add reference
-			if (element.hasAttribute("ref")) {
-				rootElement.refs[el.getAttribute("ref")] = element;
-			}
+			// if (element.hasAttribute("ref")) {
+			// 	let ref = element.getAttribute("ref");
+			// 	if (refs[ref] == null)
+			// 		refs[ref] = element;
+			// 	else if (refs[ref] == element){
+			// 		// do nothing
+			// 	}
+			// 	else if (refs[ref] instanceof Array){
+			// 		refs[ref].push(element);
+			// 	} else {
+			// 		var firstRef = refs[ref];
+			// 		refs[ref] =[firstRef, element];
+			// 	}
+			// }
         }
-		else
-		{	
-			// remove previous text node bindings
-			bindings = element.bindings == null ? [] : element.bindings.filter(x=> x.type != BindingType.TextNode);
-			element.refs = {};
-		}
+
+
+
+		// get new refs (scope might been overwritten)
+		//refs = scope?.refs;
 
         // compile nodes
         for (var i = 0; i < element.childNodes.length; i++) {
             let el = element.childNodes[i];
             if (el instanceof IUIElement) {
                 // @TODO: check if the IUI element handles the binding
-				IUI.bind(el, rootElement, sourcePath);
+				IUI.bind(el, false, sourcePath, scope);
             }
             else if (el instanceof HTMLElement) {
-				IUI.bind(el, rootElement, sourcePath);
+				IUI.bind(el, false, sourcePath, scope);
             }
             else if (el instanceof Text) {
-                let b = Binding.create(el);
+                let b = Binding.create(el, bindings.scope);
                 if (b != null)
                     bindings.push(b);
             }
 			else if (el instanceof HTMLScriptElement)
 			{
 				// this because HTML parser don't evaluate script tag
-				let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
+				/// let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
+				let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n" + el.text.trim());
+
 				let rt = func.call(el.parentElement);
 
 				if (typeof (rt) === "object") {
@@ -222,24 +253,25 @@ export class IUI {
 			}
         }
 
-        element.bindings = bindings;
-	
+        element.__i_bindings = bindings;
 	}
 
 	static async render(element, data, textNodesOnly = false) {
      
-		if (!element.bindings) {
+		if (!element.__i_bindings) {
             return;
         }
 
+		let bindings = element.__i_bindings;
+
 		if (textNodesOnly) {
-			for (var i = 0; i < element.bindings.length; i++)
-				if (element.bindings[i].type == BindingType.TextNode)
-					await element.bindings[i].render(data);
+			for (var i = 0; i < bindings.length; i++)
+				if (bindings[i].type == BindingType.TextNode)
+					await bindings[i].render(data);
 		} else {
 			// render attributes & text nodes
-			for (var i = 0; i < element.bindings.length; i++)
-				await element.bindings[i].render(data);
+			for (var i = 0; i < bindings.length; i++)
+				await bindings[i].render(data);
 		}
 
         // render children

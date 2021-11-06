@@ -7,20 +7,19 @@
     <meta charset="UTF-8" content="">
 
 
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
-    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="apple-touch-icon" sizes="180x180" href="site/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="site/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="site/favicon-16x16.png">
+    <link rel="manifest" href="site/site.webmanifest">
+    <link rel="mask-icon" href="site/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#ffc40d">
     <meta name="theme-color" content="#ffffff">
 
-    
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <link rel="stylesheet"
       href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/default.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
 
     <!--IUI 2.0 -->
     <link href="../css/iui.css" rel="stylesheet" />
@@ -86,6 +85,10 @@
 
                     <i-route name="declarative" caption="Declarative Rendering" :content="load(this)">
                     </i-route>
+                    
+                    <i-route name="scope" caption="Scope" :content="load(this)">
+                    </i-route>
+
                     <i-route name="data-flow" caption="Data Flow" :content="load(this)">
                     </i-route>
 
@@ -96,13 +99,14 @@
 
 
 
-                <i-route name="IUI Widgets" caption="IUI Widgets">
+                <i-route name="components" caption="Components">
                 
-                    <i-route name="IUIElement" caption="IUIElement">
-                        
+                    <i-route name="iui-element" caption="IUIElement" :content="load(this)">
                     </i-route>
 
-                    <i-index></i-index>
+                    <i-route name="repeat" caption="Repeat" :content="load(this)">
+                    </i-route>
+
                 </i-route>
 
 

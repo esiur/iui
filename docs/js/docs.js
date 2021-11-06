@@ -11,6 +11,6 @@ async function load(route, skip=false) {
     let content = await fetch(link);
     if (content.status != 200)
         return "Not found " + content.url;
-    var md = marked(await content.text());
+    var md = marked.parse(await content.text());
     return skip ? "<div skip>" + md + "</div>" : md;
 }

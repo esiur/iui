@@ -41,7 +41,6 @@ export default class IUIElement extends HTMLElement {
 
     async render() {
         await IUI.render(this, this._data);
-        //await IUIElement._renderElement(this, this._data);
     }
 
     _getParentData() {
@@ -57,22 +56,15 @@ export default class IUIElement extends HTMLElement {
     async setData(value) {
         this._data = value;
         this._emit("data", {data: value});
-        await IUIElement._renderElement(this, value);
+        await IUI.render(this, value);
     }
+
 
     get data() {
         return this._data;
     }
 
     async revert(){
-        //if (this.revertMap != null)
-        //{
-            //if (data == undefined)
-            //    await this.revertMap.render(this._getParentData());
-            //else
-            //    await this.revertMap.render(data);
-            // revert parents
-            
         let e = this;     
 
         do {
@@ -81,7 +73,6 @@ export default class IUIElement extends HTMLElement {
             if (e.revertMap != null)
                 await e.revertMap.render(p?.data);
         } while (e = p);
-        //}
     }
 
     async update(data) {
@@ -101,51 +92,17 @@ export default class IUIElement extends HTMLElement {
         }
     }
 
-    static async _renderElement(element, data) {
-        if (!element.bindings) {
-            return;
-        }
-
-        // render attributes & text nodes
-        for (var i = 0; i < element.bindings.length; i++)
-            await element.bindings[i].render(data);
-
-        // render children
-        for (var i = 0; i < element.children.length; i++) {
-            let e = element.children[i];
-            if (e instanceof IUIElement)
-                // @TODO should check if the element depends on parent or not
-                if (e.dataMap != null) {
-                    // if map function failed to call setData, we will render without it
-                    if (!(await e.dataMap.render(data)))
-                        await e.render();
-                }
-                else
-                    await e.setData(data);
-            else {
-                if (e.dataMap != null)
-                    await e.dataMap.render(data);
-                else
-                    e.data = data;
-
-                //let data = e.mapData(data);
-                await IUIElement._renderElement(e, e.data);
-            }
-        }
+    // bindings arguments
+    get scope(){
+        return null;
     }
-
 
     // this meant to be inherited
     modified() {
 
     }
 
-    get data() {
-        return this._data;
-    }
-
     connectedCallback() {
-
         if (this.hasAttribute("css-class"))
         {
             this.classList.add(this.getAttribute("css-class"));
@@ -182,74 +139,11 @@ export default class IUIElement extends HTMLElement {
     }
 
     destroy() {
-
-        console.log("Destroy", this);
         IUI.registry.splice(IUI.registry.indexOf(this), 1);
         if (this.parentNode)
             this.parentNode.removeChild(this);
     }
 
-
-
-    static _make_bindings(element, isRoot = false) {
-
-        // ::Attribute
-        // : Field
-        // async:: Async Attribute
-        // async: Async Field
-        // @ Event
-
-
-        // skip element ?
-        if (element.hasAttribute("skip"))
-            return;
-
-        // tags to skip
-        if (element instanceof HTMLScriptElement 
-         || element instanceof HTMLTemplateElement)
-            return;
-
-        let bindings = [];
-
-        
-        if (!isRoot)
-        {
-            // compile attributes
-            for (var i = 0; i < element.attributes.length; i++) {
-
-                let b = Binding.create(element.attributes[i]);
-
-                if (b != null) {
-                    if (b.type == BindingType.HTMLElementDataAttribute 
-                        || b.type == BindingType.IUIElementDataAttribute)
-                        element.dataMap = b;
-                    else if (b.type == BindingType.RevertAttribute)
-                        element.revertMap = b;
-                    else
-                        bindings.push(b);
-                }
-            }
-        }
-
-        // compile nodes
-        for (var i = 0; i < element.childNodes.length; i++) {
-            let e = element.childNodes[i];
-            if (e instanceof IUIElement) {
-                // @TODO: check if the IUI element handles the binding
-                IUIElement._make_bindings(e);
-            }
-            else if (e instanceof HTMLElement) {
-                IUIElement._make_bindings(e);
-            }
-            else if (e instanceof Text) {
-                let b = Binding.create(e);
-                if (b != null)
-                    bindings.push(b);
-            }
-        }
-
-        element.bindings = bindings;
-    }
 
 
     _emit(event, values) {
@@ -304,13 +198,13 @@ export default class IUIElement extends HTMLElement {
         }
     }
 
-    off(event, fn) {
-        this.removeEventListener(event, fn);
+    off(event, func) {
+        this.removeEventListener(event, func);
         return this;
     }
 
-    on(event, fn) {
-        this.addEventListener(event, fn, false);
+    on(event, func) {
+        this.addEventListener(event, func, false);
         return this;
     }
 }
