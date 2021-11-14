@@ -6,6 +6,9 @@ export default IUI.module(class CodePreview extends IUIElement {
     constructor() {
         super();
         this.refs = new RefsCollection(this);
+        this._code = this.innerHTML.trim();
+        this.textContent = '';
+
     }
 
     async create() {
@@ -13,8 +16,8 @@ export default IUI.module(class CodePreview extends IUIElement {
         if (this.hasAttribute("debug"))
             debugger;
 
-        this._code = this.innerHTML.trim();
-        this.textContent = '';
+        //this._code = this.innerHTML.trim();
+        //this.textContent = '';
         
         // create elements
         this.bar = document.createElement("div");
@@ -31,7 +34,7 @@ export default IUI.module(class CodePreview extends IUIElement {
 
         let self = this;
         this.editor.addEventListener("input", function() {
-            self._code = self.editor.innerText.trim();
+            self._code = self.editor.textContent.trim();
             self.updatePreview();
         }, false);
         
@@ -59,13 +62,19 @@ export default IUI.module(class CodePreview extends IUIElement {
     
     async updatePreview() {
         
+
         if (this._updating)
             return;
 
         this._updating = true;
-        this.preview.innerHTML = this._code;
 
-   
+        this.preview.innerHTML = this._code;
+        //this.editor.innerHTML = hljs.highlightAuto(this._code).value;
+
+//        this.editor.innerHTML = hljs.highlight(this._code, {language: 'html'}).value
+
+   //     this.editor.innerHTML = hljs.highlightElement(this.editor, {language: 'html'}).value;
+
         if (window.app?.loaded)
         {
             await IUI.create(this.preview);

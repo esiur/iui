@@ -22,3 +22,8 @@ When the document is loaded or new HTML is inserted in the document, IUI process
     Render invokes the data binding functions and sets the element text nodes and attributes to the value returned by the binding functions. The process is recursive to all children in the element tree (**IUIElement** and **HTMLElement**)
 
 The rootElement is the first `<i-app>` in the document when its loaded.
+
+
+# Extension to the Scope
+
+IUI components might extend the scope with 

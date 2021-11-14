@@ -161,7 +161,7 @@ export class IUI {
 		
 				
 		if (scope == null)
-		scope = {};
+		    scope = {};
 
 		// get refs before they get overwritten
 		//let refs = scope?.refs;
@@ -169,6 +169,25 @@ export class IUI {
 		// some element extended or overwritten the binding arguments
 		if (element.scope != null)
 			IUI.extend(scope, element.scope, true);
+		else if (element.hasAttribute(":scope"))
+		{
+			let script = element.getAttribute(":scope");
+			let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+			let func = new Function("context", code);
+			let context = {};
+
+			func.call(element, context);
+
+			if (context.error != undefined)
+				console.log("Scope binding failed", context.error.name + ": " + context.error.message, this.script, this.target);
+			else if (context.value != undefined 
+					&& context.value instanceof Object)
+				IUI.extend(scope, context.value, true);
+		}
+		
+		let scopeArgs = Object.keys(scope);
+		let scopeValues = Object.values(scope);
+
 
 		bindings = new BindingList(element, scope);
 
@@ -182,22 +201,42 @@ export class IUI {
 		}
 		else
         {
+			element.__i_bindings?.destroy();
 
             // compile attributes
             for (var i = 0; i < element.attributes.length; i++) {
 
-                let b = Binding.create(element.attributes[i], 
-										bindings.scope);
+				// skip scope
+				if (element.attributes[i].name == ":scope")
+					continue;
 
-                if (b != null) {
-                    if (b.type == BindingType.HTMLElementDataAttribute 
-                        || b.type == BindingType.IUIElementDataAttribute)
-                        element.dataMap = b;
-                    else if (b.type == BindingType.RevertAttribute)
-                        element.revertMap = b;
-                    else
-                        bindings.push(b);
-                }
+				if (element.attributes[i].name.startsWith("@")){
+
+					// make events
+					let code = element.attributes[i].value;
+					//let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+					let func = new Function("event", ...scopeArgs, code);
+					let handler = (event) => {
+						func.call(element, event, ...scopeValues);
+					}
+
+					bindings.addEvent(element.attributes[i].name.substr(1), handler);
+				}
+				else
+				{
+					let b = Binding.create(element.attributes[i], 
+												bindings.scope);
+
+					if (b != null) {
+						if (b.type == BindingType.HTMLElementDataAttribute 
+							|| b.type == BindingType.IUIElementDataAttribute)
+							element.dataMap = b;
+						else if (b.type == BindingType.RevertAttribute)
+							element.revertMap = b;
+						else
+							bindings.push(b);
+					}
+				}
             }
 
 			
@@ -218,8 +257,6 @@ export class IUI {
 			// }
         }
 
-
-
 		// get new refs (scope might been overwritten)
 		//refs = scope?.refs;
 
@@ -230,6 +267,31 @@ export class IUI {
                 // @TODO: check if the IUI element handles the binding
 				IUI.bind(el, false, sourcePath, scope);
             }
+			else if (el instanceof HTMLScriptElement)
+			{
+
+				try
+				{
+					// this because HTML parser don't evaluate script tag
+					/// let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
+					let func = new Function(...scopeArgs, 
+						"//# sourceURL=iui://" + sourcePath + "-" 
+						+ Math.round(Math.random() * 10000) 
+						+ "\r\n" + el.text.trim());
+
+					let rt = func.apply(el.parentElement, scopeValues);
+
+					console.log("rt", rt);
+
+					if (typeof (rt) === "object") {
+						for (var k in rt)
+							el.parentElement[k] = rt[k];
+					}
+				}
+				catch (ex) {
+					console.log(ex);
+				}
+			}
             else if (el instanceof HTMLElement) {
 				IUI.bind(el, false, sourcePath, scope);
             }
@@ -238,19 +300,6 @@ export class IUI {
                 if (b != null)
                     bindings.push(b);
             }
-			else if (el instanceof HTMLScriptElement)
-			{
-				// this because HTML parser don't evaluate script tag
-				/// let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
-				let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n" + el.text.trim());
-
-				let rt = func.call(el.parentElement);
-
-				if (typeof (rt) === "object") {
-					for (var k in rt)
-						el.parentElement[k] = rt[k];
-				}
-			}
         }
 
         element.__i_bindings = bindings;

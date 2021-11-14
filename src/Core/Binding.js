@@ -59,11 +59,19 @@ export class Binding {
                 isAsync = true;
                 attrType = AttributeBindingDestination.Field;
                 attrKey = nodeOrAttributeOrIUIElement.name.substr(6);
+
+                // skip scope
+                // if (attrKey == "scope")
+                //     return null;
             }
             else if (nodeOrAttributeOrIUIElement.name.startsWith(":")) {
                 isAsync = false;
                 attrType = AttributeBindingDestination.Field;
                 attrKey = nodeOrAttributeOrIUIElement.name.substr(1);
+
+                // skip scope
+                // if (attrKey == "scope")
+                //     return null;
             }
             else {
                 return null;
@@ -151,7 +159,7 @@ export class Binding {
 
         try {
             let d = this.func.apply(thisArg, [proxy, proxy, {}, true
-                                    , ...this.scopeKeys]);
+                                    , ...this.scopeValues]);
 
             this.map = map;
             return d;

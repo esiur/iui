@@ -6,14 +6,15 @@ export default class RefsCollection
         this._rootElement = rootElement;
     }
 
-    _build(element) {
+    _build(element, append) {
 
         if (element == undefined)
             element = this._rootElement;
 
-        for(var i in this)
-            if (i != "_rootElement" && i != "_build")
-                delete this[i];
+        if (!append)
+            for(var i in this)
+                if (i != "_rootElement" && i != "_build")
+                    delete this[i];
 
         for(var i = 0; i < element.children.length; i++)
         {
@@ -33,14 +34,13 @@ export default class RefsCollection
 					var firstRef = this[ref];
 					this[ref] =[firstRef, child];
 				}
-
             }
 
             if (child.refs != undefined)
                 // opt out if the element handles referencing
                 break;
             else
-                this._build(child);
+                this._build(child, true);
         }
     }
 }

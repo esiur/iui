@@ -1,7 +1,9 @@
 # Data flow
 
+
 When the :data attribute is set to an element any other attribute and child will be able to access this field directly using the variable *data* or the shortended *d*.
 
+It is a scope variable responsible for the rerendering process of the view when the value provided implements **Modifiable** interface, such as the Esiur distributed objects.
 
 <i-codepreview>
     <div :data="{name: 'Ahmed Zamil', job: 'Developer'} ">

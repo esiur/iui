@@ -172,6 +172,7 @@ export default class IUIElement extends HTMLElement {
     _register(event) {
         this._events.push(event);
 
+        /*
         if (this.hasAttribute("@" + event)) {
             let handler = this.getAttribute("@" + event);
             if (handler.match(/^[A-Za-z\$_]+(?:[\$_][A-Za-z0-9]+)*$/g) === null) {
@@ -196,6 +197,7 @@ export default class IUIElement extends HTMLElement {
                 }
             }
         }
+        */
     }
 
     off(event, func) {
