@@ -1,5 +1,6 @@
 import {IUI, iui} from "./Core/IUI.js";
 
+ 
 import "./Core/IUIElement.js";
 import './Core/App.js';
 
@@ -40,6 +41,7 @@ import './UI/Grid.js';
 
 import './UI/Location.js';
 import './UI/CodePreview.js';
+import Modifiable from "./Data/Modifiable.js";
 
 window.addEventListener("beforeprint", (e)=>{
    let viewRoute = router.current.viewRoute;
@@ -56,9 +58,9 @@ window.addEventListener("afterprint", (e)=>{
 window.addEventListener("load", async function () {
     await IUI.create(document.body);
     await IUI.created(document.body);
-    //if (window.app != null) {
-      //  window.app._emit("load", { app: window.app });
-   // }
+
 });
 
 window.iui = iui;
+
+window.Modifiable = Modifiable;

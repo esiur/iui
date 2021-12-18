@@ -150,6 +150,9 @@ export default IUI.module(class Input extends IUIElement {
             this._input.value = value != null ? value.toISOString().slice(0, 10) : value;
         else if (this.type == null || this.type == "text" || this.type == "search" || this.type == "password")
             this._input.value = value == null ? '' : value;
+        else if (this.type == "file") {
+            // can't set value on file input
+        }
         else
             this._input.value = value;
 
@@ -163,7 +166,7 @@ export default IUI.module(class Input extends IUIElement {
             this.value = value[this.field];
         else if (this.field != null)
             this.value = null;
-            */
+        */
     }
 
 

@@ -12,6 +12,8 @@ var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 
 var _IUI = require("../Core/IUI.js");
 
+var _RefsCollection = _interopRequireDefault(require("./RefsCollection.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -40,9 +42,13 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   var _super = _createSuper(App);
 
   function App() {
+    var _this;
+
     _classCallCheck(this, App);
 
-    return _super.call(this);
+    _this = _super.call(this);
+    _this.refs = new _RefsCollection["default"](_assertThisInitialized(_this));
+    return _this;
   }
 
   _createClass(App, [{
@@ -55,7 +61,13 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   }, {
     key: "created",
     value: function created() {
-      _IUI.IUI.bind(this, this, "/"); //IUIElement._make_bindings(this);
+      _IUI.IUI.bind(this, this, "/", {
+        app: this,
+        refs: this.refs
+      }); // update referencing
+
+
+      this.refs._build(); //IUIElement._make_bindings(this);
 
 
       this.render();
@@ -73,7 +85,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],2:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./RefsCollection.js":6}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86,6 +98,24 @@ var _IUIElement = _interopRequireDefault(require("./IUIElement.js"));
 var _IUI = require("./IUI.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -155,7 +185,7 @@ var Binding = /*#__PURE__*/function () {
       var proxy = new Proxy(map, detector);
 
       try {
-        var d = this.func.apply(thisArg, [proxy, proxy, {}, true]);
+        var d = this.func.apply(thisArg, [proxy, proxy, {}, true].concat(_toConsumableArray(this.scopeValues)));
         this.map = map;
         return d;
       } catch (ex) {
@@ -174,7 +204,7 @@ var Binding = /*#__PURE__*/function () {
               case 0:
                 if (!this.checked) this._findMap(thisArg);
                 context = {};
-                rt = this.func.apply(thisArg, [data, data, context, false]); //console.log(rt);
+                rt = this.func.apply(thisArg, [data, data, context, false].concat(_toConsumableArray(this.scopeValues))); //console.log(rt);
 
                 if (!(rt instanceof Promise)) {
                   _context2.next = 6;
@@ -278,7 +308,7 @@ var Binding = /*#__PURE__*/function () {
     key: "render",
     value: function () {
       var _render = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(data) {
-        var d, _d, _window, _window$app, targetElement, _d2, _d3, _d4, _d5, _d6, _d7;
+        var d, _d, _window, _window$app, targetElement, _d2, _targetElement$__i_bi, _targetElement$__i_bi2, _targetElement$__i_bi3, _targetElement$__i_bi4, _d3, _d4, _d5, _d6, _d7;
 
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -289,52 +319,43 @@ var Binding = /*#__PURE__*/function () {
                 _context3.prev = 1;
 
                 if (!(this.type === BindingType.IUIElement)) {
-                  _context3.next = 12;
+                  _context3.next = 10;
                   break;
                 }
 
-                d = this.func.apply(this.target, [data, data]);
+                _context3.next = 5;
+                return this._execute(this.target, data);
 
-                if (!(d instanceof Promise)) {
-                  _context3.next = 8;
-                  break;
-                }
-
-                _context3.next = 7;
-                return d;
-
-              case 7:
+              case 5:
                 d = _context3.sent;
-
-              case 8:
-                _context3.next = 10;
+                _context3.next = 8;
                 return this.target.setData(d);
 
-              case 10:
-                _context3.next = 86;
+              case 8:
+                _context3.next = 85;
                 break;
 
-              case 12:
+              case 10:
                 if (!(this.type === BindingType.TextNode)) {
-                  _context3.next = 28;
+                  _context3.next = 26;
                   break;
                 }
 
-                _context3.prev = 13;
-                _context3.next = 16;
+                _context3.prev = 11;
+                _context3.next = 14;
                 return this._execute(this.target.parentElement, data);
 
-              case 16:
+              case 14:
                 _d = _context3.sent;
 
                 if (!(_d === undefined)) {
-                  _context3.next = 19;
+                  _context3.next = 17;
                   break;
                 }
 
                 return _context3.abrupt("return", false);
 
-              case 19:
+              case 17:
                 //if (d instanceof Promise)
                 //    d = await d;
                 this.target.data = _d; // (d === undefined) ? "" : d;
@@ -344,125 +365,127 @@ var Binding = /*#__PURE__*/function () {
                   this.bind(data, this.map);
                 }
 
-                _context3.next = 26;
+                _context3.next = 24;
                 break;
 
-              case 23:
-                _context3.prev = 23;
-                _context3.t0 = _context3["catch"](13);
+              case 21:
+                _context3.prev = 21;
+                _context3.t0 = _context3["catch"](11);
                 this.target.data = "";
 
-              case 26:
-                _context3.next = 86;
+              case 24:
+                _context3.next = 85;
                 break;
 
-              case 28:
+              case 26:
                 if (!(this.type == BindingType.ContentAttribute)) {
-                  _context3.next = 46;
+                  _context3.next = 45;
                   break;
                 }
 
                 targetElement = this.target.ownerElement;
-                _context3.next = 32;
+                _context3.next = 30;
                 return this._execute(targetElement, data);
 
-              case 32:
+              case 30:
                 _d2 = _context3.sent;
 
                 if (!(_d2 === undefined)) {
-                  _context3.next = 35;
+                  _context3.next = 33;
                   break;
                 }
 
                 return _context3.abrupt("return", false);
 
-              case 35:
+              case 33:
                 //if (d instanceof Promise)
                 //  d = await d;
                 targetElement.innerHTML = _d2;
 
                 if (!((_window = window) !== null && _window !== void 0 && (_window$app = _window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
-                  _context3.next = 44;
+                  _context3.next = 43;
                   break;
                 }
 
-                _context3.next = 39;
+                _context3.next = 37;
                 return _IUI.IUI.create(targetElement);
 
-              case 39:
+              case 37:
+                _IUI.IUI.bind(targetElement, true, "content", (_targetElement$__i_bi = targetElement.__i_bindings) === null || _targetElement$__i_bi === void 0 ? void 0 : _targetElement$__i_bi.scope); // update references
+
+
+                (_targetElement$__i_bi2 = targetElement.__i_bindings) === null || _targetElement$__i_bi2 === void 0 ? void 0 : (_targetElement$__i_bi3 = _targetElement$__i_bi2.scope) === null || _targetElement$__i_bi3 === void 0 ? void 0 : (_targetElement$__i_bi4 = _targetElement$__i_bi3.refs) === null || _targetElement$__i_bi4 === void 0 ? void 0 : _targetElement$__i_bi4._build();
                 _context3.next = 41;
                 return _IUI.IUI.created(targetElement);
 
               case 41:
-                _IUI.IUI.bind(targetElement, targetElement, "content");
-
-                _context3.next = 44;
+                _context3.next = 43;
                 return _IUI.IUI.render(targetElement, targetElement._data, true);
 
-              case 44:
-                _context3.next = 86;
+              case 43:
+                _context3.next = 85;
                 break;
 
-              case 46:
+              case 45:
                 if (!(this.type == BindingType.IfAttribute)) {
-                  _context3.next = 53;
+                  _context3.next = 52;
                   break;
                 }
 
-                _context3.next = 49;
+                _context3.next = 48;
                 return this._execute(this.target.ownerElement, data);
 
-              case 49:
+              case 48:
                 _d3 = _context3.sent;
                 //if (d === undefined)
                 //    return false;
                 this.target.ownerElement.style.display = _d3 ? "" : "none";
-                _context3.next = 86;
+                _context3.next = 85;
                 break;
 
-              case 53:
+              case 52:
                 if (!(this.type == BindingType.RevertAttribute)) {
-                  _context3.next = 61;
+                  _context3.next = 60;
                   break;
                 }
 
-                _context3.next = 56;
+                _context3.next = 55;
                 return this._execute(this.target.ownerElement, data);
 
-              case 56:
+              case 55:
                 _d4 = _context3.sent;
 
                 if (!(_d4 === undefined)) {
-                  _context3.next = 59;
+                  _context3.next = 58;
                   break;
                 }
 
                 return _context3.abrupt("return", false);
 
-              case 59:
-                _context3.next = 86;
+              case 58:
+                _context3.next = 85;
                 break;
 
-              case 61:
+              case 60:
                 if (!(this.type === BindingType.Attribute)) {
-                  _context3.next = 71;
+                  _context3.next = 70;
                   break;
                 }
 
-                _context3.next = 64;
+                _context3.next = 63;
                 return this._execute(this.target.ownerElement, data);
 
-              case 64:
+              case 63:
                 _d5 = _context3.sent;
 
                 if (!(_d5 === undefined)) {
-                  _context3.next = 67;
+                  _context3.next = 66;
                   break;
                 }
 
                 return _context3.abrupt("return", false);
 
-              case 67:
+              case 66:
                 //if (d instanceof Promise)
                 //  d = await d;
                 if (this.attrType == AttributeBindingDestination.Field) this.target.ownerElement[this.attrKey] = _d5;else this.target.ownerElement.setAttribute(this.attrKey, _d5);
@@ -472,65 +495,65 @@ var Binding = /*#__PURE__*/function () {
                   this.bind(data, this.map);
                 }
 
-                _context3.next = 86;
+                _context3.next = 85;
                 break;
 
-              case 71:
+              case 70:
                 if (!(this.type === BindingType.IUIElementDataAttribute)) {
-                  _context3.next = 79;
+                  _context3.next = 78;
                   break;
                 }
 
-                _context3.next = 74;
+                _context3.next = 73;
                 return this._execute(this.target.ownerElement, data);
 
-              case 74:
+              case 73:
                 _d6 = _context3.sent;
-                _context3.next = 77;
+                _context3.next = 76;
                 return this.target.ownerElement.setData(_d6);
 
-              case 77:
-                _context3.next = 86;
+              case 76:
+                _context3.next = 85;
                 break;
 
-              case 79:
+              case 78:
                 if (!(this.type == BindingType.HTMLElementDataAttribute)) {
-                  _context3.next = 86;
-                  break;
-                }
-
-                _context3.next = 82;
-                return this._execute(this.target.ownerElement, data);
-
-              case 82:
-                _d7 = _context3.sent;
-
-                if (!(_d7 === undefined)) {
                   _context3.next = 85;
                   break;
                 }
 
+                _context3.next = 81;
+                return this._execute(this.target.ownerElement, data);
+
+              case 81:
+                _d7 = _context3.sent;
+
+                if (!(_d7 === undefined)) {
+                  _context3.next = 84;
+                  break;
+                }
+
                 return _context3.abrupt("return", false);
 
-              case 85:
+              case 84:
                 //if (d instanceof Promise)
                 //  d = await d;
                 this.target.ownerElement.data = _d7;
 
-              case 86:
+              case 85:
                 return _context3.abrupt("return", true);
 
-              case 89:
-                _context3.prev = 89;
+              case 88:
+                _context3.prev = 88;
                 _context3.t1 = _context3["catch"](1);
                 return _context3.abrupt("return", false);
 
-              case 92:
+              case 91:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[1, 89], [13, 23]]);
+        }, _callee3, this, [[1, 88], [11, 21]]);
       }));
 
       function render(_x3) {
@@ -541,7 +564,7 @@ var Binding = /*#__PURE__*/function () {
     }()
   }], [{
     key: "create",
-    value: function create(nodeOrAttributeOrIUIElement) {
+    value: function create(nodeOrAttributeOrIUIElement, scope) {
       var code, isAsync, type, attrType, attrKey, func, script; //if (nodeOrAttributeOrIUIElement.created)
       //  debugger;
 
@@ -570,11 +593,15 @@ var Binding = /*#__PURE__*/function () {
         } else if (nodeOrAttributeOrIUIElement.name.startsWith("async:")) {
           isAsync = true;
           attrType = AttributeBindingDestination.Field;
-          attrKey = nodeOrAttributeOrIUIElement.name.substr(6);
+          attrKey = nodeOrAttributeOrIUIElement.name.substr(6); // skip scope
+          // if (attrKey == "scope")
+          //     return null;
         } else if (nodeOrAttributeOrIUIElement.name.startsWith(":")) {
           isAsync = false;
           attrType = AttributeBindingDestination.Field;
-          attrKey = nodeOrAttributeOrIUIElement.name.substr(1);
+          attrKey = nodeOrAttributeOrIUIElement.name.substr(1); // skip scope
+          // if (attrKey == "scope")
+          //     return null;
         } else {
           return null;
         } // isAsync = nodeOrAttributeOrIUIElement.value.search("await");
@@ -596,8 +623,12 @@ var Binding = /*#__PURE__*/function () {
       } // test the function
 
 
+      var scopeKeys = Object.keys(scope);
+      var scopeValues = Object.values(scope);
+
       try {
-        if (isAsync) func = new AsyncFunction("data", "d", "context", "_test", code);else func = new Function("data", "d", "context", "_test", code);
+        var args = ["data", "d", "context", "_test"].concat(_toConsumableArray(scopeKeys));
+        if (isAsync) func = _construct(AsyncFunction, _toConsumableArray(args).concat([code]));else func = _construct(Function, _toConsumableArray(args).concat([code]));
       } catch (ex) {
         console.log("Test failed: " + ex, code);
         return null;
@@ -612,7 +643,9 @@ var Binding = /*#__PURE__*/function () {
         func: func,
         target: nodeOrAttributeOrIUIElement,
         checked: false,
-        script: script
+        script: script,
+        scopeKeys: scopeKeys,
+        scopeValues: scopeValues
       });
       return rt;
     }
@@ -623,7 +656,102 @@ var Binding = /*#__PURE__*/function () {
 
 exports.Binding = Binding;
 
-},{"./IUI.js":3,"./IUIElement.js":4}],3:[function(require,module,exports){
+},{"./IUI.js":4,"./IUIElement.js":5}],3:[function(require,module,exports){
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var BindingList = /*#__PURE__*/function (_Array) {
+  _inherits(BindingList, _Array);
+
+  var _super = _createSuper(BindingList);
+
+  function BindingList(target, scope) {
+    var _this;
+
+    _classCallCheck(this, BindingList);
+
+    _this = _super.call(this);
+    _this.target = target;
+    _this.scope = scope;
+    _this.events = [];
+    return _this;
+  }
+
+  _createClass(BindingList, [{
+    key: "destroy",
+    value: function destroy() {
+      for (var i = 0; i < this.length; i++) {
+        this[i].unbind();
+      }
+
+      this.scope = {};
+      this.target = null;
+
+      for (var i = 0; i < this.events.length; i++) {
+        this.target.removeEventListener(this.events[i].name, this.events[i].handle);
+      }
+    }
+  }, {
+    key: "addEvent",
+    value: function addEvent(name, handle) {
+      this.target.addEventListener(name, handle);
+      this.events.push({
+        name: name,
+        handle: handle
+      });
+    }
+  }, {
+    key: "getArgumentsNames",
+    value: function getArgumentsNames() {
+      if (this.scope == null) return [];
+      var rt;
+
+      for (var i in this.scope.length) {
+        rt.push(i);
+      }
+
+      return rt;
+    }
+  }]);
+
+  return BindingList;
+}( /*#__PURE__*/_wrapNativeSuper(Array));
+
+exports["default"] = BindingList;
+
+},{}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -636,9 +764,29 @@ var _IUIElement = _interopRequireDefault(require("./IUIElement.js"));
 
 var _Binding = require("./Binding.js");
 
+var _BindingList = _interopRequireDefault(require("./BindingList.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -652,7 +800,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-//import Route from '../Router/Route.js';
 var IUI = /*#__PURE__*/function () {
   function IUI() {
     _classCallCheck(this, IUI);
@@ -810,97 +957,148 @@ var IUI = /*#__PURE__*/function () {
     }
   }, {
     key: "extend",
-    value: function extend(properties, defaults, force) {
+    value: function extend(properties, defaults, overwrite) {
       if (properties == null) properties = defaults;else for (var i in defaults) {
-        if (force) properties[i] = defaults[i];else if (properties[i] === undefined) properties[i] = defaults[i];
+        if (overwrite) properties[i] = defaults[i];else if (properties[i] === undefined) properties[i] = defaults[i];
       }
       return properties;
     }
   }, {
     key: "bind",
-    value: function bind(element, rootElement, sourcePath) {
+    value: function bind(element, skipAttributes, sourcePath, scope) {
       // ::Attribute
-      // : Field
+      // : Field 
       // async:: Async Attribute
       // async: Async Field
       // @ Event
       // skip element ?
-      if (element.hasAttribute("skip") || element instanceof HTMLTemplateElement) return; // tags to skip
+      if (element.hasAttribute("skip") || element.hasAttribute("i-skip") || element instanceof HTMLTemplateElement) return; // tags to skip
       //if (element instanceof HTMLScriptElement )
       //return;
 
-      if (rootElement == null) rootElement = element;
       var bindings;
+      if (scope == null) scope = {}; // get refs before they get overwritten
+      //let refs = scope?.refs;
+      // some element extended or overwritten the binding arguments
 
-      if (element != rootElement) {
-        element.view = rootElement.view;
-        element.route = rootElement.route;
-        bindings = []; // compile attributes
+      if (element.scope != null) IUI.extend(scope, element.scope, true);else if (element.hasAttribute(":scope")) {
+        var script = element.getAttribute(":scope");
+        var code = "try {\r\n context.value = ".concat(script, "; \r\n}\r\n catch(ex) { context.error = ex; }");
+        var func = new Function("context", code);
+        var context = {};
+        func.call(element, context);
+        if (context.error != undefined) console.log("Scope binding failed", context.error.name + ": " + context.error.message, this.script, this.target);else if (context.value != undefined && context.value instanceof Object) IUI.extend(scope, context.value, true);
+      }
+      var scopeArgs = Object.keys(scope);
+      var scopeValues = Object.values(scope);
+      bindings = new _BindingList["default"](element, scope);
 
-        for (var i = 0; i < element.attributes.length; i++) {
-          var b = _Binding.Binding.create(element.attributes[i]);
-
-          if (b != null) {
-            if (b.type == _Binding.BindingType.HTMLElementDataAttribute || b.type == _Binding.BindingType.IUIElementDataAttribute) element.dataMap = b;else if (b.type == _Binding.BindingType.RevertAttribute) element.revertMap = b;else bindings.push(b);
-          }
-        } // add reference
-
-
-        if (element.hasAttribute("ref")) {
-          rootElement.refs[el.getAttribute("ref")] = element;
+      if (skipAttributes) {
+        // copy attributes bindings
+        if (element.__i_bindings != null) for (var i = 0; i < element.__i_bindings.length; i++) {
+          if (element.__i_bindings[i].type != _Binding.BindingType.TextNode) bindings.push(element.__i_bindings[i]);
         }
       } else {
-        // remove previous text node bindings
-        bindings = element.bindings == null ? [] : element.bindings.filter(function (x) {
-          return x.type != _Binding.BindingType.TextNode;
-        });
-        element.refs = {};
-      } // compile nodes
+        var _element$__i_bindings;
+
+        (_element$__i_bindings = element.__i_bindings) === null || _element$__i_bindings === void 0 ? void 0 : _element$__i_bindings.destroy(); // compile attributes
+
+        for (var i = 0; i < element.attributes.length; i++) {
+          // skip scope
+          if (element.attributes[i].name == ":scope") continue;
+
+          if (element.attributes[i].name.startsWith("@")) {
+            (function () {
+              // make events
+              var code = element.attributes[i].value; //let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+
+              var func = _construct(Function, ["event"].concat(_toConsumableArray(scopeArgs), [code]));
+
+              var handler = function handler(event) {
+                func.call.apply(func, [element, event].concat(_toConsumableArray(scopeValues)));
+              };
+
+              bindings.addEvent(element.attributes[i].name.substr(1), handler);
+            })();
+          } else {
+            var b = _Binding.Binding.create(element.attributes[i], bindings.scope);
+
+            if (b != null) {
+              if (b.type == _Binding.BindingType.HTMLElementDataAttribute || b.type == _Binding.BindingType.IUIElementDataAttribute) element.dataMap = b;else if (b.type == _Binding.BindingType.RevertAttribute) element.revertMap = b;else bindings.push(b);
+            }
+          }
+        } // add reference
+        // if (element.hasAttribute("ref")) {
+        // 	let ref = element.getAttribute("ref");
+        // 	if (refs[ref] == null)
+        // 		refs[ref] = element;
+        // 	else if (refs[ref] == element){
+        // 		// do nothing
+        // 	}
+        // 	else if (refs[ref] instanceof Array){
+        // 		refs[ref].push(element);
+        // 	} else {
+        // 		var firstRef = refs[ref];
+        // 		refs[ref] =[firstRef, element];
+        // 	}
+        // }
+
+      } // get new refs (scope might been overwritten)
+      //refs = scope?.refs;
+      // compile nodes
 
 
       for (var i = 0; i < element.childNodes.length; i++) {
-        var _el = element.childNodes[i];
+        var el = element.childNodes[i];
 
-        if (_el instanceof _IUIElement["default"]) {
+        if (el instanceof _IUIElement["default"]) {
           // @TODO: check if the IUI element handles the binding
-          IUI.bind(_el, rootElement, sourcePath);
-        } else if (_el instanceof HTMLElement) {
-          IUI.bind(_el, rootElement, sourcePath);
-        } else if (_el instanceof Text) {
-          var _b = _Binding.Binding.create(_el);
+          IUI.bind(el, false, sourcePath, scope);
+        } else if (el instanceof HTMLScriptElement) {
+          try {
+            // this because HTML parser don't evaluate script tag
+            /// let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
+            var _func = _construct(Function, _toConsumableArray(scopeArgs).concat(["//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n" + el.text.trim()]));
+
+            var rt = _func.apply(el.parentElement, scopeValues);
+
+            console.log("rt", rt);
+
+            if (_typeof(rt) === "object") {
+              for (var k in rt) {
+                el.parentElement[k] = rt[k];
+              }
+            }
+          } catch (ex) {
+            console.log(ex);
+          }
+        } else if (el instanceof HTMLElement) {
+          IUI.bind(el, false, sourcePath, scope);
+        } else if (el instanceof Text) {
+          var _b = _Binding.Binding.create(el, bindings.scope);
 
           if (_b != null) bindings.push(_b);
-        } else if (_el instanceof HTMLScriptElement) {
-          // this because HTML parser don't evaluate script tag
-          var func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + _el.text.trim());
-          var rt = func.call(_el.parentElement);
-
-          if (_typeof(rt) === "object") {
-            for (var k in rt) {
-              _el.parentElement[k] = rt[k];
-            }
-          }
         }
       }
 
-      element.bindings = bindings;
+      element.__i_bindings = bindings;
     }
   }, {
     key: "render",
     value: function () {
       var _render = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(element, data) {
         var textNodesOnly,
+            bindings,
             i,
-            _el2,
+            el,
             _args3 = arguments;
-
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
                 textNodesOnly = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : false;
 
-                if (element.bindings) {
+                if (element.__i_bindings) {
                   _context3.next = 3;
                   break;
                 }
@@ -908,124 +1106,126 @@ var IUI = /*#__PURE__*/function () {
                 return _context3.abrupt("return");
 
               case 3:
+                bindings = element.__i_bindings;
+
                 if (!textNodesOnly) {
-                  _context3.next = 14;
+                  _context3.next = 15;
                   break;
                 }
 
                 i = 0;
 
-              case 5:
-                if (!(i < element.bindings.length)) {
-                  _context3.next = 12;
+              case 6:
+                if (!(i < bindings.length)) {
+                  _context3.next = 13;
                   break;
                 }
 
-                if (!(element.bindings[i].type == _Binding.BindingType.TextNode)) {
-                  _context3.next = 9;
+                if (!(bindings[i].type == _Binding.BindingType.TextNode)) {
+                  _context3.next = 10;
                   break;
                 }
 
-                _context3.next = 9;
-                return element.bindings[i].render(data);
+                _context3.next = 10;
+                return bindings[i].render(data);
 
-              case 9:
+              case 10:
                 i++;
-                _context3.next = 5;
+                _context3.next = 6;
                 break;
 
-              case 12:
-                _context3.next = 21;
-                break;
-
-              case 14:
-                i = 0;
-
-              case 15:
-                if (!(i < element.bindings.length)) {
-                  _context3.next = 21;
-                  break;
-                }
-
-                _context3.next = 18;
-                return element.bindings[i].render(data);
-
-              case 18:
-                i++;
-                _context3.next = 15;
-                break;
-
-              case 21:
-                i = 0;
-
-              case 22:
-                if (!(i < element.children.length)) {
-                  _context3.next = 48;
-                  break;
-                }
-
-                _el2 = element.children[i];
-
-                if (!(_el2 instanceof _IUIElement["default"])) {
-                  _context3.next = 37;
-                  break;
-                }
-
-                if (!(_el2.dataMap != null)) {
-                  _context3.next = 33;
-                  break;
-                }
-
-                _context3.next = 28;
-                return _el2.dataMap.render(data);
-
-              case 28:
-                if (_context3.sent) {
-                  _context3.next = 31;
-                  break;
-                }
-
-                _context3.next = 31;
-                return _el2.render();
-
-              case 31:
-                _context3.next = 35;
-                break;
-
-              case 33:
-                _context3.next = 35;
-                return _el2.setData(data);
-
-              case 35:
-                _context3.next = 45;
-                break;
-
-              case 37:
-                if (!(_el2.dataMap != null)) {
-                  _context3.next = 42;
-                  break;
-                }
-
-                _context3.next = 40;
-                return _el2.dataMap.render(data);
-
-              case 40:
-                _context3.next = 43;
-                break;
-
-              case 42:
-                _el2.data = data;
-
-              case 43:
-                _context3.next = 45;
-                return IUI.render(_el2, _el2.data);
-
-              case 45:
-                i++;
+              case 13:
                 _context3.next = 22;
                 break;
 
-              case 48:
+              case 15:
+                i = 0;
+
+              case 16:
+                if (!(i < bindings.length)) {
+                  _context3.next = 22;
+                  break;
+                }
+
+                _context3.next = 19;
+                return bindings[i].render(data);
+
+              case 19:
+                i++;
+                _context3.next = 16;
+                break;
+
+              case 22:
+                i = 0;
+
+              case 23:
+                if (!(i < element.children.length)) {
+                  _context3.next = 49;
+                  break;
+                }
+
+                el = element.children[i];
+
+                if (!(el instanceof _IUIElement["default"])) {
+                  _context3.next = 38;
+                  break;
+                }
+
+                if (!(el.dataMap != null)) {
+                  _context3.next = 34;
+                  break;
+                }
+
+                _context3.next = 29;
+                return el.dataMap.render(data);
+
+              case 29:
+                if (_context3.sent) {
+                  _context3.next = 32;
+                  break;
+                }
+
+                _context3.next = 32;
+                return el.render();
+
+              case 32:
+                _context3.next = 36;
+                break;
+
+              case 34:
+                _context3.next = 36;
+                return el.setData(data);
+
+              case 36:
+                _context3.next = 46;
+                break;
+
+              case 38:
+                if (!(el.dataMap != null)) {
+                  _context3.next = 43;
+                  break;
+                }
+
+                _context3.next = 41;
+                return el.dataMap.render(data);
+
+              case 41:
+                _context3.next = 44;
+                break;
+
+              case 43:
+                el.data = data;
+
+              case 44:
+                _context3.next = 46;
+                return IUI.render(el, el.data);
+
+              case 46:
+                i++;
+                _context3.next = 23;
+                break;
+
+              case 49:
               case "end":
                 return _context3.stop();
             }
@@ -1243,7 +1443,7 @@ window.addEventListener("load", function(){
 });
 */
 
-},{"./Binding.js":2,"./IUIElement.js":4}],4:[function(require,module,exports){
+},{"./Binding.js":2,"./BindingList.js":3,"./IUIElement.js":5}],5:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1502,7 +1702,13 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
       }
 
       return update;
-    }() // this meant to be inherited
+    }() // bindings arguments
+
+  }, {
+    key: "scope",
+    get: function get() {
+      return null;
+    } // this meant to be inherited
 
   }, {
     key: "modified",
@@ -1568,30 +1774,33 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
     key: "_register",
     value: function _register(event) {
       this._events.push(event);
-
+      /*
       if (this.hasAttribute("@" + event)) {
-        var handler = this.getAttribute("@" + event);
-
-        if (handler.match(/^[A-Za-z\$_]+(?:[\$_][A-Za-z0-9]+)*$/g) === null) {
-          try {
-            var func = new Function("event", this._encapsulateEvent(this.getAttribute("@" + event)));
-            this.addEventListener(event, func);
-          } catch (ex) {
-            console.log(ex);
+          let handler = this.getAttribute("@" + event);
+          if (handler.match(/^[A-Za-z\$_]+(?:[\$_][A-Za-z0-9]+)*$/g) === null) {
+              try
+              {
+                  let func = new Function("event", this._encapsulateEvent(this.getAttribute("@" + event)));
+                  this.addEventListener(event, func);
+              } catch (ex)
+              {
+                  console.log(ex);
+              }
           }
-        } else {
-          var _func = this[handler];
-
-          if (_func instanceof Function) {
-            this.addEventListener(event, _func, false);
-          } else {
-            // might be added in the future
-            var _func2 = new Function("event", "this[\"".concat(handler, "\"](event)"));
-
-            this.addEventListener(event, _func2, false);
+          else {
+              let func = this[handler];
+              if (func instanceof Function) {
+                  this.addEventListener(event, func, false);
+              }
+              else {
+                  // might be added in the future
+                  let func = new Function("event", `this["${handler}"](event)`);
+                  this.addEventListener(event, func, false);
+              }
           }
-        }
       }
+      */
+
     }
   }, {
     key: "off",
@@ -1617,7 +1826,61 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
 
 exports["default"] = IUIElement;
 
-},{"./Binding.js":2,"./IUI.js":3}],5:[function(require,module,exports){
+},{"./Binding.js":2,"./IUI.js":4}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var RefsCollection = /*#__PURE__*/function () {
+  function RefsCollection(rootElement) {
+    _classCallCheck(this, RefsCollection);
+
+    this._rootElement = rootElement;
+  }
+
+  _createClass(RefsCollection, [{
+    key: "_build",
+    value: function _build(element, append) {
+      if (element == undefined) element = this._rootElement;
+      if (!append) for (var i in this) {
+        if (i != "_rootElement" && i != "_build") delete this[i];
+      }
+
+      for (var i = 0; i < element.children.length; i++) {
+        var child = element.children[i];
+
+        if (child.hasAttribute("ref")) {
+          var ref = child.getAttribute("ref");
+          if (this[ref] == null) this[ref] = child;else if (this[ref] == child) {// do nothing
+          } else if (this[ref] instanceof Array) {
+            this[ref].push(child);
+          } else {
+            var firstRef = this[ref];
+            this[ref] = [firstRef, child];
+          }
+        }
+
+        if (child.refs != undefined) // opt out if the element handles referencing
+          break;else this._build(child, true);
+      }
+    }
+  }]);
+
+  return RefsCollection;
+}();
+
+exports["default"] = RefsCollection;
+
+},{}],7:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1724,7 +1987,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_HTMLElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],6:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1907,7 +2170,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Modifiable.js":9}],7:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Modifiable.js":11}],9:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1920,6 +2183,8 @@ exports["default"] = void 0;
 var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 
 var _IUI = require("../Core/IUI.js");
+
+var _RefsCollection = _interopRequireDefault(require("../Core/RefsCollection.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -1958,7 +2223,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, Include);
 
     _this = _super.call(this);
-    _this.refs = {};
+    _this.refs = new _RefsCollection["default"]();
     return _this;
   }
 
@@ -1971,6 +2236,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       this.setAttribute("src", value);
 
       this._load(value);
+    }
+  }, {
+    key: "scope",
+    get: function get() {
+      return {
+        view: this,
+        refs: this.refs
+      };
     }
   }, {
     key: "_load",
@@ -2000,7 +2273,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 x = _context.sent;
 
                 if (!(x.status == 200)) {
-                  _context.next = 21;
+                  _context.next = 22;
                   break;
                 }
 
@@ -2012,7 +2285,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this.innerHTML = t; //let xeval = (code) => eval(code);
 
                 if (!((_window = window) !== null && _window !== void 0 && (_window$app = _window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
-                  _context.next = 21;
+                  _context.next = 22;
                   break;
                 }
 
@@ -2020,16 +2293,18 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _IUI.IUI.create(this);
 
               case 16:
-                _context.next = 18;
+                _IUI.IUI.bind(this, true, "include:" + src, _IUI.IUI.extend(this._i__bindings.scope, this.scope, true));
+
+                this.refs._build();
+
+                _context.next = 20;
                 return _IUI.IUI.created(this);
 
-              case 18:
-                _IUI.IUI.bind(this, this, "include:" + src);
-
-                _context.next = 21;
+              case 20:
+                _context.next = 22;
                 return _IUI.IUI.render(this, this._data, true);
 
-              case 21:
+              case 22:
                 this.classList.remove(this.cssClass + "-loading"); // if (window?.app?.loaded)
                 // {
                 //     await IUI.create(this);
@@ -2044,7 +2319,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 this._loading = false;
 
-              case 23:
+              case 24:
               case "end":
                 return _context.stop();
             }
@@ -2088,6 +2363,30 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
       return create;
     }()
+  }, {
+    key: "created",
+    value: function () {
+      var _created = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                this.refs._build();
+
+              case 1:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function created() {
+        return _created.apply(this, arguments);
+      }
+
+      return created;
+    }()
   }]);
 
   return Include;
@@ -2095,7 +2394,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],8:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Core/RefsCollection.js":6}],10:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2213,7 +2512,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_HTMLElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Field.js":5}],9:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Field.js":7}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2377,7 +2676,7 @@ var Modifiable = /*#__PURE__*/function () {
 
 exports["default"] = Modifiable;
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2470,15 +2769,11 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         if (this.children.length > 0) this._repeatNode = this.children[0].cloneNode(true);else this._repeatNode = document.createElement("div");
         this.innerHTML = "";
         this._container = this;
-      }
+      } // var newElements = this.querySelectorAll("*");
+      // for (var i = 0; i < newElements.length; i++)
+      //     newElements[i].repeat = this;
+      // var self = this;
 
-      var newElements = this.querySelectorAll("*");
-
-      for (var i = 0; i < newElements.length; i++) {
-        newElements[i].repeat = this;
-      }
-
-      var self = this;
       /*
       this._repeatModified = function(propertyName, value)
       {
@@ -2501,6 +2796,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
           }
       };
       */
+
     }
   }, {
     key: "clear",
@@ -2523,31 +2819,13 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       return this._data.length;
     }
   }, {
-    key: "_assign",
-    value: function _assign(node, index) {
-      // update fields
-      // this so we won't mess with i-include view
-      if (node.view == undefined) node.view = this.view;
-      node.rotue = this.route;
-      node.index = index; // update references
-
-      if (node.hasAttribute("ref")) {
-        var ref = node.getAttribute("ref"); // create new array
-
-        if (!(this.view.refs[ref] instanceof Array)) this.view.refs[ref] = [];
-        this.view.refs[ref][index] = node;
-      } //Object.assign(node, customFields);
-
-
-      for (var i = 0; i < node.children.length; i++) {
-        this._assign(node.children[i], index);
-      }
-    }
-  }, {
     key: "setData",
     value: function () {
       var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(value) {
-        var i, e;
+        var _value;
+
+        var i, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2, e;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -2561,14 +2839,10 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _context.abrupt("return", false);
 
               case 3:
-                //console.log("RPT: SetData", value);
-                this._busy = true; // var id = Math.random();
-                //console.log("SetData " + this.getAttribute("ref") + " " + id, value);
-                //console.trace();
-                // clear
+                this._busy = true; // clear
 
                 this.clear();
-                if (value.toArray instanceof Function) value = value.toArray();else if (value == null || !(value instanceof Array || value instanceof Int32Array)) value = []; //debugger;
+                if (((_value = value) === null || _value === void 0 ? void 0 : _value.toArray) instanceof Function) value = value.toArray();else if (value == null || !(value instanceof Array || value instanceof Int32Array)) value = []; //debugger;
 
                 _context.next = 8;
                 return _get(_getPrototypeOf(Repeat.prototype), "setData", this).call(this, value);
@@ -2578,101 +2852,38 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 9:
                 if (!(i < value.length)) {
-                  _context.next = 44;
+                  _context.next = 24;
                   break;
                 }
 
-                ///console.log("ST1");
-                //let content = this.template.content.cloneNode(true);
-                //let nodes = content.childNodes;
                 e = this._repeatNode.cloneNode(true);
-                this.list.push(e); //console.log("ST2");
-                // Create node
-
-                if (!(e instanceof _IUIElement2["default"])) {
-                  _context.next = 15;
-                  break;
-                }
-
-                _context.next = 15;
-                return e.create();
-
-              case 15:
-                _context.next = 17;
+                this.list.push(e);
+                _context.next = 14;
                 return _IUI.IUI.create(e);
 
-              case 17:
-                //console.log("Created repeat " + i, this, e);
-                //console.log("ST4");
-                //this._make_bindings(e)
-                _IUI.IUI.bind(e, this, "repeat");
+              case 14:
+                _IUI.IUI.bind(e, false, "repeat", _IUI.IUI.extend((_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, {
+                  index: i,
+                  repeat: this
+                }, true));
 
-                this._container.insertBefore(e, this._beforeNode);
-
-                this._assign(e, i); // { view: this.view, route: this.route, index: i });
-                //console.log("ST5");
+                this._container.insertBefore(e, this._beforeNode); // update referencing
 
 
-                if (!(e instanceof _IUIElement2["default"])) {
-                  _context.next = 33;
-                  break;
-                }
+                (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
+                _context.next = 19;
+                return _IUI.IUI.created(e);
 
-                if (!(e.dataMap != null)) {
-                  _context.next = 29;
-                  break;
-                }
+              case 19:
+                _context.next = 21;
+                return _IUI.IUI.render(e, value[i], false);
 
-                _context.next = 24;
-                return e.dataMap.render(value[i]);
-
-              case 24:
-                if (_context.sent) {
-                  _context.next = 27;
-                  break;
-                }
-
-                _context.next = 27;
-                return e.render();
-
-              case 27:
-                _context.next = 31;
-                break;
-
-              case 29:
-                _context.next = 31;
-                return e.setData(value[i]);
-
-              case 31:
-                _context.next = 41;
-                break;
-
-              case 33:
-                if (!(e.dataMap != null)) {
-                  _context.next = 38;
-                  break;
-                }
-
-                _context.next = 36;
-                return e.dataMap.render(value[i]);
-
-              case 36:
-                _context.next = 39;
-                break;
-
-              case 38:
-                e.data = value[i];
-
-              case 39:
-                _context.next = 41;
-                return this._renderElement(e, e.data);
-
-              case 41:
+              case 21:
                 i++;
                 _context.next = 9;
                 break;
 
-              case 44:
+              case 24:
                 // @TODO: check if this works for event names starting with ":"
                 this._emit(":data", {
                   data: value
@@ -2681,7 +2892,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 this._busy = false;
 
-              case 46:
+              case 26:
               case "end":
                 return _context.stop();
             }
@@ -2702,7 +2913,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],11:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],13:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2763,7 +2974,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],12:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],14:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2878,7 +3089,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],13:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],15:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2893,6 +3104,8 @@ var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 var _IUI = require("../Core/IUI.js");
 
 var _Router = _interopRequireDefault(require("./Router.js"));
+
+var _RefsCollection = _interopRequireDefault(require("../Core/RefsCollection.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -2936,7 +3149,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
     _this = _super.call(this);
     _this.routes = [];
-    _this.refs = {};
+    _this.refs = new _RefsCollection["default"](_assertThisInitialized(_this));
 
     _this._register("show");
 
@@ -2974,6 +3187,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
       return setData;
     }()
+  }, {
+    key: "scope",
+    get: function get() {
+      return {
+        route: this,
+        view: this
+      };
+    }
   }, {
     key: "_updateLinks",
     value: function _updateLinks() {
@@ -3092,7 +3313,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 12:
                 if (!((_window = window) !== null && _window !== void 0 && (_window$app = _window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
-                  _context2.next = 20;
+                  _context2.next = 21;
                   break;
                 }
 
@@ -3100,16 +3321,18 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _IUI.IUI.create(this);
 
               case 15:
-                _context2.next = 17;
+                _IUI.IUI.bind(this, true, "route:" + src, this.scope);
+
+                this.refs._build();
+
+                _context2.next = 19;
                 return _IUI.IUI.created(this);
 
-              case 17:
-                _IUI.IUI.bind(this, this, "route:" + src);
-
-                _context2.next = 20;
+              case 19:
+                _context2.next = 21;
                 return _IUI.IUI.render(this, this._data, true);
 
-              case 20:
+              case 21:
               case "end":
                 return _context2.stop();
             }
@@ -3125,7 +3348,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     }()
   }, {
     key: "created",
-    value: function created() {}
+    value: function created() {
+      this.refs._build();
+    }
   }, {
     key: "set",
     value: function set(value) {
@@ -3156,7 +3381,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Router.js":14}],14:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Core/RefsCollection.js":6,"./Router.js":16}],16:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3612,7 +3837,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Route.js":13,"./Target.js":15}],15:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Route.js":15,"./Target.js":17}],17:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3726,7 +3951,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Route.js":13}],16:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Route.js":15}],18:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3818,7 +4043,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],17:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],19:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3939,7 +4164,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],18:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],20:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4078,7 +4303,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],19:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],21:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4091,6 +4316,8 @@ exports["default"] = void 0;
 var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 
 var _IUI = require("../Core/IUI.js");
+
+var _RefsCollection = _interopRequireDefault(require("../Core/RefsCollection.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -4123,10 +4350,16 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
   var _super = _createSuper(CodePreview);
 
-  function CodePreview(properties) {
+  function CodePreview() {
+    var _this;
+
     _classCallCheck(this, CodePreview);
 
-    return _super.call(this);
+    _this = _super.call(this);
+    _this.refs = new _RefsCollection["default"](_assertThisInitialized(_this));
+    _this._code = _this.innerHTML.trim();
+    _this.textContent = '';
+    return _this;
   }
 
   _createClass(CodePreview, [{
@@ -4138,9 +4371,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (this.hasAttribute("debug")) debugger;
-                this._code = this.innerHTML.trim();
-                this.textContent = ''; // create elements
+                if (this.hasAttribute("debug")) debugger; //this._code = this.innerHTML.trim();
+                //this.textContent = '';
+                // create elements
 
                 this.bar = document.createElement("div");
                 this.bar.className = this.cssClass + "-bar";
@@ -4153,8 +4386,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this.editor.setAttribute("skip", true);
                 self = this;
                 this.editor.addEventListener("input", function () {
-                  self._code = self.editor.innerText.trim();
-                  self.update();
+                  self._code = self.editor.textContent.trim();
+                  self.updatePreview();
                 }, false);
                 this.preview = document.createElement("div");
                 this.preview.className = this.cssClass + "-preview"; //this.preview.setAttribute(":content", "");
@@ -4163,11 +4396,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this.content.append(this.preview);
                 this.append(this.bar);
                 this.append(this.content);
-                this.field = this.getAttribute("field");
-                _context.next = 23;
-                return this.update();
+                this.field = this.getAttribute("field"); //await this.updatePreview();
 
-              case 23:
+              case 19:
               case "end":
                 return _context.stop();
             }
@@ -4182,40 +4413,17 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       return create;
     }()
   }, {
-    key: "update",
+    key: "created",
     value: function () {
-      var _update = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+      var _created = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!this._updating) {
-                  _context2.next = 2;
-                  break;
-                }
-
-                return _context2.abrupt("return");
+                _context2.next = 2;
+                return this.updatePreview();
 
               case 2:
-                this._updating = true;
-                this.preview.innerHTML = this._code;
-                _context2.next = 6;
-                return _IUI.IUI.create(this.preview);
-
-              case 6:
-                _context2.next = 8;
-                return _IUI.IUI.created(this.preview);
-
-              case 8:
-                _IUI.IUI.bind(this.preview, this.preview, "preview");
-
-                _context2.next = 11;
-                return _IUI.IUI.render(this.preview, this._data, true);
-
-              case 11:
-                this._updating = false;
-
-              case 12:
               case "end":
                 return _context2.stop();
             }
@@ -4223,11 +4431,79 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         }, _callee2, this);
       }));
 
-      function update() {
-        return _update.apply(this, arguments);
+      function created() {
+        return _created.apply(this, arguments);
       }
 
-      return update;
+      return created;
+    }()
+  }, {
+    key: "scope",
+    get: function get() {
+      return {
+        view: this,
+        refs: this.refs
+      };
+    }
+  }, {
+    key: "updatePreview",
+    value: function () {
+      var _updatePreview = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var _window$app;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!this._updating) {
+                  _context3.next = 2;
+                  break;
+                }
+
+                return _context3.abrupt("return");
+
+              case 2:
+                this._updating = true;
+                this.preview.innerHTML = this._code; //this.editor.innerHTML = hljs.highlightAuto(this._code).value;
+                //        this.editor.innerHTML = hljs.highlight(this._code, {language: 'html'}).value
+                //     this.editor.innerHTML = hljs.highlightElement(this.editor, {language: 'html'}).value;
+
+                if (!((_window$app = window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
+                  _context3.next = 13;
+                  break;
+                }
+
+                _context3.next = 7;
+                return _IUI.IUI.create(this.preview);
+
+              case 7:
+                _context3.next = 9;
+                return _IUI.IUI.created(this.preview);
+
+              case 9:
+                _IUI.IUI.bind(this.preview, true, "preview", this.scope);
+
+                this.refs._build();
+
+                _context3.next = 13;
+                return _IUI.IUI.render(this.preview, this._data, true);
+
+              case 13:
+                this._updating = false;
+
+              case 14:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function updatePreview() {
+        return _updatePreview.apply(this, arguments);
+      }
+
+      return updatePreview;
     }()
   }]);
 
@@ -4236,7 +4512,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],20:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Core/RefsCollection.js":6}],22:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4590,7 +4866,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],21:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],23:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4901,7 +5177,7 @@ document.addEventListener("keydown", function (e) {
   }
 }); //IUI.module("dialog", IUIDialog, function(el, modal, properties){ return new IUIDialog(el, modal, properties);});
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Window.js":33}],22:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Window.js":35}],24:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5138,7 +5414,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],23:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],25:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5377,7 +5653,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],24:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],26:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5728,7 +6004,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],25:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],27:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5807,7 +6083,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"../Router/Link.js":12}],26:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Router/Link.js":14}],28:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5994,7 +6270,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],27:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],29:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -6278,7 +6554,7 @@ window.addEventListener("load", function () {
   document.body.addEventListener("touchstart", handler);
 });
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Background.js":16,"./DropDown.js":22}],28:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Background.js":18,"./DropDown.js":24}],30:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -6556,7 +6832,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"../Router/Link.js":12,"./Check.js":18}],29:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Router/Link.js":14,"./Check.js":20}],31:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -6845,7 +7121,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return this.menu.create();
 
               case 31:
-                _IUI.IUI.bind(this.menu, this, "menu");
+                _IUI.IUI.bind(this.menu, false, "menu");
 
                 _context2.next = 34;
                 return _IUI.IUI.create(this.menu);
@@ -7081,7 +7357,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"../Data/Layout.js":8,"../Data/Repeat.js":10,"../UI/Menu.js":27}],30:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],32:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -7148,7 +7424,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],31:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],33:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -7918,7 +8194,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         var cl = column.node.cloneNode(true); // tr.insertCell();
         //this._make_bindings(cl)
 
-        _IUI.IUI.bind(cl, _this3, "table");
+        _IUI.IUI.bind(cl, false, "table", _IUI.IUI.extend(_this3.__i_bindings, {
+          index: i
+        }, true));
 
         tr.appendChild(cl);
         if (cl.dataMap != null) cl.dataMap.render(item).then(function () {
@@ -8422,7 +8700,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"../Data/Layout.js":8}],32:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10}],34:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -8640,7 +8918,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Check.js":18,"./Tab.js":30}],33:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Check.js":20,"./Tab.js":32}],35:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -8969,7 +9247,7 @@ window.addEventListener("hashchange", function(e){
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],34:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],36:[function(require,module,exports){
 "use strict";
 
 var _IUI = require("./Core/IUI.js");
@@ -9069,4 +9347,4 @@ window.addEventListener("load", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/reg
 })));
 window.iui = _IUI.iui;
 
-},{"./Core/App.js":1,"./Core/IUI.js":3,"./Core/IUIElement.js":4,"./Data/Field.js":5,"./Data/Form.js":6,"./Data/Include.js":7,"./Data/Layout.js":8,"./Data/Repeat.js":10,"./Data/TableRow.js":11,"./Router/Link.js":12,"./Router/Route.js":13,"./Router/Router.js":14,"./Router/Target.js":15,"./UI/Background.js":16,"./UI/Button.js":17,"./UI/Check.js":18,"./UI/CodePreview.js":19,"./UI/DateTimePicker.js":20,"./UI/Dialog.js":21,"./UI/DropDown.js":22,"./UI/Grid.js":23,"./UI/Input.js":24,"./UI/Location.js":25,"./UI/Login.js":26,"./UI/Menu.js":27,"./UI/Navbar.js":28,"./UI/Select.js":29,"./UI/Tab.js":30,"./UI/Table.js":31,"./UI/Tabs.js":32,"./UI/Window.js":33}]},{},[34]);
+},{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":7,"./Data/Form.js":8,"./Data/Include.js":9,"./Data/Layout.js":10,"./Data/Repeat.js":12,"./Data/TableRow.js":13,"./Router/Link.js":14,"./Router/Route.js":15,"./Router/Router.js":16,"./Router/Target.js":17,"./UI/Background.js":18,"./UI/Button.js":19,"./UI/Check.js":20,"./UI/CodePreview.js":21,"./UI/DateTimePicker.js":22,"./UI/Dialog.js":23,"./UI/DropDown.js":24,"./UI/Grid.js":25,"./UI/Input.js":26,"./UI/Location.js":27,"./UI/Login.js":28,"./UI/Menu.js":29,"./UI/Navbar.js":30,"./UI/Select.js":31,"./UI/Tab.js":32,"./UI/Table.js":33,"./UI/Tabs.js":34,"./UI/Window.js":35}]},{},[36]);

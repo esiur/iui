@@ -33,10 +33,10 @@ export default class Modifiable
         return true;
     }
 
-    constructor(original){
+    constructor(original, copy = false){
 
         this._events = {};
-        this._data = Modifiable._copy(original);
+        this._data = copy ?  Modifiable._copy(original) : original;
         this._original = original;
 
         for(let p in this._data)

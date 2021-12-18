@@ -25,17 +25,13 @@ export default IUI.module(class Form extends IUIElement {
     }
 
     async create() {
-        //var elements = this.querySelectorAll("*[field]");
-        //for (var i = 0; i < elements.length; i++)
-        //    this.form[elements[i].getAttribute("field")] = elements[i];
+
     }
 
     async setData(value) {
         this.original = value;
-        //var copy = {};
-        //Object.assign(copy, value);
-        super.setData(new Modifiable(this.original));//  Form._copy(this.original));
-        //super.setData({ ...this.original });
+        super.setData(new Modifiable(this.original, true)); 
+
     }
 
   
