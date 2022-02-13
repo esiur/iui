@@ -1,42 +1,40 @@
-﻿import { IUI, iui } from '../Core/IUI.js';
-import IUIElement from '../Core/IUIElement.js';
-import Menu from '../UI/Menu.js';
-import Layout from '../Data/Layout.js';
-import Repeat from '../Data/Repeat.js';
+﻿import { IUI, iui } from "../Core/IUI.js";
+import IUIElement from "../Core/IUIElement.js";
+import Menu from "../UI/Menu.js";
+import Layout from "../Data/Layout.js";
+import Repeat from "../Data/Repeat.js";
 
-export default IUI.module(class Select extends IUIElement {
+export default IUI.module(
+  class Select extends IUIElement {
     constructor() {
-        super({
-            visible: false,
-            searchlist: false,
-            hasArrow: true,
-            //hasAdd: false,
-            updateTextBox: true,
-            query: (x) => null,
-            //_formatter: (x) => x,
-            _autocomplete: false,
-            cssClass: 'select'
-        });
+      super({
+        visible: false,
+        searchlist: false,
+        hasArrow: true,
+        //hasAdd: false,
+        updateTextBox: true,
+        query: x => null,
+        //_formatter: (x) => x,
+        _autocomplete: false,
+        cssClass: "select",
+      });
 
-        this._register("select");
-        this._register("input");
-        this._register("add");
+      this._register("select");
+      this._register("input");
+      this._register("add");
     }
 
     disconnectedCallback() {
-        //console.log("Select removed", this);
-        if (!this.searchlist && this.menu)
-            app.removeChild(this.menu);
-        
+      //console.log("Select removed", this);
+      if (!this.searchlist && this.menu) app.removeChild(this.menu);
     }
 
-    connectedCallback(){
-        super.connectedCallback();
-        if (!this.searchlist && this.menu)
-            app.appendChild(this.menu);        
+    connectedCallback() {
+      super.connectedCallback();
+      if (!this.searchlist && this.menu) app.appendChild(this.menu);
     }
     get autocomplete() {
-        return this._autocomplete;
+      return this._autocomplete;
     }
 
     // get formatter() {
@@ -48,211 +46,192 @@ export default IUI.module(class Select extends IUIElement {
     // }
 
     _checkValidity() {
-
-        if (this.validate != null) {
-            try {
-                let valid = this.validate.apply(this);
-                if (!valid) {
-                    this.setAttribute("invalid", "");
-                    this.classList.add(this.cssClass + "-invalid");
-                    return false;
-                }
-                else {
-                    this.removeAttribute("invalid");
-                    this.classList.remove(this.cssClass + "-invalid");
-                    return true;
-                }
-            }
-            catch (ex) {
-                console.log("Validation Error", ex);
-                return false;
-            }
+      if (this.validate != null) {
+        try {
+          let valid = this.validate.apply(this);
+          if (!valid) {
+            this.setAttribute("invalid", "");
+            this.classList.add(this.cssClass + "-invalid");
+            return false;
+          } else {
+            this.removeAttribute("invalid");
+            this.classList.remove(this.cssClass + "-invalid");
+            return true;
+          }
+        } catch (ex) {
+          console.log("Validation Error", ex);
+          return false;
         }
+      }
 
-        return true;
+      return true;
     }
 
     set hasAdd(value) {
-        if (value)
-            this.setAttribute("add", "add");
-        else
-            this.removeAttribute("add");
+      if (value) this.setAttribute("add", "add");
+      else this.removeAttribute("add");
     }
 
     get hasAdd() {
-        return this.hasAttribute("add");
+      return this.hasAttribute("add");
     }
 
     async create() {
+      this.isAuto = this.hasAttribute("auto");
+      this.field = this.getAttribute("field");
 
-        this.isAuto = this.hasAttribute("auto");
-        this.field = this.getAttribute("field");
+      if (this.field != null) {
+        this.setAttribute(":data", `d['${this.field}']`);
+        this.setAttribute(":revert", `d['${this.field}'] = this.data`);
+      }
 
+      this._autocomplete = this.hasAttribute("autocomplete");
+      //this.hasAdd = this.hasAttribute("add") || this.hasAdd;
 
-        if (this.field != null)
-        {
-            this.setAttribute(":data", `d['${this.field}']`)
-            this.setAttribute(":revert", `d['${this.field}'] = this.data`);
-        }
+      let self = this;
 
-        this._autocomplete = this.hasAttribute("autocomplete");
-        //this.hasAdd = this.hasAttribute("add") || this.hasAdd;
+      //if (this._autocomplete)
+      //  this.cssClass += "-autocomplete";
 
-        let self = this;
+      this.repeat = new Repeat();
+      this.repeat.cssClass = "select-menu-repeat";
+      //this.repeat.innerHTML = this.innerHTML;
+      this.repeat.setAttribute(":data", "d[1]");
 
-        //if (this._autocomplete)
-          //  this.cssClass += "-autocomplete";
+      this.counter = document.createElement("div");
+      this.counter.className = this.cssClass + "-counter";
+      this.counter.innerHTML = "${d[0]}";
 
+      this.menu = new Menu({
+        cssClass: this.cssClass + "-menu",
+        "target-class": "",
+      });
 
+      this.menu
+        .on("click", async e => {
+          if (
+            e.target != self.textbox &&
+            e.target != self.counter &&
+            e.target !== self.menu
+          ) {
+            await self.setData(e.target.data);
 
-          
-        this.repeat = new Repeat();
-        this.repeat.cssClass = "select-menu-repeat";
-        //this.repeat.innerHTML = this.innerHTML;
-        this.repeat.setAttribute(":data", "d[1]");
+            self._emit("input", { value: e.target.data });
 
-        this.counter = document.createElement("div");
-        this.counter.className = this.cssClass + "-counter";
-        this.counter.innerHTML = "${d[0]}";
-        
-
-        this.menu = new Menu({ cssClass: this.cssClass + "-menu", "target-class": "" });
-        
-        this.menu.on("click", async (e) => {
-            
-            if (e.target != self.textbox && e.target != self.counter && e.target !== self.menu) {
-                await self.setData(e.target.data);
-
-                self._emit("input", { value: e.target.data });
-
-                self.hide();
-            }
-        }).on("visible", x=> { if (!x.visible) self.hide()});
-
-
-        if (this._autocomplete) {
-            this.textbox = document.createElement("input");
-            this.textbox.type = "search";
-            this.textbox.className = this.cssClass + "-textbox";
-
-            if (this.placeholder)
-                this.textbox.placeholder = this.placeholder;
-
-            this.textbox.addEventListener("keyup", function (e) {
-                if (e.keyCode != 13) {
-                    self._query(0, self.textbox.value);
-                }
-            });
-
-            this.textbox.addEventListener("search", function (e) {
-               // console.log(e);
-            });
-
-            this.menu.appendChild(this.textbox);
-
-        }
-
-        // get collection
-        let layout = Layout.get(this, "div", true, true); 
-
-        //debugger;
-
-
-        if (layout != null && layout.label != undefined && layout.menu != undefined) {
-            this.label = layout.label.node;
-            this.repeat.appendChild(layout.menu.node);
-        }
-        else if (layout != null && layout.null != null)
-        {
-            this.label = layout.null.node;
-            this.repeat.appendChild(layout.null.node.cloneNode(true));
-        }
-        else
-        {
-            this.label = document.createElement("div");
-            this.repeat.innerHTML = this.innerHTML;
-        }
-
-        // clear everything else
-        //this.innerHTML = "";
-        
-        this.label.className = this.cssClass + "-label";
-
-        this.appendChild(this.label);
-
-        this.label.addEventListener("click", function (e) {
-            self.show();
+            self.hide();
+          }
+        })
+        .on("visible", x => {
+          if (!x.visible) self.hide();
         });
 
-        this.menu.appendChild(this.repeat);
-        this.menu.appendChild(this.counter);
+      if (this._autocomplete) {
+        this.textbox = document.createElement("input");
+        this.textbox.type = "search";
+        this.textbox.className = this.cssClass + "-textbox";
 
-    
-        if (this.hasArrow) {
-            this.arrow = document.createElement("div");
-            this.arrow.className = this.cssClass + "-arrow";
-            this.appendChild(this.arrow);
+        if (this.placeholder) this.textbox.placeholder = this.placeholder;
 
-
-            this.arrow.addEventListener("click", function (e) {
-                if (self.visible)
-                    self.hide();
-                else
-                    self.show();
-            });
-        }
-
-        if (this.hasAdd) {
-            this._add_button = document.createElement("div");
-            this._add_button.className = this.cssClass + "-add";
-            this.appendChild(this._add_button);
-
-            this._add_button.addEventListener("click", function (e) {
-                self._emit("add", { value: self.data })
-            });
-        }
-
-
-        if (this.searchlist)
-            this.appendChild(this.menu);
-        else
-        {
-            app.appendChild(this.menu);
-            if (app.loaded)
-            {
-
-                ///console.log("Append", this.menu);
-                await this.menu.create();
-                IUI.bind(this.menu, false, "menu");
-                await IUI.create(this.menu);
-            
-                //this._make_bindings(this.menu);    
-            }
-        }
-
-        this.addEventListener("click", function (e) {
-            if (e.target == self.textbox)
-                self.show();
+        this.textbox.addEventListener("keyup", function (e) {
+          if (e.keyCode != 13) {
+            self._query(0, self.textbox.value);
+          }
         });
+
+        this.textbox.addEventListener("search", function (e) {
+          // console.log(e);
+        });
+
+        this.menu.appendChild(this.textbox);
+      }
+
+      // get collection
+      let layout = Layout.get(this, "div", true, true);
+
+      //debugger;
+
+      if (
+        layout != null &&
+        layout.label != undefined &&
+        layout.menu != undefined
+      ) {
+        this.label = layout.label.node;
+        this.repeat.appendChild(layout.menu.node);
+      } else if (layout != null && layout.null != null) {
+        this.label = layout.null.node;
+        this.repeat.appendChild(layout.null.node.cloneNode(true));
+      } else {
+        this.label = document.createElement("div");
+        this.repeat.innerHTML = this.innerHTML;
+      }
+
+      // clear everything else
+      //this.innerHTML = "";
+
+      this.label.className = this.cssClass + "-label";
+
+      this.appendChild(this.label);
+
+      this.label.addEventListener("click", function (e) {
+        self.show();
+      });
+
+      this.menu.appendChild(this.repeat);
+      this.menu.appendChild(this.counter);
+
+      if (this.hasArrow) {
+        this.arrow = document.createElement("div");
+        this.arrow.className = this.cssClass + "-arrow";
+        this.appendChild(this.arrow);
+
+        this.arrow.addEventListener("click", function (e) {
+          if (self.visible) self.hide();
+          else self.show();
+        });
+      }
+
+      if (this.hasAdd) {
+        this._add_button = document.createElement("div");
+        this._add_button.className = this.cssClass + "-add";
+        this.appendChild(this._add_button);
+
+        this._add_button.addEventListener("click", function (e) {
+          self._emit("add", { value: self.data });
+        });
+      }
+
+      if (this.searchlist) this.appendChild(this.menu);
+      else {
+        app.appendChild(this.menu);
+        if (app.loaded) {
+          ///console.log("Append", this.menu);
+          await this.menu.create();
+          IUI.bind(this.menu, false, "menu");
+          await IUI.create(this.menu);
+
+          //this._make_bindings(this.menu);
+        }
+      }
+
+      this.addEventListener("click", function (e) {
+        if (e.target == self.textbox) self.show();
+      });
     }
 
     get disabled() {
-        return this.hasAttribute("disabled");
+      return this.hasAttribute("disabled");
     }
 
     set disabled(value) {
-        if (this._autocomplete) {
-            this.textbox.disabled = value;
-        }
+      if (this._autocomplete) {
+        this.textbox.disabled = value;
+      }
 
-        if (value) {
-            this.setAttribute("disabled", value);
-        }
-        else {
-            this.removeAttribute("disabled");
-        }
-
-
+      if (value) {
+        this.setAttribute("disabled", value);
+      } else {
+        this.removeAttribute("disabled");
+      }
     }
     /*
     set(item) {
@@ -275,117 +254,95 @@ export default IUI.module(class Select extends IUIElement {
     */
 
     show() {
-        this.setVisible(true);
-        //this.textbox.focus();
+      this.setVisible(true);
+      //this.textbox.focus();
     }
 
     hide() {
-        this.setVisible(false);
-        //this.textbox.focus();
+      this.setVisible(false);
+      //this.textbox.focus();
     }
 
     clear() {
-        if (this.autocomplete !== undefined)
-            this.textbox.value = "";
-        //else
-          //  this.label.innerHTML = "";
+      if (this.autocomplete !== undefined) this.textbox.value = "";
+      //else
+      //  this.label.innerHTML = "";
 
-        //this.menu.clear();
-        this.response.start = 0;
-        this.selected = null;
+      //this.menu.clear();
+      this.response.start = 0;
+      this.selected = null;
     }
 
     async _query() {
+      if (this._autocomplete) if (this.disabled) return;
 
-        
-        if (this._autocomplete)
-            if (this.disabled)
-                return;
+      let self = this;
+      let text = this._autocomplete ? this.textbox.value : null;
 
-        let self = this;
-        let text = this._autocomplete ? this.textbox.value : null;
+      var res = this.query(0, text);
+      if (res instanceof Promise) res = await res;
 
-        var res = this.query(0, text)
-        if (res instanceof Promise)
-            res = await res;
+      //.then(async (res) => {
+      if (res[1].length == 0) await self.setData(null);
 
-        //.then(async (res) => {
-        if (res[1].length == 0)
-            await self.setData(null);
-
-        await this.menu.setData(res);
-
-
-       
+      await this.menu.setData(res);
     }
-
 
     async setData(value) {
+      // this.label.innerHTML = "";
 
-        // this.label.innerHTML = "";
-            
-        await super.setData(value);
+      await super.setData(value);
 
-        try {
-            //let text = this.formatter(value);
-            // this.label.innerHTML = text == null ? "" : text;
+      try {
+        //let text = this.formatter(value);
+        // this.label.innerHTML = text == null ? "" : text;
 
-            this._emit("select", { value });
-        }
-        catch (ex) {
-            //console.log(ex);
-            this._emit("select", { value });
-        }
+        this._emit("select", { value });
+      } catch (ex) {
+        //console.log(ex);
+        this._emit("select", { value });
+      }
 
-        //this._checkValidity();
+      //this._checkValidity();
 
-
-        if (this._checkValidity() && this.isAuto)
-            this.revert();
-
+      if (this._checkValidity() && this.isAuto) this.revert();
     }
 
-
     setVisible(visible) {
+      if (visible == this.visible) return;
 
-        if (visible == this.visible)
-            return;
+      //console.log("SLCT: SetVisible", visible);
 
-        //console.log("SLCT: SetVisible", visible);
+      if (visible) {
+        this._query(0);
 
-        if (visible) {
-            this._query(0);
+        // show menu
+        var rect = this.getBoundingClientRect();
+        this.menu.style.width =
+          this.clientWidth - this._computeMenuOuterWidth() + "px";
+        this.menu.style.paddingTop = rect.height + "px";
+        this.menu.setVisible(true, rect.left, rect.top); //, this.menu);
+        this.visible = true;
 
-            // show menu
-            var rect = this.getBoundingClientRect();
-            this.menu.style.width = (this.clientWidth - this._computeMenuOuterWidth()) + "px";
-            this.menu.style.paddingTop = rect.height + "px";
-            this.menu.setVisible(true, rect.left, rect.top);//, this.menu);
-            this.visible = true;
+        this.classList.add(this.cssClass + "-visible");
 
-            this.classList.add(this.cssClass + "-visible");
+        if (this._autocomplete)
+          setTimeout(() => {
+            this.textbox.focus();
+          }, 100);
+      } else {
+        this.visible = false;
+        this.classList.remove(this.cssClass + "-visible");
 
-            if (this._autocomplete)
-                setTimeout(() => {
-                    this.textbox.focus();        
-                }, 100);
+        this.menu.hide();
+      }
 
-        }
-        else {
-            this.visible = false;
-            this.classList.remove(this.cssClass + "-visible");
-            
-            this.menu.hide();
-        }
-
-        //this.textbox.focus();
-
+      //this.textbox.focus();
     }
 
     _computeMenuOuterWidth() {
-
-        return this.menu.offsetWidth - this.menu.clientWidth;
-        /*
+      return this.menu.offsetWidth - this.menu.clientWidth;
+      /*
         var style = window.getComputedStyle(this.menu.el, null);
         var paddingLeft = style.getPropertyValue('padding-left');
         var paddingRight = style.getPropertyValue('padding-right');
@@ -400,5 +357,5 @@ export default IUI.module(class Select extends IUIElement {
         return paddingLeft + paddingRight + borderLeft + borderRight;
         */
     }
-
-});
+  }
+);

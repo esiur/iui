@@ -2,59 +2,52 @@
 import { IUI } from "../Core/IUI.js";
 import Route from "./Route.js";
 
-export default IUI.module(class Target extends IUIElement {
+export default IUI.module(
+  class Target extends IUIElement {
     constructor(properties) {
-        super(IUI.extend(properties, { cssClass: 'target' }));
+      super(IUI.extend(properties, { cssClass: "target" }));
 
-        this._register("show");
-        this._register("hide");
-
+      this._register("show");
+      this._register("hide");
     }
 
-    setLoading(value)
-    {
-        if (value)
-            this.classList.add(this.cssClass + "-loading");
-        else
-            this.classList.remove(this.cssClass + "-loading");
+    setLoading(value) {
+      if (value) this.classList.add(this.cssClass + "-loading");
+      else this.classList.remove(this.cssClass + "-loading");
     }
 
-    create() {
-
-    }
+    create() {}
 
     show(route, previous) {
+      let previousTarget = previous?.target;
 
-        let previousTarget = previous?.target;
+      route.target = this;
 
-        route.target = this;
-
-        for (var i = 0; i < this.children.length; i++)
-            if (this.children[i] instanceof Route && this.children[i] != route) {
-                this.children[i].set(false);
-            }
-
-        //if (previous != null && previous != route && previous.target == this) {
-        //    previous.set(false);
-        //}
-        //else 
-        if (previousTarget != null && previousTarget != this) {
-            previousTarget.hide(this.active);
+      for (var i = 0; i < this.children.length; i++)
+        if (this.children[i] instanceof Route && this.children[i] != route) {
+          this.children[i].set(false);
         }
 
+      //if (previous != null && previous != route && previous.target == this) {
+      //    previous.set(false);
+      //}
+      //else
+      if (previousTarget != null && previousTarget != this) {
+        previousTarget.hide(this.active);
+      }
 
-        if (route.parentElement != this)
-            this.appendChild(route);
+      if (route.parentElement != this) this.appendChild(route);
 
-        this._emit("show", { route, previous});
+      this._emit("show", { route, previous });
     }
 
     hide(route) {
-        for (var i = 0; i < this.children.length; i++)
-            if (this.children[i] instanceof Route) {
-                this.children[i].set(false);
-            }
+      for (var i = 0; i < this.children.length; i++)
+        if (this.children[i] instanceof Route) {
+          this.children[i].set(false);
+        }
 
-        this._emit("hide", { route });
+      this._emit("hide", { route });
     }
-});
+  }
+);

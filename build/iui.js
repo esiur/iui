@@ -5784,9 +5784,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       window.router.on("route", function (e) {
         self.textContent = ''; // clear everything
 
-        var html = "";
-        var route = e.route;
-        var current = document.createElement("div");
+        let route = e.route;
+        let current = document.createElement("div");
         current.innerHTML = route.caption;
         self.append(current);
 

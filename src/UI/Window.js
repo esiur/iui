@@ -1,104 +1,97 @@
 import IUIElement from "../Core/IUIElement.js";
 import { IUI } from "../Core/IUI.js";
 
-export default IUI.module(class IUIWindow extends IUIElement {
+export default IUI.module(
+  class IUIWindow extends IUIElement {
     constructor() {
-        super({ closeable: true, draggable: false, focus: false });
+      super({ closeable: true, draggable: false, focus: false });
 
-        this._register("resize");
-        this._register("move");
-        this._register("close");
+      this._register("resize");
+      this._register("move");
+      this._register("close");
 
-        this._uid = "d:" + Math.random().toString(36).substring(2);
-
+      this._uid = "d:" + Math.random().toString(36).substring(2);
     }
 
     static moduleName = "window";
 
     create() {
-        var self = this;
+      var self = this;
 
-        this.tabIndex = 0;
+      this.tabIndex = 0;
 
-        // create header
-        this._header = document.createElement("div");
-        this._header.className = this.cssClass + "-header";
+      // create header
+      this._header = document.createElement("div");
+      this._header.className = this.cssClass + "-header";
 
-        if (this.draggable)
-            this._header.setAttribute("draggable", true);
+      if (this.draggable) this._header.setAttribute("draggable", true);
 
-        var f = this.getElementsByClassName(this.cssClass + "-footer");
-        this._footer = f.length > 0 ? f[0] : null;
+      var f = this.getElementsByClassName(this.cssClass + "-footer");
+      this._footer = f.length > 0 ? f[0] : null;
 
-        var b = this.getElementsByClassName(this.cssClass + "-body");
-        //this.body = b.length > 0 ? b[0]: null;
+      var b = this.getElementsByClassName(this.cssClass + "-body");
+      //this.body = b.length > 0 ? b[0]: null;
 
-        if (b.length == 0) {
-            this._body = document.createElement("div");
-            this._body.className = this.cssClass + "-body";
+      if (b.length == 0) {
+        this._body = document.createElement("div");
+        this._body.className = this.cssClass + "-body";
 
-            while (this.children.length > (this._footer == null ? 0 : 1))
-                this._body.appendChild(this.children[0]);
+        while (this.children.length > (this._footer == null ? 0 : 1))
+          this._body.appendChild(this.children[0]);
 
-            this.insertAdjacentElement("afterBegin", this._body);
+        this.insertAdjacentElement("afterBegin", this._body);
+      } else this._body = b[0];
 
-        }
-        else
-            this._body = b[0];
+      if (this.icon) {
+        this._icon = document.createElement("div");
+        this._icon.className = this.cssClass + "-icon";
+        //this._icon.src = this.icon;
 
-        if (this.icon) {
-            this._icon = document.createElement("div");
-            this._icon.className = this.cssClass + "-icon";
-            //this._icon.src = this.icon;
+        this._icon.style.setProperty("--icon", `url('${this.icon}')`);
+        this._header.appendChild(this._icon);
+      }
 
+      this._caption = document.createElement("div");
+      this._caption.className = this.cssClass + "-caption";
+      this._caption.innerHTML = this.caption;
 
-       
-            this._icon.style.setProperty("--icon", `url('${this.icon}')`);
-            this._header.appendChild(this._icon);
-        }
+      this._subtitle = document.createElement("div");
+      this._subtitle.className = this.cssClass + "-subtitle";
+      this._subtitle.innerHTML = this.subtitle;
 
-        this._caption = document.createElement("div");
-        this._caption.className = this.cssClass + "-caption";
-        this._caption.innerHTML = this.caption;
+      this._tools = document.createElement("div");
+      this._tools.className = this.cssClass + "-tools";
 
-        this._subtitle = document.createElement("div");
-        this._subtitle.className = this.cssClass + "-subtitle";
-        this._subtitle.innerHTML = this.subtitle;
+      this._header.appendChild(this._caption);
+      this._header.appendChild(this._subtitle);
+      this._header.appendChild(this._tools);
 
-        this._tools = document.createElement("div");
-        this._tools.className = this.cssClass + "-tools";
+      if (this.closeable) {
+        this._close = document.createElement("div");
+        this._close.className = this.cssClass + "-tools-close button";
+        this._close.addEventListener("click", function () {
+          self._emit("close");
+        });
+      }
 
-        this._header.appendChild(this._caption);
-        this._header.appendChild(this._subtitle);
-        this._header.appendChild(this._tools);
+      //this.addEventListener("mousedown", function (e) {
+      //    self.setFocus(true);
+      //});
 
-        if (this.closeable) {
-            this._close = document.createElement("div");
-            this._close.className = this.cssClass + "-tools-close button";
-            this._close.addEventListener("click", function () {
-                self._emit("close");
-            });
-        }
-
-        //this.addEventListener("mousedown", function (e) {
-        //    self.setFocus(true);
-        //});
-
-        this.insertAdjacentElement("afterBegin", this._header);
+      this.insertAdjacentElement("afterBegin", this._header);
     }
 
     setHeaderVisible(value) {
-        this._header.style.display = value ? "" : "none";
-        //this._updateSize();
+      this._header.style.display = value ? "" : "none";
+      //this._updateSize();
     }
 
     setCloseVisible(value) {
-        if (this.closeable)
-            this._close.style.display = value ? "" : "none";
+      if (this.closeable) this._close.style.display = value ? "" : "none";
     }
 
     get icon() {
-        return this.getAttribute("icon");
+      return this.getAttribute("icon");
     }
     /*
     setFocus(v) {
@@ -174,91 +167,98 @@ export default IUI.module(class IUIWindow extends IUIElement {
     }
     */
 
-
     show() {
-        //this.setFocus(true);
-        return this;
+      //this.setFocus(true);
+      return this;
     }
 
     move(x, y) {
-        this.style.left = x + "px";
-        this.style.top = y + "px";
-        this._emit("move", x, y);
-        return this;
+      this.style.left = x + "px";
+      this.style.top = y + "px";
+      this._emit("move", x, y);
+      return this;
     }
 
     resize(width, height) {
-        this.style.width = width + "px";
-        this.style.height = height + "px";
+      this.style.width = width + "px";
+      this.style.height = height + "px";
 
-        this._updateSize();
+      this._updateSize();
 
-        this._emit("resize", this.clientWidth, this.clientHeight);
+      this._emit("resize", this.clientWidth, this.clientHeight);
 
-        return this;
+      return this;
     }
 
     _updateSize() {
-        if (IUI.responsive)
-            return;
+      if (IUI.responsive) return;
 
-        if (this._body) {
-            if (this.clientWidth < this._body.scrollWidth)
-                this.style.width = this._body.scrollWidth + 1 + "px";
+      if (this._body) {
+        if (this.clientWidth < this._body.scrollWidth)
+          this.style.width = this._body.scrollWidth + 1 + "px";
 
-            if (this._footer) {
+        if (this._footer) {
+          if (this.clientWidth < this._footer.offsetWidth)
+            this.style.width = this._footer.offsetWidth + "px";
 
-                if (this.clientWidth < this._footer.offsetWidth)
-                    this.style.width = this._footer.offsetWidth + "px";
-
-                if (this.clientHeight < this._header.offsetHeight + this._body.scrollHeight + this._footer.offsetHeight)
-                    this.style.height = (this._header.offsetHeight + this._body.scrollHeight + this._footer.offsetHeight) + "px";
-
-            }
-            else {
-                if (this.clientHeight < this._header.offsetHeight + this._body.scrollHeight)
-                    this.style.height = (this._header.offsetHeight + this._body.scrollHeight + 1) + "px";
-
-            }
+          if (
+            this.clientHeight <
+            this._header.offsetHeight +
+              this._body.scrollHeight +
+              this._footer.offsetHeight
+          )
+            this.style.height =
+              this._header.offsetHeight +
+              this._body.scrollHeight +
+              this._footer.offsetHeight +
+              "px";
+        } else {
+          if (
+            this.clientHeight <
+            this._header.offsetHeight + this._body.scrollHeight
+          )
+            this.style.height =
+              this._header.offsetHeight + this._body.scrollHeight + 1 + "px";
         }
+      }
 
-        // handle windows exceeding document size
-        if (this.clientHeight > document.body.clientHeight) {
-            this.style.height = document.body.clientHeight + "px";
-            if (this._footer)
-                this._body.style.height = (this.clientHeight - this._footer.clientHeight - this._header.clientHeight) + "px";
-            else
-                this._body.style.height = (this.clientHeight - this._header.clientHeight) + "px";
-        }
+      // handle windows exceeding document size
+      if (this.clientHeight > document.body.clientHeight) {
+        this.style.height = document.body.clientHeight + "px";
+        if (this._footer)
+          this._body.style.height =
+            this.clientHeight -
+            this._footer.clientHeight -
+            this._header.clientHeight +
+            "px";
+        else
+          this._body.style.height =
+            this.clientHeight - this._header.clientHeight + "px";
+      }
 
-
-        if (this.clientWidth > document.body.clientWidth)
-            this.style.width = document.body.clientWidth + 1 + "px";
-
+      if (this.clientWidth > document.body.clientWidth)
+        this.style.width = document.body.clientWidth + 1 + "px";
     }
 
-
     get caption() {
-        return this.getAttribute("caption");
+      return this.getAttribute("caption");
     }
 
     set caption(value) {
-        this._caption.innerHTML = value;
-        this.setAttribute("caption", value);
+      this._caption.innerHTML = value;
+      this.setAttribute("caption", value);
     }
 
-
     get subtitle() {
-        return this.getAttribute("subtitle");
+      return this.getAttribute("subtitle");
     }
 
     set subtitle(value) {
-        this._subtitle.innerHTML = value;
-        this.setAttribute("subtitle", value);
+      this._subtitle.innerHTML = value;
+      this.setAttribute("subtitle", value);
     }
-
-
-});
+  }
+);
 
 /*
 IUI._nav_list = [];

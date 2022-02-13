@@ -1,338 +1,273 @@
-import IUIElement from "../Core/IUIElement.js";
-import Route from "./Route.js"
+import Route from "./Route.js";
 import Target from "./Target.js";
 import { IUI } from "../Core/IUI.js";
+import path from "../Core/Path.js";
 
+export default IUI.module(
+  class Router extends Target {
+    constructor() {
+      super({
+        routes: [],
+        _states: new Map(),
+        active: null,
+        cssClass: "router",
+      });
 
-export default IUI.module(class Router extends Target
-{
-    
-    constructor()
-    {
-        super({routes: [], _states: new Map(), active: null, cssClass: "router"});
-
-        this._history = [];
-
-
-        //IUI._router = this;
-
-        //Object.defineProperty(window, "router", {
-        //    get() {
-        //        if (!IUI._router.isConnected)
-        //            IUI._router = document.getElementsByTagName("i-router")[0];
-        //        return IUI._router;
-        //    }
-        //});
-
+      this._history = [];
     }
 
     _getRouteParent(route) {
-        let e = null;
+      let e = null;
 
-        while (e = route.parentElement) {
-            if (e instanceof Route || e instanceof Router)
-                return e;
-        }
+      while ((e = route.parentElement)) {
+        if (e instanceof Route || e instanceof Router) return e;
+      }
 
-        return null;
+      return null;
     }
 
     add(route, parent = null) {
-        if (parent == null) {
-            this.routes.push(route);
-        }
-        else {
-            route.parent = parent;
-            this.appendChild(route);
-            //parent.routes.push(route);
-        }
+      route.base = this._base;
+
+      if (!parent) {
+        this.routes.push(route);
+        return;
+      }
+
+      route.parent = parent;
+      this.appendChild(route);
     }
 
-    _routeInPath(name, routes)
-    {
-        for (var i = 0; i < routes.length; i++)
-            if (routes[i].name == name)
-                return routes[i];
-        return null;
+    _routeInPath(name, routes) {
+      for (let i = 0; i < routes.length; i++)
+        if (routes[i].name == name) return routes[i];
+      return null;
     }
 
     getRoute(url, data) {
-        let p = url.split("/");
+      /**
+       * @type {String[]}
+       */
+      const p = url.split("/");
+      if (p[0] == this._base) p.shift();
+      let searchRoutes = this.routes;
+      for (let i = 0; i < p.length; i++) {
+        const route = this._routeInPath(p[i], searchRoutes);
 
-        let searchRoutes = this.routes;
+        if (route == null) return [null, null];
 
-        for (var i = 0; i < p.length; i++) {
-            var route = this._routeInPath(p[i], searchRoutes);
+        if (i == p.length - 1) {
+          // return [destination state route (link, icon,..etc) , actual route to view]
+          if (route.dst == null) return [route, route];
 
-            if (route == null)
-                return [null, null];
-
-            if (i == p.length - 1) {
-                // return [destination state route (link, icon,..etc) , actual route to view]
-                if (route.dst == null)
-                    return [route, route];
-                else {
-
-                    let dst = route.dst instanceof Function ? route.dst(data) : route.dst;
-                    let url = dst.replace(/^[/]*(.*?)[/]*$/g, '$1').trim();
-                    return [route, this.getRoute(url)[1]];
-                }
-            }
-
-            searchRoutes = route.routes;
+          const dst =
+            route.dst instanceof Function ? route.dst(data) : route.dst;
+          const url = dst.replace(/^[/]*(.*?)[/]*$/g, "$1").trim();
+          return [route, this.getRoute(url)[1]];
         }
-
+        searchRoutes = route.routes;
+      }
     }
 
     back() {
-        //if (this._history.length > 1) {
-        //    let last = this._history[this._history.length - 2];
-        //    this.navigate(last.url, last.data, last.target);
-        //}
-
-        window.history.back();
-     }
+      window.history.back();
+    }
 
     _toQuery(o) {
-        let rt = [];
-        for (let i in o)
-            if (o[i] == undefined)
-                rt.push(i);
-            else
-                rt.push(i + "=" + encodeURI(o[i].toString().replace("&", "&&")));///encodeURIComponent(o[i]));
-        return rt.join("&");
+      return Object.keys(o)
+        .map(i =>
+          !i ? i : `${i}=${encodeURI(o[i].toString().replace("&", "&&"))}`
+        )
+        .join("&");
     }
 
     _fromQuery(q) {
-        let kv = q.replace("&&", "\0").split('&');
-        let rt = {};
-        for (let i = 0; i < kv.length; i++) {
-            let d = kv[i].replace("\0", "&").split('=', 2);
-            let v = decodeURI(d[1] || ''); //decodeURIComponent(d[1] || '');
-            if (v != null && v.trim() != '' && !isNaN(v))
-                v = new Number(v);
-            rt[d[0]] = v;
-        }
-        return JSON.parse(JSON.stringify(rt));
+      const kv = q.replace("&&", "\0").split("&");
+      const rt = {};
+      for (let i = 0; i < kv.length; i++) {
+        const d = kv[i].replace("\0", "&").split("=", 2);
+        const v = decodeURI(d[1] || "");
+        if (v != null && v.trim() != "" && !isNaN(v)) v = new Number(v);
+        rt[d[0]] = v;
+      }
+      return JSON.parse(JSON.stringify(rt));
     }
 
-    async navigate(url, data, target, state, dataToQuery = true)
-    {
-        let q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
+    async navigate(url, data, target, state, dataToQuery = true) {
+      let q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
 
-        //debugger;
+      let path;
 
-        var path;
+      // Do we have a query string ?
+      if (q[2] !== undefined) {
+        path = q[1];
+        data = this._fromQuery(q[2]);
+        url = path + "?" + q[2];
+      }
+      // Do we have data?
+      else if (data !== undefined) {
+        path = q[3];
+        url = dataToQuery ? path + "?" + this._toQuery(data) : path;
+      } else {
+        path = q[3];
+        url = path;
+      }
 
-        // do we have a query string ?
-        if (q[2] !== undefined) {
-            path = q[1];
-            data = this._fromQuery(q[2]);
-            url = path + "?" + q[2];
-        }
-        // do we have data ?
-        else if (data !== undefined) {
-            path = q[3];    
-            url = dataToQuery ?  path + "?" + this._toQuery(data) : path;
-        }
-        else {
-            path = q[3];
-            url = path;
-        }
-        
+      const [stateRoute, viewRoute] = this.getRoute(path, data);
 
-        let [stateRoute, viewRoute] = this.getRoute(path, data);
+      if (stateRoute == null) {
+        console.warn("State not found ", path);
+        return;
+      }
 
-        if (stateRoute == null)
-        {
-            console.warn("State not found ", path);
-            return;
-        }
+      let ok = this._emit("navigate", {
+        url,
+        stateRoute,
+        viewRoute,
+        base: path,
+        data,
+        cancelable: true,
+      });
 
-        let ok = this._emit("navigate", { url, stateRoute, viewRoute, base: path, data, cancelable: true });
+      if (!ok) {
+        console.warn("Route not allowed", path);
+        return;
+      }
 
-        if (!ok)
-        {
-            console.warn("Route not allowed", path);
-            return;
-        }
+      // destination view not found
+      if (viewRoute == null) {
+        console.log(`Destination route not found ${stateRoute.dst}`);
+        viewRoute = stateRoute;
+      }
 
-        // destination view not found
-        if (viewRoute == null) {
-            console.log(`Destination route not found ${stateRoute.dst}`);
-            viewRoute = stateRoute;
-        }
-            
+      if (!(target instanceof Target)) target = this;
 
-        //let state = null;
+      if (state == null) {
+        const id = Math.random().toString(36).substring(2, 12);
+        state = { id, url, data, target, stateRoute, viewRoute };
+        this._states.set(id, state);
+        history.pushState(
+          id,
+          stateRoute.caption,
+          this._hash ? "#" + url : "/" + url
+        );
+      }
 
-        //if (data !== undefined) {
-        //    for (let [k, v] of this._states)
-        //        if (v == data) {
-        //            state = k;
-        //            break;
-        //        }
+      this._history.push(state.id); // { url, data, target, stateRoute, viewRoute });
 
-        //    if (state == null) {
-        //        state = Math.random().toString(36).substr(2, 10);
-        //        this._states.set(state, data);
-        //    }
-        //}
+      target.show(viewRoute, this.active);
+      viewRoute.set(true);
 
-        if (!(target instanceof Target))
-            target = this;
+      this.active = viewRoute;
 
-        if (state == null) {
-            let id = Math.random().toString(36).substr(2, 10); 
-            state = { id, url, data, target, stateRoute, viewRoute };
-            this._states.set(id, state);
-            history.pushState(id, stateRoute.caption, this._hash ? "#" + url : "/" + url);
-        }
+      this._emit("route", { route: stateRoute });
 
-        this._history.push(state.id);// { url, data, target, stateRoute, viewRoute });
+      viewRoute.query = data || {};
+      stateRoute.query = viewRoute.query;
 
-        target.show(viewRoute, this.active);
-        viewRoute.set(true);
+      target.setLoading(true);
 
+      if (stateRoute.dataMap != null) {
+        // if map function failed to call setData, we will render without it
+        if (!(await stateRoute.dataMap.render(data || {})))
+          await stateRoute.render();
 
-        this.active = viewRoute;
+        if (viewRoute != stateRoute) await viewRoute.setData(stateRoute.data);
+      } //if (data !== undefined)
+      else await viewRoute.setData(data);
 
-
-        //{ url: "/", data: null, target: null }; 
-        this._emit("route", { route: stateRoute });
-
-        viewRoute.query = data || {};
-        stateRoute.query = viewRoute.query;
-
-
-        target.setLoading(true);
-
-        if (stateRoute.dataMap != null) {
-            // if map function failed to call setData, we will render without it
-            if (!(await stateRoute.dataMap.render(data || {})))
-                await stateRoute.render();
-
-            if (viewRoute != stateRoute)
-                await viewRoute.setData(stateRoute.data);
-        }
-        else //if (data !== undefined)
-            await viewRoute.setData(data);
-        
-        target.setLoading(false);
-        
+      target.setLoading(false);
     }
 
     hide() {
-        // do nothing, we're not here to hide.
+      // do nothing, we're not here to hide.
     }
 
     refresh() {
-
-        let state = this.current;
-        this.navigate(state.url, state.data, state.target, state);
-
-        //this.current.render();
-        //this.current.data = this.current.data;
-        //if (updateAttributes)
-          //  this.current.updateAttributes(true);
+      const state = this.current;
+      this.navigate(state.url, state.data, state.target, state);
     }
 
     show(route, active) {
-        super.show(route, active);
-
-
+      super.show(route, active);
     }
 
     get current() {
-        return this._states.get(history.state);//.viewRoute;
-        //return this._history[this._history.length - 1].viewRoute;
+      return this._states.get(history.state); //.viewRoute;
     }
 
     get previous() {
-
-        if (this._history.length > 2)
-            return this._states.get(this._history[this._history.length  - 2]);//.viewRoute;
-        else
-            return null;
+      if (this._history.length > 2)
+        return this._states.get(this._history[this._history.length - 2]);
+      //.viewRoute;
+      else return null;
     }
 
     create() {
-
-        // save origin
-        this.origin = window.location.pathname + window.location.search;
+      // save origin
+      this.origin = window.location.pathname + window.location.search;
+      this._base = this.hasAttribute("base") ? this.getAttribute("base") : "/";
     }
 
     destroy() {
-        console.log("Destroyed", this);
+      console.log("Destroyed", this);
     }
 
-    created()
-    {
+    created() {
+      if (
+        this.hasAttribute("type") &&
+        this.getAttribute("type").toLowerCase() == "hash"
+      ) {
+        this._hash = true;
+      }
 
-        if (this.hasAttribute("type") && this.getAttribute("type").toLowerCase() == "hash")
-            this._hash = true;
-
-
-        /// find all children
-        for (var i = 0; i < this.children.length; i++) {
-            let e = this.children[i];
-            if (e instanceof Route) {
-                this.add(e);
-                if (e.visible)
-                    this.navigate(e.name);
-            }
+      /// find all children
+      for (let i = 0; i < this.children.length; i++) {
+        const e = this.children[i];
+        if (e instanceof Route) {
+          this.add(e);
+          if (e.visible) this.navigate(e.name);
         }
+      }
 
-        this._emit("created");
-
-        //console.log("Router created", this);
+      this._emit("created");
     }
 
     connectedCallback() {
-        //console.log("New router", this);
+      window.router = this;
 
-        window.router = this;
+      const self = this;
+      window.addEventListener("popstate", function (event) {
+        const stateId = event.state;
+        let path;
 
-        let self = this;
+        if (self._hash) {
+          path = window.location.hash;
 
-        window.addEventListener("popstate", function (event) {
+          if (path.length > 0) path = path.substring(1);
+        } else {
+          path = window.location.pathname;
+        }
 
-            //console.log(event);
-            let stateId = event.state;
-            let path;
+        if (stateId != null) {
+          if (stateId != self._history[self._history.length - 1]) {
+            //this._lastStateId = stateId;
+            const state = self._states.get(stateId);
+            self.navigate(path, state.data, state.target, state);
+          } else {
+            console.log("SAME");
+          }
+        } else {
+          this._lastState = null;
+          self.navigate(path, undefined, undefined, {});
+        }
+        //alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
+        console.log(document.location.hash, event.state);
+      });
 
-            if (self._hash) {
-                path = window.location.hash;
-
-                if (path.length > 0)
-                    path = path.substr(1);
-            }
-            else {
-                path = window.location.pathname;
-            }
-
-            if (stateId != null) {
-
-                if (stateId != self._history[self._history.length -1]) {
-                    //this._lastStateId = stateId;
-                    let state = self._states.get(stateId);
-                    self.navigate(path, state.data, state.target, state);
-                }
-                else {
-                    console.log("SAME");
-                }
-            }
-            else {
-                this._lastState = null;
-                self.navigate(path, undefined, undefined, {});
-            }
-            //alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
-            console.log(document.location.hash, event.state);
-        });
-
-        this._register("navigate");
-        this._register("route");
-        this._register("created");
+      this._register("navigate");
+      this._register("route");
+      this._register("created");
     }
-
-});
+  }
+);
