@@ -56,6 +56,7 @@ window.addEventListener("afterprint", e => {
 window.addEventListener("load", async function () {
   await IUI.create(document.body);
   await IUI.created(document.body);
+  window.router.navigate(window.router.origin);
 });
 
 window.iui = iui;
