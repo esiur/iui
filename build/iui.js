@@ -12,6 +12,8 @@ var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 
 var _IUI = require("../Core/IUI.js");
 
+var _RefsCollection = _interopRequireDefault(require("./RefsCollection.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -40,9 +42,13 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   var _super = _createSuper(App);
 
   function App() {
+    var _this;
+
     _classCallCheck(this, App);
 
-    return _super.call(this);
+    _this = _super.call(this);
+    _this.refs = new _RefsCollection["default"](_assertThisInitialized(_this));
+    return _this;
   }
 
   _createClass(App, [{
@@ -55,7 +61,13 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   }, {
     key: "created",
     value: function created() {
-      _IUI.IUI.bind(this, this, "/"); //IUIElement._make_bindings(this);
+      _IUI.IUI.bind(this, this, "/", {
+        app: this,
+        refs: this.refs
+      }); // update referencing
+
+
+      this.refs._build(); //IUIElement._make_bindings(this);
 
 
       this.render();
@@ -73,7 +85,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],2:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./RefsCollection.js":7}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86,6 +98,24 @@ var _IUIElement = _interopRequireDefault(require("./IUIElement.js"));
 var _IUI = require("./IUI.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -155,7 +185,7 @@ var Binding = /*#__PURE__*/function () {
       var proxy = new Proxy(map, detector);
 
       try {
-        var d = this.func.apply(thisArg, [proxy, proxy, {}, true]);
+        var d = this.func.apply(thisArg, [proxy, proxy, {}, true].concat(_toConsumableArray(this.scopeValues)));
         this.map = map;
         return d;
       } catch (ex) {
@@ -174,7 +204,7 @@ var Binding = /*#__PURE__*/function () {
               case 0:
                 if (!this.checked) this._findMap(thisArg);
                 context = {};
-                rt = this.func.apply(thisArg, [data, data, context, false]); //console.log(rt);
+                rt = this.func.apply(thisArg, [data, data, context, false].concat(_toConsumableArray(this.scopeValues))); //console.log(rt);
 
                 if (!(rt instanceof Promise)) {
                   _context2.next = 6;
@@ -278,7 +308,7 @@ var Binding = /*#__PURE__*/function () {
     key: "render",
     value: function () {
       var _render = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(data) {
-        var d, _d, _window, _window$app, targetElement, _d2, _d3, _d4, _d5, _d6, _d7;
+        var d, _d, _window, _window$app, targetElement, _d2, _targetElement$__i_bi, _targetElement$__i_bi2, _targetElement$__i_bi3, _targetElement$__i_bi4, _d3, _d4, _d5, _d6, _d7;
 
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -289,52 +319,43 @@ var Binding = /*#__PURE__*/function () {
                 _context3.prev = 1;
 
                 if (!(this.type === BindingType.IUIElement)) {
-                  _context3.next = 12;
+                  _context3.next = 10;
                   break;
                 }
 
-                d = this.func.apply(this.target, [data, data]);
+                _context3.next = 5;
+                return this._execute(this.target, data);
 
-                if (!(d instanceof Promise)) {
-                  _context3.next = 8;
-                  break;
-                }
-
-                _context3.next = 7;
-                return d;
-
-              case 7:
+              case 5:
                 d = _context3.sent;
-
-              case 8:
-                _context3.next = 10;
+                _context3.next = 8;
                 return this.target.setData(d);
 
-              case 10:
-                _context3.next = 86;
+              case 8:
+                _context3.next = 85;
                 break;
 
-              case 12:
+              case 10:
                 if (!(this.type === BindingType.TextNode)) {
-                  _context3.next = 28;
+                  _context3.next = 26;
                   break;
                 }
 
-                _context3.prev = 13;
-                _context3.next = 16;
+                _context3.prev = 11;
+                _context3.next = 14;
                 return this._execute(this.target.parentElement, data);
 
-              case 16:
+              case 14:
                 _d = _context3.sent;
 
                 if (!(_d === undefined)) {
-                  _context3.next = 19;
+                  _context3.next = 17;
                   break;
                 }
 
                 return _context3.abrupt("return", false);
 
-              case 19:
+              case 17:
                 //if (d instanceof Promise)
                 //    d = await d;
                 this.target.data = _d; // (d === undefined) ? "" : d;
@@ -344,125 +365,127 @@ var Binding = /*#__PURE__*/function () {
                   this.bind(data, this.map);
                 }
 
-                _context3.next = 26;
+                _context3.next = 24;
                 break;
 
-              case 23:
-                _context3.prev = 23;
-                _context3.t0 = _context3["catch"](13);
+              case 21:
+                _context3.prev = 21;
+                _context3.t0 = _context3["catch"](11);
                 this.target.data = "";
 
-              case 26:
-                _context3.next = 86;
+              case 24:
+                _context3.next = 85;
                 break;
 
-              case 28:
+              case 26:
                 if (!(this.type == BindingType.ContentAttribute)) {
-                  _context3.next = 46;
+                  _context3.next = 45;
                   break;
                 }
 
                 targetElement = this.target.ownerElement;
-                _context3.next = 32;
+                _context3.next = 30;
                 return this._execute(targetElement, data);
 
-              case 32:
+              case 30:
                 _d2 = _context3.sent;
 
                 if (!(_d2 === undefined)) {
-                  _context3.next = 35;
+                  _context3.next = 33;
                   break;
                 }
 
                 return _context3.abrupt("return", false);
 
-              case 35:
+              case 33:
                 //if (d instanceof Promise)
                 //  d = await d;
                 targetElement.innerHTML = _d2;
 
                 if (!((_window = window) !== null && _window !== void 0 && (_window$app = _window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
-                  _context3.next = 44;
+                  _context3.next = 43;
                   break;
                 }
 
-                _context3.next = 39;
+                _context3.next = 37;
                 return _IUI.IUI.create(targetElement);
 
-              case 39:
+              case 37:
+                _IUI.IUI.bind(targetElement, true, "content", (_targetElement$__i_bi = targetElement.__i_bindings) === null || _targetElement$__i_bi === void 0 ? void 0 : _targetElement$__i_bi.scope); // update references
+
+
+                (_targetElement$__i_bi2 = targetElement.__i_bindings) === null || _targetElement$__i_bi2 === void 0 ? void 0 : (_targetElement$__i_bi3 = _targetElement$__i_bi2.scope) === null || _targetElement$__i_bi3 === void 0 ? void 0 : (_targetElement$__i_bi4 = _targetElement$__i_bi3.refs) === null || _targetElement$__i_bi4 === void 0 ? void 0 : _targetElement$__i_bi4._build();
                 _context3.next = 41;
                 return _IUI.IUI.created(targetElement);
 
               case 41:
-                _IUI.IUI.bind(targetElement, targetElement, "content");
-
-                _context3.next = 44;
+                _context3.next = 43;
                 return _IUI.IUI.render(targetElement, targetElement._data, true);
 
-              case 44:
-                _context3.next = 86;
+              case 43:
+                _context3.next = 85;
                 break;
 
-              case 46:
+              case 45:
                 if (!(this.type == BindingType.IfAttribute)) {
-                  _context3.next = 53;
+                  _context3.next = 52;
                   break;
                 }
 
-                _context3.next = 49;
+                _context3.next = 48;
                 return this._execute(this.target.ownerElement, data);
 
-              case 49:
+              case 48:
                 _d3 = _context3.sent;
                 //if (d === undefined)
                 //    return false;
                 this.target.ownerElement.style.display = _d3 ? "" : "none";
-                _context3.next = 86;
+                _context3.next = 85;
                 break;
 
-              case 53:
+              case 52:
                 if (!(this.type == BindingType.RevertAttribute)) {
-                  _context3.next = 61;
+                  _context3.next = 60;
                   break;
                 }
 
-                _context3.next = 56;
+                _context3.next = 55;
                 return this._execute(this.target.ownerElement, data);
 
-              case 56:
+              case 55:
                 _d4 = _context3.sent;
 
                 if (!(_d4 === undefined)) {
-                  _context3.next = 59;
+                  _context3.next = 58;
                   break;
                 }
 
                 return _context3.abrupt("return", false);
 
-              case 59:
-                _context3.next = 86;
+              case 58:
+                _context3.next = 85;
                 break;
 
-              case 61:
+              case 60:
                 if (!(this.type === BindingType.Attribute)) {
-                  _context3.next = 71;
+                  _context3.next = 70;
                   break;
                 }
 
-                _context3.next = 64;
+                _context3.next = 63;
                 return this._execute(this.target.ownerElement, data);
 
-              case 64:
+              case 63:
                 _d5 = _context3.sent;
 
                 if (!(_d5 === undefined)) {
-                  _context3.next = 67;
+                  _context3.next = 66;
                   break;
                 }
 
                 return _context3.abrupt("return", false);
 
-              case 67:
+              case 66:
                 //if (d instanceof Promise)
                 //  d = await d;
                 if (this.attrType == AttributeBindingDestination.Field) this.target.ownerElement[this.attrKey] = _d5;else this.target.ownerElement.setAttribute(this.attrKey, _d5);
@@ -472,65 +495,65 @@ var Binding = /*#__PURE__*/function () {
                   this.bind(data, this.map);
                 }
 
-                _context3.next = 86;
+                _context3.next = 85;
                 break;
 
-              case 71:
+              case 70:
                 if (!(this.type === BindingType.IUIElementDataAttribute)) {
-                  _context3.next = 79;
+                  _context3.next = 78;
                   break;
                 }
 
-                _context3.next = 74;
+                _context3.next = 73;
                 return this._execute(this.target.ownerElement, data);
 
-              case 74:
+              case 73:
                 _d6 = _context3.sent;
-                _context3.next = 77;
+                _context3.next = 76;
                 return this.target.ownerElement.setData(_d6);
 
-              case 77:
-                _context3.next = 86;
+              case 76:
+                _context3.next = 85;
                 break;
 
-              case 79:
+              case 78:
                 if (!(this.type == BindingType.HTMLElementDataAttribute)) {
-                  _context3.next = 86;
-                  break;
-                }
-
-                _context3.next = 82;
-                return this._execute(this.target.ownerElement, data);
-
-              case 82:
-                _d7 = _context3.sent;
-
-                if (!(_d7 === undefined)) {
                   _context3.next = 85;
                   break;
                 }
 
+                _context3.next = 81;
+                return this._execute(this.target.ownerElement, data);
+
+              case 81:
+                _d7 = _context3.sent;
+
+                if (!(_d7 === undefined)) {
+                  _context3.next = 84;
+                  break;
+                }
+
                 return _context3.abrupt("return", false);
 
-              case 85:
+              case 84:
                 //if (d instanceof Promise)
                 //  d = await d;
                 this.target.ownerElement.data = _d7;
 
-              case 86:
+              case 85:
                 return _context3.abrupt("return", true);
 
-              case 89:
-                _context3.prev = 89;
+              case 88:
+                _context3.prev = 88;
                 _context3.t1 = _context3["catch"](1);
                 return _context3.abrupt("return", false);
 
-              case 92:
+              case 91:
               case "end":
                 return _context3.stop();
             }
           }
-        }, _callee3, this, [[1, 89], [13, 23]]);
+        }, _callee3, this, [[1, 88], [11, 21]]);
       }));
 
       function render(_x3) {
@@ -541,7 +564,7 @@ var Binding = /*#__PURE__*/function () {
     }()
   }], [{
     key: "create",
-    value: function create(nodeOrAttributeOrIUIElement) {
+    value: function create(nodeOrAttributeOrIUIElement, scope) {
       var code, isAsync, type, attrType, attrKey, func, script; //if (nodeOrAttributeOrIUIElement.created)
       //  debugger;
 
@@ -570,11 +593,15 @@ var Binding = /*#__PURE__*/function () {
         } else if (nodeOrAttributeOrIUIElement.name.startsWith("async:")) {
           isAsync = true;
           attrType = AttributeBindingDestination.Field;
-          attrKey = nodeOrAttributeOrIUIElement.name.substr(6);
+          attrKey = nodeOrAttributeOrIUIElement.name.substr(6); // skip scope
+          // if (attrKey == "scope")
+          //     return null;
         } else if (nodeOrAttributeOrIUIElement.name.startsWith(":")) {
           isAsync = false;
           attrType = AttributeBindingDestination.Field;
-          attrKey = nodeOrAttributeOrIUIElement.name.substr(1);
+          attrKey = nodeOrAttributeOrIUIElement.name.substr(1); // skip scope
+          // if (attrKey == "scope")
+          //     return null;
         } else {
           return null;
         } // isAsync = nodeOrAttributeOrIUIElement.value.search("await");
@@ -591,13 +618,17 @@ var Binding = /*#__PURE__*/function () {
 
         attrKey = sentence.join("");
         if (attrKey == "content") type = BindingType.ContentAttribute;else if (attrKey == "if") {
-          type = BindingType.IfAttribute; //displayMode = 
+          type = BindingType.IfAttribute; //displayMode =
         } else if (attrKey == "revert") type = BindingType.RevertAttribute;else if (attrKey != "data") type = BindingType.Attribute;else if (nodeOrAttributeOrIUIElement.ownerElement instanceof _IUIElement["default"]) type = BindingType.IUIElementDataAttribute;else type = BindingType.HTMLElementDataAttribute;
       } // test the function
 
 
+      var scopeKeys = Object.keys(scope);
+      var scopeValues = Object.values(scope);
+
       try {
-        if (isAsync) func = new AsyncFunction("data", "d", "context", "_test", code);else func = new Function("data", "d", "context", "_test", code);
+        var args = ["data", "d", "context", "_test"].concat(_toConsumableArray(scopeKeys));
+        if (isAsync) func = _construct(AsyncFunction, _toConsumableArray(args).concat([code]));else func = _construct(Function, _toConsumableArray(args).concat([code]));
       } catch (ex) {
         console.log("Test failed: " + ex, code);
         return null;
@@ -612,7 +643,9 @@ var Binding = /*#__PURE__*/function () {
         func: func,
         target: nodeOrAttributeOrIUIElement,
         checked: false,
-        script: script
+        script: script,
+        scopeKeys: scopeKeys,
+        scopeValues: scopeValues
       });
       return rt;
     }
@@ -623,7 +656,102 @@ var Binding = /*#__PURE__*/function () {
 
 exports.Binding = Binding;
 
-},{"./IUI.js":3,"./IUIElement.js":4}],3:[function(require,module,exports){
+},{"./IUI.js":4,"./IUIElement.js":5}],3:[function(require,module,exports){
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var BindingList = /*#__PURE__*/function (_Array) {
+  _inherits(BindingList, _Array);
+
+  var _super = _createSuper(BindingList);
+
+  function BindingList(target, scope) {
+    var _this;
+
+    _classCallCheck(this, BindingList);
+
+    _this = _super.call(this);
+    _this.target = target;
+    _this.scope = scope;
+    _this.events = [];
+    return _this;
+  }
+
+  _createClass(BindingList, [{
+    key: "destroy",
+    value: function destroy() {
+      for (var i = 0; i < this.length; i++) {
+        this[i].unbind();
+      }
+
+      this.scope = {};
+      this.target = null;
+
+      for (var i = 0; i < this.events.length; i++) {
+        this.target.removeEventListener(this.events[i].name, this.events[i].handle);
+      }
+    }
+  }, {
+    key: "addEvent",
+    value: function addEvent(name, handle) {
+      this.target.addEventListener(name, handle);
+      this.events.push({
+        name: name,
+        handle: handle
+      });
+    }
+  }, {
+    key: "getArgumentsNames",
+    value: function getArgumentsNames() {
+      if (this.scope == null) return [];
+      var rt;
+
+      for (var i in this.scope.length) {
+        rt.push(i);
+      }
+
+      return rt;
+    }
+  }]);
+
+  return BindingList;
+}( /*#__PURE__*/_wrapNativeSuper(Array));
+
+exports["default"] = BindingList;
+
+},{}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -636,9 +764,29 @@ var _IUIElement = _interopRequireDefault(require("./IUIElement.js"));
 
 var _Binding = require("./Binding.js");
 
+var _BindingList = _interopRequireDefault(require("./BindingList.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -652,7 +800,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-//import Route from '../Router/Route.js';
 var IUI = /*#__PURE__*/function () {
   function IUI() {
     _classCallCheck(this, IUI);
@@ -810,97 +957,148 @@ var IUI = /*#__PURE__*/function () {
     }
   }, {
     key: "extend",
-    value: function extend(properties, defaults, force) {
+    value: function extend(properties, defaults, overwrite) {
       if (properties == null) properties = defaults;else for (var i in defaults) {
-        if (force) properties[i] = defaults[i];else if (properties[i] === undefined) properties[i] = defaults[i];
+        if (overwrite) properties[i] = defaults[i];else if (properties[i] === undefined) properties[i] = defaults[i];
       }
       return properties;
     }
   }, {
     key: "bind",
-    value: function bind(element, rootElement, sourcePath) {
+    value: function bind(element, skipAttributes, sourcePath, scope) {
       // ::Attribute
       // : Field
       // async:: Async Attribute
       // async: Async Field
       // @ Event
       // skip element ?
-      if (element.hasAttribute("skip") || element instanceof HTMLTemplateElement) return; // tags to skip
+      if (element.hasAttribute("skip") || element.hasAttribute("i-skip") || element instanceof HTMLTemplateElement) return; // tags to skip
       //if (element instanceof HTMLScriptElement )
       //return;
 
-      if (rootElement == null) rootElement = element;
       var bindings;
+      if (scope == null) scope = {}; // get refs before they get overwritten
+      //let refs = scope?.refs;
+      // some element extended or overwritten the binding arguments
 
-      if (element != rootElement) {
-        element.view = rootElement.view;
-        element.route = rootElement.route;
-        bindings = []; // compile attributes
+      if (element.scope != null) IUI.extend(scope, element.scope, true);else if (element.hasAttribute(":scope")) {
+        var script = element.getAttribute(":scope");
+        var code = "try {\r\n context.value = ".concat(script, "; \r\n}\r\n catch(ex) { context.error = ex; }");
+        var func = new Function("context", code);
+        var context = {};
+        func.call(element, context);
+        if (context.error != undefined) console.log("Scope binding failed", context.error.name + ": " + context.error.message, this.script, this.target);else if (context.value != undefined && context.value instanceof Object) IUI.extend(scope, context.value, true);
+      }
+      var scopeArgs = Object.keys(scope);
+      var scopeValues = Object.values(scope);
+      bindings = new _BindingList["default"](element, scope);
 
-        for (var i = 0; i < element.attributes.length; i++) {
-          var b = _Binding.Binding.create(element.attributes[i]);
-
-          if (b != null) {
-            if (b.type == _Binding.BindingType.HTMLElementDataAttribute || b.type == _Binding.BindingType.IUIElementDataAttribute) element.dataMap = b;else if (b.type == _Binding.BindingType.RevertAttribute) element.revertMap = b;else bindings.push(b);
-          }
-        } // add reference
-
-
-        if (element.hasAttribute("ref")) {
-          rootElement.refs[el.getAttribute("ref")] = element;
+      if (skipAttributes) {
+        // copy attributes bindings
+        if (element.__i_bindings != null) for (var i = 0; i < element.__i_bindings.length; i++) {
+          if (element.__i_bindings[i].type != _Binding.BindingType.TextNode) bindings.push(element.__i_bindings[i]);
         }
       } else {
-        // remove previous text node bindings
-        bindings = element.bindings == null ? [] : element.bindings.filter(function (x) {
-          return x.type != _Binding.BindingType.TextNode;
-        });
-        element.refs = {};
-      } // compile nodes
+        var _element$__i_bindings;
+
+        (_element$__i_bindings = element.__i_bindings) === null || _element$__i_bindings === void 0 ? void 0 : _element$__i_bindings.destroy(); // compile attributes
+
+        for (var i = 0; i < element.attributes.length; i++) {
+          // skip scope
+          if (element.attributes[i].name == ":scope") continue;
+
+          if (element.attributes[i].name.startsWith("@")) {
+            (function () {
+              // make events
+              var code = element.attributes[i].value; //let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+
+              var func = _construct(Function, ["event"].concat(_toConsumableArray(scopeArgs), [code]));
+
+              var handler = function handler(event) {
+                func.call.apply(func, [element, event].concat(_toConsumableArray(scopeValues)));
+              };
+
+              bindings.addEvent(element.attributes[i].name.substr(1), handler);
+            })();
+          } else {
+            var b = _Binding.Binding.create(element.attributes[i], bindings.scope);
+
+            if (b != null) {
+              if (b.type == _Binding.BindingType.HTMLElementDataAttribute || b.type == _Binding.BindingType.IUIElementDataAttribute) element.dataMap = b;else if (b.type == _Binding.BindingType.RevertAttribute) element.revertMap = b;else bindings.push(b);
+            }
+          }
+        } // add reference
+        // if (element.hasAttribute("ref")) {
+        // 	let ref = element.getAttribute("ref");
+        // 	if (refs[ref] == null)
+        // 		refs[ref] = element;
+        // 	else if (refs[ref] == element){
+        // 		// do nothing
+        // 	}
+        // 	else if (refs[ref] instanceof Array){
+        // 		refs[ref].push(element);
+        // 	} else {
+        // 		var firstRef = refs[ref];
+        // 		refs[ref] =[firstRef, element];
+        // 	}
+        // }
+
+      } // get new refs (scope might been overwritten)
+      //refs = scope?.refs;
+      // compile nodes
 
 
       for (var i = 0; i < element.childNodes.length; i++) {
-        var _el = element.childNodes[i];
+        var el = element.childNodes[i];
 
-        if (_el instanceof _IUIElement["default"]) {
+        if (el instanceof _IUIElement["default"]) {
           // @TODO: check if the IUI element handles the binding
-          IUI.bind(_el, rootElement, sourcePath);
-        } else if (_el instanceof HTMLElement) {
-          IUI.bind(_el, rootElement, sourcePath);
-        } else if (_el instanceof Text) {
-          var _b = _Binding.Binding.create(_el);
+          IUI.bind(el, false, sourcePath, scope);
+        } else if (el instanceof HTMLScriptElement) {
+          try {
+            // this because HTML parser don't evaluate script tag
+            /// let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
+            var _func = _construct(Function, _toConsumableArray(scopeArgs).concat(["//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n" + el.text.trim()]));
+
+            var rt = _func.apply(el.parentElement, scopeValues);
+
+            console.log("rt", rt);
+
+            if (_typeof(rt) === "object") {
+              for (var k in rt) {
+                el.parentElement[k] = rt[k];
+              }
+            }
+          } catch (ex) {
+            console.log(ex);
+          }
+        } else if (el instanceof HTMLElement) {
+          IUI.bind(el, false, sourcePath, scope);
+        } else if (el instanceof Text) {
+          var _b = _Binding.Binding.create(el, bindings.scope);
 
           if (_b != null) bindings.push(_b);
-        } else if (_el instanceof HTMLScriptElement) {
-          // this because HTML parser don't evaluate script tag
-          var func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + _el.text.trim());
-          var rt = func.call(_el.parentElement);
-
-          if (_typeof(rt) === "object") {
-            for (var k in rt) {
-              _el.parentElement[k] = rt[k];
-            }
-          }
         }
       }
 
-      element.bindings = bindings;
+      element.__i_bindings = bindings;
     }
   }, {
     key: "render",
     value: function () {
       var _render = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(element, data) {
         var textNodesOnly,
+            bindings,
             i,
-            _el2,
+            el,
             _args3 = arguments;
-
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
                 textNodesOnly = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : false;
 
-                if (element.bindings) {
+                if (element.__i_bindings) {
                   _context3.next = 3;
                   break;
                 }
@@ -908,124 +1106,126 @@ var IUI = /*#__PURE__*/function () {
                 return _context3.abrupt("return");
 
               case 3:
+                bindings = element.__i_bindings;
+
                 if (!textNodesOnly) {
-                  _context3.next = 14;
+                  _context3.next = 15;
                   break;
                 }
 
                 i = 0;
 
-              case 5:
-                if (!(i < element.bindings.length)) {
-                  _context3.next = 12;
+              case 6:
+                if (!(i < bindings.length)) {
+                  _context3.next = 13;
                   break;
                 }
 
-                if (!(element.bindings[i].type == _Binding.BindingType.TextNode)) {
-                  _context3.next = 9;
+                if (!(bindings[i].type == _Binding.BindingType.TextNode)) {
+                  _context3.next = 10;
                   break;
                 }
 
-                _context3.next = 9;
-                return element.bindings[i].render(data);
+                _context3.next = 10;
+                return bindings[i].render(data);
 
-              case 9:
+              case 10:
                 i++;
-                _context3.next = 5;
+                _context3.next = 6;
                 break;
 
-              case 12:
-                _context3.next = 21;
-                break;
-
-              case 14:
-                i = 0;
-
-              case 15:
-                if (!(i < element.bindings.length)) {
-                  _context3.next = 21;
-                  break;
-                }
-
-                _context3.next = 18;
-                return element.bindings[i].render(data);
-
-              case 18:
-                i++;
-                _context3.next = 15;
-                break;
-
-              case 21:
-                i = 0;
-
-              case 22:
-                if (!(i < element.children.length)) {
-                  _context3.next = 48;
-                  break;
-                }
-
-                _el2 = element.children[i];
-
-                if (!(_el2 instanceof _IUIElement["default"])) {
-                  _context3.next = 37;
-                  break;
-                }
-
-                if (!(_el2.dataMap != null)) {
-                  _context3.next = 33;
-                  break;
-                }
-
-                _context3.next = 28;
-                return _el2.dataMap.render(data);
-
-              case 28:
-                if (_context3.sent) {
-                  _context3.next = 31;
-                  break;
-                }
-
-                _context3.next = 31;
-                return _el2.render();
-
-              case 31:
-                _context3.next = 35;
-                break;
-
-              case 33:
-                _context3.next = 35;
-                return _el2.setData(data);
-
-              case 35:
-                _context3.next = 45;
-                break;
-
-              case 37:
-                if (!(_el2.dataMap != null)) {
-                  _context3.next = 42;
-                  break;
-                }
-
-                _context3.next = 40;
-                return _el2.dataMap.render(data);
-
-              case 40:
-                _context3.next = 43;
-                break;
-
-              case 42:
-                _el2.data = data;
-
-              case 43:
-                _context3.next = 45;
-                return IUI.render(_el2, _el2.data);
-
-              case 45:
-                i++;
+              case 13:
                 _context3.next = 22;
                 break;
 
-              case 48:
+              case 15:
+                i = 0;
+
+              case 16:
+                if (!(i < bindings.length)) {
+                  _context3.next = 22;
+                  break;
+                }
+
+                _context3.next = 19;
+                return bindings[i].render(data);
+
+              case 19:
+                i++;
+                _context3.next = 16;
+                break;
+
+              case 22:
+                i = 0;
+
+              case 23:
+                if (!(i < element.children.length)) {
+                  _context3.next = 49;
+                  break;
+                }
+
+                el = element.children[i];
+
+                if (!(el instanceof _IUIElement["default"])) {
+                  _context3.next = 38;
+                  break;
+                }
+
+                if (!(el.dataMap != null)) {
+                  _context3.next = 34;
+                  break;
+                }
+
+                _context3.next = 29;
+                return el.dataMap.render(data);
+
+              case 29:
+                if (_context3.sent) {
+                  _context3.next = 32;
+                  break;
+                }
+
+                _context3.next = 32;
+                return el.render();
+
+              case 32:
+                _context3.next = 36;
+                break;
+
+              case 34:
+                _context3.next = 36;
+                return el.setData(data);
+
+              case 36:
+                _context3.next = 46;
+                break;
+
+              case 38:
+                if (!(el.dataMap != null)) {
+                  _context3.next = 43;
+                  break;
+                }
+
+                _context3.next = 41;
+                return el.dataMap.render(data);
+
+              case 41:
+                _context3.next = 44;
+                break;
+
+              case 43:
+                el.data = data;
+
+              case 44:
+                _context3.next = 46;
+                return IUI.render(el, el.data);
+
+              case 46:
+                i++;
+                _context3.next = 23;
+                break;
+
+              case 49:
               case "end":
                 return _context3.stop();
             }
@@ -1066,20 +1266,17 @@ _defineProperty(IUI, "observer", new IntersectionObserver(function (entries) {
   threshold: [0]
 }));
 
-;
-
 function iui(selector) {
   return IUI.get(selector);
   /*
   if ((typeof selector === 'string' || selector instanceof String) && selector.length > 0)
   {
-  	var els = document.querySelectorAll(selector); 
+  var els = document.querySelectorAll(selector); 
   }
   else
   {
-  	var els = IUI.get(selector);
-  	if (els != null)
-  
+  var els = IUI.get(selector);
+  if (els != null)
   }
   */
 
@@ -1090,7 +1287,7 @@ function iui(selector) {
 
       if ((typeof Node === "undefined" ? "undefined" : _typeof(Node)) === "object" ? o instanceof Node : selector && _typeof(selector) === "object" && typeof selector.nodeType === "number" && typeof selector.nodeName === "string" || selector === window) {
         el = selector;
-      } else if (typeof selector === 'string' || selector instanceof String) {
+      } else if (typeof selector === "string" || selector instanceof String) {
         if (selector[0] == ".") el = document.getElementsByClassName(selector.substr(1));else el = document.getElementById(selector);
       }
 
@@ -1136,21 +1333,20 @@ function iui(selector) {
   /*
   IUI.registry.push(this);
   
-  
   if (selector)
   {
-  	if( Object.prototype.toString.call( selector ) === '[object Array]' )
-  	{
-  		this.el = [];
-  		selector.forEach(function(i){
-  			this.el.push(query(i));
-  		});
-  	}
-  	else
-  		this.el = query(selector);
-  	
-  	this.events = {};
-  	this.id = this.el.id;
+  if( Object.prototype.toString.call( selector ) === '[object Array]' )
+  {
+  	this.el = [];
+  	selector.forEach(function(i){
+  		this.el.push(query(i));
+  	});
+  }
+  else
+  	this.el = query(selector);
+  
+  this.events = {};
+  this.id = this.el.id;
   }
   */
 
@@ -1243,7 +1439,7 @@ window.addEventListener("load", function(){
 });
 */
 
-},{"./Binding.js":2,"./IUIElement.js":4}],4:[function(require,module,exports){
+},{"./Binding.js":2,"./BindingList.js":3,"./IUIElement.js":5}],5:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1502,7 +1698,13 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
       }
 
       return update;
-    }() // this meant to be inherited
+    }() // bindings arguments
+
+  }, {
+    key: "scope",
+    get: function get() {
+      return null;
+    } // this meant to be inherited
 
   }, {
     key: "modified",
@@ -1568,30 +1770,33 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
     key: "_register",
     value: function _register(event) {
       this._events.push(event);
-
-      if (this.hasAttribute("@" + event)) {
-        var handler = this.getAttribute("@" + event);
-
-        if (handler.match(/^[A-Za-z\$_]+(?:[\$_][A-Za-z0-9]+)*$/g) === null) {
-          try {
-            var func = new Function("event", this._encapsulateEvent(this.getAttribute("@" + event)));
-            this.addEventListener(event, func);
-          } catch (ex) {
-            console.log(ex);
+      /*
+          if (this.hasAttribute("@" + event)) {
+              let handler = this.getAttribute("@" + event);
+              if (handler.match(/^[A-Za-z\$_]+(?:[\$_][A-Za-z0-9]+)*$/g) === null) {
+                  try
+                  {
+                      let func = new Function("event", this._encapsulateEvent(this.getAttribute("@" + event)));
+                      this.addEventListener(event, func);
+                  } catch (ex)
+                  {
+                      console.log(ex);
+                  }
+              }
+              else {
+                  let func = this[handler];
+                  if (func instanceof Function) {
+                      this.addEventListener(event, func, false);
+                  }
+                  else {
+                      // might be added in the future
+                      let func = new Function("event", `this["${handler}"](event)`);
+                      this.addEventListener(event, func, false);
+                  }
+              }
           }
-        } else {
-          var _func = this[handler];
+          */
 
-          if (_func instanceof Function) {
-            this.addEventListener(event, _func, false);
-          } else {
-            // might be added in the future
-            var _func2 = new Function("event", "this[\"".concat(handler, "\"](event)"));
-
-            this.addEventListener(event, _func2, false);
-          }
-        }
-      }
     }
   }, {
     key: "off",
@@ -1617,7 +1822,98 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
 
 exports["default"] = IUIElement;
 
-},{"./Binding.js":2,"./IUI.js":3}],5:[function(require,module,exports){
+},{"./Binding.js":2,"./IUI.js":4}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Path = /*#__PURE__*/function () {
+  function Path() {
+    _classCallCheck(this, Path);
+  }
+
+  _createClass(Path, null, [{
+    key: "join",
+    value:
+    /**
+     * Similar to `os.path.join` in nodejs.
+     * @param {...String} args
+     * @returns {String}
+     */
+    function join() {
+      return Array.from(arguments).join("/").replace(/\/{1,}/g, "/");
+    }
+  }]);
+
+  return Path;
+}();
+
+exports["default"] = Path;
+
+},{}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var RefsCollection = /*#__PURE__*/function () {
+  function RefsCollection(rootElement) {
+    _classCallCheck(this, RefsCollection);
+
+    this._rootElement = rootElement;
+  }
+
+  _createClass(RefsCollection, [{
+    key: "_build",
+    value: function _build(element, append) {
+      if (element == undefined) element = this._rootElement;
+      if (!append) for (var i in this) {
+        if (i != "_rootElement" && i != "_build") delete this[i];
+      }
+
+      for (var i = 0; i < element.children.length; i++) {
+        var child = element.children[i];
+
+        if (child.hasAttribute("ref")) {
+          var ref = child.getAttribute("ref");
+          if (this[ref] == null) this[ref] = child;else if (this[ref] == child) {// do nothing
+          } else if (this[ref] instanceof Array) {
+            this[ref].push(child);
+          } else {
+            var firstRef = this[ref];
+            this[ref] = [firstRef, child];
+          }
+        }
+
+        if (child.refs != undefined) // opt out if the element handles referencing
+          break;else this._build(child, true);
+      }
+    }
+  }]);
+
+  return RefsCollection;
+}();
+
+exports["default"] = RefsCollection;
+
+},{}],8:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1724,7 +2020,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_HTMLElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],6:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1889,7 +2185,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   }], [{
     key: "_copy",
     value: function _copy(val) {
-      if (_typeof(val) === 'object' && val !== null) {
+      if (_typeof(val) === "object" && val !== null) {
         var rt = {};
 
         for (var i in val) {
@@ -1907,7 +2203,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Modifiable.js":9}],7:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Modifiable.js":12}],10:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1920,6 +2216,8 @@ exports["default"] = void 0;
 var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 
 var _IUI = require("../Core/IUI.js");
+
+var _RefsCollection = _interopRequireDefault(require("../Core/RefsCollection.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -1958,7 +2256,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, Include);
 
     _this = _super.call(this);
-    _this.refs = {};
+    _this.refs = new _RefsCollection["default"]();
     return _this;
   }
 
@@ -1971,6 +2269,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       this.setAttribute("src", value);
 
       this._load(value);
+    }
+  }, {
+    key: "scope",
+    get: function get() {
+      return {
+        view: this,
+        refs: this.refs
+      };
     }
   }, {
     key: "_load",
@@ -1991,7 +2297,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 2:
                 this._loading = true;
-                src = url.replace(/^\/+|\/+$/g, '');
+                src = url.replace(/^\/+|\/+$/g, "");
                 this.classList.add(this.cssClass + "-loading");
                 _context.next = 7;
                 return fetch(src);
@@ -2000,7 +2306,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 x = _context.sent;
 
                 if (!(x.status == 200)) {
-                  _context.next = 21;
+                  _context.next = 22;
                   break;
                 }
 
@@ -2012,7 +2318,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this.innerHTML = t; //let xeval = (code) => eval(code);
 
                 if (!((_window = window) !== null && _window !== void 0 && (_window$app = _window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
-                  _context.next = 21;
+                  _context.next = 22;
                   break;
                 }
 
@@ -2020,16 +2326,18 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _IUI.IUI.create(this);
 
               case 16:
-                _context.next = 18;
+                _IUI.IUI.bind(this, true, "include:" + src, _IUI.IUI.extend(this._i__bindings.scope, this.scope, true));
+
+                this.refs._build();
+
+                _context.next = 20;
                 return _IUI.IUI.created(this);
 
-              case 18:
-                _IUI.IUI.bind(this, this, "include:" + src);
-
-                _context.next = 21;
+              case 20:
+                _context.next = 22;
                 return _IUI.IUI.render(this, this._data, true);
 
-              case 21:
+              case 22:
                 this.classList.remove(this.cssClass + "-loading"); // if (window?.app?.loaded)
                 // {
                 //     await IUI.create(this);
@@ -2044,7 +2352,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 this._loading = false;
 
-              case 23:
+              case 24:
               case "end":
                 return _context.stop();
             }
@@ -2088,6 +2396,30 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
       return create;
     }()
+  }, {
+    key: "created",
+    value: function () {
+      var _created = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                this.refs._build();
+
+              case 1:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function created() {
+        return _created.apply(this, arguments);
+      }
+
+      return created;
+    }()
   }]);
 
   return Include;
@@ -2095,7 +2427,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],8:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Core/RefsCollection.js":7}],11:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2144,6 +2476,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_HTMLElement) {
 
   var _super = _createSuper(Layout);
 
+  // IUIElement
   function Layout() {
     _classCallCheck(this, Layout);
 
@@ -2208,12 +2541,11 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_HTMLElement) {
   }]);
 
   return Layout;
-}( /*#__PURE__*/_wrapNativeSuper(HTMLElement // IUIElement
-)));
+}( /*#__PURE__*/_wrapNativeSuper(HTMLElement)));
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Field.js":5}],9:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Field.js":8}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2346,7 +2678,7 @@ var Modifiable = /*#__PURE__*/function () {
   }], [{
     key: "_copy",
     value: function _copy(val) {
-      if (_typeof(val) === 'object' && val !== null) {
+      if (_typeof(val) === "object" && val !== null) {
         var rt = {};
 
         for (var i in val) {
@@ -2377,7 +2709,7 @@ var Modifiable = /*#__PURE__*/function () {
 
 exports["default"] = Modifiable;
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2470,37 +2802,34 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         if (this.children.length > 0) this._repeatNode = this.children[0].cloneNode(true);else this._repeatNode = document.createElement("div");
         this.innerHTML = "";
         this._container = this;
-      }
+      } // var newElements = this.querySelectorAll("*");
+      // for (var i = 0; i < newElements.length; i++)
+      //     newElements[i].repeat = this;
+      // var self = this;
 
-      var newElements = this.querySelectorAll("*");
-
-      for (var i = 0; i < newElements.length; i++) {
-        newElements[i].repeat = this;
-      }
-
-      var self = this;
       /*
-      this._repeatModified = function(propertyName, value)
+        this._repeatModified = function(propertyName, value)
       {
-            var bindings = self._repeatBindings.get(this);
-            // update view
-          for(var i = 0; i < bindings.length; i++)
-          {
-              if (bindings[i].props)
-              {
-                  for(var j = 0; j < bindings[i].props.length; j++)
-                  {
-                      if (bindings[i].props[j] == propertyName)
-                      {
-                          bindings[i].node.data = bindings[i].func.apply(self, 
-                              [this, this, this, this, 0, 0]);
-                            break;
-                      }
-                  }
-              }
-          }
+             var bindings = self._repeatBindings.get(this);
+             // update view
+            for(var i = 0; i < bindings.length; i++)
+            {
+                if (bindings[i].props)
+                {
+                    for(var j = 0; j < bindings[i].props.length; j++)
+                    {
+                        if (bindings[i].props[j] == propertyName)
+                        {
+                            bindings[i].node.data = bindings[i].func.apply(self, 
+                                [this, this, this, this, 0, 0]);
+                             break;
+                        }
+                    }
+                }
+            }
       };
-      */
+        */
+
     }
   }, {
     key: "clear",
@@ -2523,31 +2852,13 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       return this._data.length;
     }
   }, {
-    key: "_assign",
-    value: function _assign(node, index) {
-      // update fields
-      // this so we won't mess with i-include view
-      if (node.view == undefined) node.view = this.view;
-      node.rotue = this.route;
-      node.index = index; // update references
-
-      if (node.hasAttribute("ref")) {
-        var ref = node.getAttribute("ref"); // create new array
-
-        if (!(this.view.refs[ref] instanceof Array)) this.view.refs[ref] = [];
-        this.view.refs[ref][index] = node;
-      } //Object.assign(node, customFields);
-
-
-      for (var i = 0; i < node.children.length; i++) {
-        this._assign(node.children[i], index);
-      }
-    }
-  }, {
     key: "setData",
     value: function () {
       var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(value) {
-        var i, e;
+        var _value;
+
+        var i, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2, e;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -2561,14 +2872,10 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _context.abrupt("return", false);
 
               case 3:
-                //console.log("RPT: SetData", value);
-                this._busy = true; // var id = Math.random();
-                //console.log("SetData " + this.getAttribute("ref") + " " + id, value);
-                //console.trace();
-                // clear
+                this._busy = true; // clear
 
                 this.clear();
-                if (value.toArray instanceof Function) value = value.toArray();else if (value == null || !(value instanceof Array || value instanceof Int32Array)) value = []; //debugger;
+                if (((_value = value) === null || _value === void 0 ? void 0 : _value.toArray) instanceof Function) value = value.toArray();else if (value == null || !(value instanceof Array || value instanceof Int32Array)) value = []; //debugger;
 
                 _context.next = 8;
                 return _get(_getPrototypeOf(Repeat.prototype), "setData", this).call(this, value);
@@ -2578,101 +2885,38 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 9:
                 if (!(i < value.length)) {
-                  _context.next = 44;
+                  _context.next = 24;
                   break;
                 }
 
-                ///console.log("ST1");
-                //let content = this.template.content.cloneNode(true);
-                //let nodes = content.childNodes;
                 e = this._repeatNode.cloneNode(true);
-                this.list.push(e); //console.log("ST2");
-                // Create node
-
-                if (!(e instanceof _IUIElement2["default"])) {
-                  _context.next = 15;
-                  break;
-                }
-
-                _context.next = 15;
-                return e.create();
-
-              case 15:
-                _context.next = 17;
+                this.list.push(e);
+                _context.next = 14;
                 return _IUI.IUI.create(e);
 
-              case 17:
-                //console.log("Created repeat " + i, this, e);
-                //console.log("ST4");
-                //this._make_bindings(e)
-                _IUI.IUI.bind(e, this, "repeat");
+              case 14:
+                _IUI.IUI.bind(e, false, "repeat", _IUI.IUI.extend((_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, {
+                  index: i,
+                  repeat: this
+                }, true));
 
-                this._container.insertBefore(e, this._beforeNode);
-
-                this._assign(e, i); // { view: this.view, route: this.route, index: i });
-                //console.log("ST5");
+                this._container.insertBefore(e, this._beforeNode); // update referencing
 
 
-                if (!(e instanceof _IUIElement2["default"])) {
-                  _context.next = 33;
-                  break;
-                }
+                (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
+                _context.next = 19;
+                return _IUI.IUI.created(e);
 
-                if (!(e.dataMap != null)) {
-                  _context.next = 29;
-                  break;
-                }
+              case 19:
+                _context.next = 21;
+                return _IUI.IUI.render(e, value[i], false);
 
-                _context.next = 24;
-                return e.dataMap.render(value[i]);
-
-              case 24:
-                if (_context.sent) {
-                  _context.next = 27;
-                  break;
-                }
-
-                _context.next = 27;
-                return e.render();
-
-              case 27:
-                _context.next = 31;
-                break;
-
-              case 29:
-                _context.next = 31;
-                return e.setData(value[i]);
-
-              case 31:
-                _context.next = 41;
-                break;
-
-              case 33:
-                if (!(e.dataMap != null)) {
-                  _context.next = 38;
-                  break;
-                }
-
-                _context.next = 36;
-                return e.dataMap.render(value[i]);
-
-              case 36:
-                _context.next = 39;
-                break;
-
-              case 38:
-                e.data = value[i];
-
-              case 39:
-                _context.next = 41;
-                return this._renderElement(e, e.data);
-
-              case 41:
+              case 21:
                 i++;
                 _context.next = 9;
                 break;
 
-              case 44:
+              case 24:
                 // @TODO: check if this works for event names starting with ":"
                 this._emit(":data", {
                   data: value
@@ -2681,7 +2925,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 this._busy = false;
 
-              case 46:
+              case 26:
               case "end":
                 return _context.stop();
             }
@@ -2702,7 +2946,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],11:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],14:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2763,7 +3007,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],12:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],15:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2811,7 +3055,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
     //debugger;
     _this = _super.call(this, {
-      cssClass: 'link'
+      cssClass: "link"
     }); //      super({ cssClass: 'link' });
 
     _this._register("route");
@@ -2878,7 +3122,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],13:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],16:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -2893,6 +3137,10 @@ var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 var _IUI = require("../Core/IUI.js");
 
 var _Router = _interopRequireDefault(require("./Router.js"));
+
+var _RefsCollection = _interopRequireDefault(require("../Core/RefsCollection.js"));
+
+var _Path = _interopRequireDefault(require("../Core/Path.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -2924,6 +3172,8 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   _inherits(Route, _IUIElement);
 
@@ -2935,8 +3185,11 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, Route);
 
     _this = _super.call(this);
+
+    _defineProperty(_assertThisInitialized(_this), "base", "");
+
     _this.routes = [];
-    _this.refs = {};
+    _this.refs = new _RefsCollection["default"](_assertThisInitialized(_this));
 
     _this._register("show");
 
@@ -2975,6 +3228,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       return setData;
     }()
   }, {
+    key: "scope",
+    get: function get() {
+      return {
+        route: this,
+        view: this
+      };
+    }
+  }, {
     key: "_updateLinks",
     value: function _updateLinks() {
       for (var i = 0; i < this.children.length; i++) {
@@ -2996,7 +3257,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         parent = parent.parent;
       }
 
-      return link;
+      return this.base + "/" + link;
     }
   }, {
     key: "name",
@@ -3041,13 +3302,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       }
 
       return null;
-    } // get route() {
-    //     return this;
-    // }
-    // get view() {
-    //     return this;
-    // }
-
+    }
   }, {
     key: "create",
     value: function () {
@@ -3068,7 +3323,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                   break;
                 }
 
-                _src = this.getAttribute("src").replace(/^\/+|\/+$/g, '');
+                _src = this.getAttribute("src").replace(/^\/+|\/+$/g, "");
                 _context2.next = 5;
                 return fetch(_src);
 
@@ -3088,11 +3343,11 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 10:
                 t = _context2.sent;
-                this.innerHTML = t; //let xeval = (code) => eval(code);
+                this.innerHTML = t;
 
               case 12:
                 if (!((_window = window) !== null && _window !== void 0 && (_window$app = _window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
-                  _context2.next = 20;
+                  _context2.next = 21;
                   break;
                 }
 
@@ -3100,16 +3355,18 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _IUI.IUI.create(this);
 
               case 15:
-                _context2.next = 17;
+                _IUI.IUI.bind(this, true, "route:" + src, this.scope);
+
+                this.refs._build();
+
+                _context2.next = 19;
                 return _IUI.IUI.created(this);
 
-              case 17:
-                _IUI.IUI.bind(this, this, "route:" + src);
-
-                _context2.next = 20;
+              case 19:
+                _context2.next = 21;
                 return _IUI.IUI.render(this, this._data, true);
 
-              case 20:
+              case 21:
               case "end":
                 return _context2.stop();
             }
@@ -3125,11 +3382,15 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     }()
   }, {
     key: "created",
-    value: function created() {}
+    value: function created() {
+      this.refs._build();
+    }
   }, {
     key: "set",
     value: function set(value) {
-      if (value == this.visible) return;
+      if (value == this.visible) {
+        return;
+      }
 
       if (value) {
         this.setAttribute("selected", "");
@@ -3156,7 +3417,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Router.js":14}],14:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Core/Path.js":6,"../Core/RefsCollection.js":7,"./Router.js":17}],17:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3166,13 +3427,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _IUIElement = _interopRequireDefault(require("../Core/IUIElement.js"));
-
 var _Route = _interopRequireDefault(require("./Route.js"));
 
 var _Target2 = _interopRequireDefault(require("./Target.js"));
 
 var _IUI = require("../Core/IUI.js");
+
+var _Path = _interopRequireDefault(require("../Core/Path.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -3187,6 +3448,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-only"); }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -3232,15 +3495,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
       active: null,
       cssClass: "router"
     });
-    _this._history = []; //IUI._router = this;
-    //Object.defineProperty(window, "router", {
-    //    get() {
-    //        if (!IUI._router.isConnected)
-    //            IUI._router = document.getElementsByTagName("i-router")[0];
-    //        return IUI._router;
-    //    }
-    //});
-
+    _this._history = [];
     return _this;
   }
 
@@ -3259,13 +3514,15 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
     key: "add",
     value: function add(route) {
       var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      route.base = this._base;
 
-      if (parent == null) {
+      if (!parent) {
         this.routes.push(route);
-      } else {
-        route.parent = parent;
-        this.appendChild(route); //parent.routes.push(route);
+        return;
       }
+
+      route.parent = parent;
+      this.appendChild(route);
     }
   }, {
     key: "_routeInPath",
@@ -3279,7 +3536,11 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
   }, {
     key: "getRoute",
     value: function getRoute(url, data) {
+      /**
+       * @type {String[]}
+       */
       var p = url.split("/");
+      if (p[0] == this._base) p.shift();
       var searchRoutes = this.routes;
 
       for (var i = 0; i < p.length; i++) {
@@ -3289,13 +3550,12 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
 
         if (i == p.length - 1) {
           // return [destination state route (link, icon,..etc) , actual route to view]
-          if (route.dst == null) return [route, route];else {
-            var dst = route.dst instanceof Function ? route.dst(data) : route.dst;
+          if (route.dst == null) return [route, route];
+          var dst = route.dst instanceof Function ? route.dst(data) : route.dst;
 
-            var _url = dst.replace(/^[/]*(.*?)[/]*$/g, '$1').trim();
+          var _url = dst.replace(/^[/]*(.*?)[/]*$/g, "$1").trim();
 
-            return [route, this.getRoute(_url)[1]];
-          }
+          return [route, this.getRoute(_url)[1]];
         }
 
         searchRoutes = route.routes;
@@ -3304,35 +3564,25 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
   }, {
     key: "back",
     value: function back() {
-      //if (this._history.length > 1) {
-      //    let last = this._history[this._history.length - 2];
-      //    this.navigate(last.url, last.data, last.target);
-      //}
       window.history.back();
     }
   }, {
     key: "_toQuery",
     value: function _toQuery(o) {
-      var rt = [];
-
-      for (var i in o) {
-        if (o[i] == undefined) rt.push(i);else rt.push(i + "=" + encodeURI(o[i].toString().replace("&", "&&")));
-      } ///encodeURIComponent(o[i]));
-
-
-      return rt.join("&");
+      return Object.keys(o).map(function (i) {
+        return !i ? i : "".concat(i, "=").concat(encodeURI(o[i].toString().replace("&", "&&")));
+      }).join("&");
     }
   }, {
     key: "_fromQuery",
     value: function _fromQuery(q) {
-      var kv = q.replace("&&", "\0").split('&');
+      var kv = q.replace("&&", "\0").split("&");
       var rt = {};
 
       for (var i = 0; i < kv.length; i++) {
-        var d = kv[i].replace("\0", "&").split('=', 2);
-        var v = decodeURI(d[1] || ''); //decodeURIComponent(d[1] || '');
-
-        if (v != null && v.trim() != '' && !isNaN(v)) v = new Number(v);
+        var d = kv[i].replace("\0", "&").split("=", 2);
+        var v = decodeURI(d[1] || "");
+        if (v != null && v.trim() != "" && !isNaN(v)) v = new Number(v);
         rt[d[0]] = v;
       }
 
@@ -3358,14 +3608,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
             switch (_context.prev = _context.next) {
               case 0:
                 dataToQuery = _args.length > 4 && _args[4] !== undefined ? _args[4] : true;
-                q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/); //debugger;
+                q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
 
-                // do we have a query string ?
+                // Do we have a query string ?
                 if (q[2] !== undefined) {
                   path = q[1];
                   data = this._fromQuery(q[2]);
                   url = path + "?" + q[2];
-                } // do we have data ?
+                } // Do we have data?
                 else if (data !== undefined) {
                   path = q[3];
                   url = dataToQuery ? path + "?" + this._toQuery(data) : path;
@@ -3406,25 +3656,13 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 // destination view not found
                 if (viewRoute == null) {
                   console.log("Destination route not found ".concat(stateRoute.dst));
-                  viewRoute = stateRoute;
-                } //let state = null;
-                //if (data !== undefined) {
-                //    for (let [k, v] of this._states)
-                //        if (v == data) {
-                //            state = k;
-                //            break;
-                //        }
-                //    if (state == null) {
-                //        state = Math.random().toString(36).substr(2, 10);
-                //        this._states.set(state, data);
-                //    }
-                //}
-
+                  stateRoute, _readOnlyError("viewRoute");
+                }
 
                 if (!(target instanceof _Target2["default"])) target = this;
 
                 if (state == null) {
-                  id = Math.random().toString(36).substr(2, 10);
+                  id = Math.random().toString(36).substring(2, 12);
                   state = {
                     id: id,
                     url: url,
@@ -3444,7 +3682,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
 
                 target.show(viewRoute, this.active);
                 viewRoute.set(true);
-                this.active = viewRoute; //{ url: "/", data: null, target: null }; 
+                this.active = viewRoute;
 
                 this._emit("route", {
                   route: stateRoute
@@ -3513,10 +3751,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
     key: "refresh",
     value: function refresh() {
       var state = this.current;
-      this.navigate(state.url, state.data, state.target, state); //this.current.render();
-      //this.current.data = this.current.data;
-      //if (updateAttributes)
-      //  this.current.updateAttributes(true);
+      this.navigate(state.url, state.data, state.target, state);
     }
   }, {
     key: "show",
@@ -3527,7 +3762,6 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
     key: "current",
     get: function get() {
       return this._states.get(history.state); //.viewRoute;
-      //return this._history[this._history.length - 1].viewRoute;
     }
   }, {
     key: "previous",
@@ -3540,6 +3774,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
     value: function create() {
       // save origin
       this.origin = window.location.pathname + window.location.search;
+      this._base = this.hasAttribute("base") ? this.getAttribute("base") : "/";
     }
   }, {
     key: "destroy",
@@ -3549,7 +3784,10 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
   }, {
     key: "created",
     value: function created() {
-      if (this.hasAttribute("type") && this.getAttribute("type").toLowerCase() == "hash") this._hash = true; /// find all children
+      if (this.hasAttribute("type") && this.getAttribute("type").toLowerCase() == "hash") {
+        this._hash = true;
+      } /// find all children
+
 
       for (var i = 0; i < this.children.length; i++) {
         var e = this.children[i];
@@ -3560,23 +3798,20 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
         }
       }
 
-      this._emit("created"); //console.log("Router created", this);
-
+      this._emit("created");
     }
   }, {
     key: "connectedCallback",
     value: function connectedCallback() {
-      //console.log("New router", this);
       window.router = this;
       var self = this;
       window.addEventListener("popstate", function (event) {
-        //console.log(event);
         var stateId = event.state;
         var path;
 
         if (self._hash) {
           path = window.location.hash;
-          if (path.length > 0) path = path.substr(1);
+          if (path.length > 0) path = path.substring(1);
         } else {
           path = window.location.pathname;
         }
@@ -3612,7 +3847,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Route.js":13,"./Target.js":15}],15:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/Path.js":6,"./Route.js":16,"./Target.js":18}],18:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3661,7 +3896,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, Target);
 
     _this = _super.call(this, _IUI.IUI.extend(properties, {
-      cssClass: 'target'
+      cssClass: "target"
     }));
 
     _this._register("show");
@@ -3692,7 +3927,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       } //if (previous != null && previous != route && previous.target == this) {
       //    previous.set(false);
       //}
-      //else 
+      //else
 
 
       if (previousTarget != null && previousTarget != this) {
@@ -3726,7 +3961,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Route.js":13}],16:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Route.js":16}],19:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3773,7 +4008,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, Background);
 
     _this = _super.call(this, {
-      cssClass: 'background'
+      cssClass: "background"
     });
 
     _this.classList.add(_this.cssClass);
@@ -3818,7 +4053,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],17:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],20:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3865,7 +4100,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, Button);
 
     _this = _super.call(this, {
-      cssClass: 'button'
+      cssClass: "button"
     });
 
     _this.addEventListener("mousedown", function (e) {
@@ -3939,7 +4174,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],18:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],21:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -3994,7 +4229,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, Check);
 
     _this = _super.call(this, _IUI.IUI.extend(properties, {
-      cssClass: 'check'
+      cssClass: "check"
     }));
 
     _this._register("check");
@@ -4078,7 +4313,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],19:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],22:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4091,6 +4326,8 @@ exports["default"] = void 0;
 var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 
 var _IUI = require("../Core/IUI.js");
+
+var _RefsCollection = _interopRequireDefault(require("../Core/RefsCollection.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -4123,10 +4360,16 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
   var _super = _createSuper(CodePreview);
 
-  function CodePreview(properties) {
+  function CodePreview() {
+    var _this;
+
     _classCallCheck(this, CodePreview);
 
-    return _super.call(this);
+    _this = _super.call(this);
+    _this.refs = new _RefsCollection["default"](_assertThisInitialized(_this));
+    _this._code = _this.innerHTML.trim();
+    _this.textContent = "";
+    return _this;
   }
 
   _createClass(CodePreview, [{
@@ -4138,9 +4381,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (this.hasAttribute("debug")) debugger;
-                this._code = this.innerHTML.trim();
-                this.textContent = ''; // create elements
+                if (this.hasAttribute("debug")) debugger; //this._code = this.innerHTML.trim();
+                //this.textContent = '';
+                // create elements
 
                 this.bar = document.createElement("div");
                 this.bar.className = this.cssClass + "-bar";
@@ -4153,8 +4396,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this.editor.setAttribute("skip", true);
                 self = this;
                 this.editor.addEventListener("input", function () {
-                  self._code = self.editor.innerText.trim();
-                  self.update();
+                  self._code = self.editor.textContent.trim();
+                  self.updatePreview();
                 }, false);
                 this.preview = document.createElement("div");
                 this.preview.className = this.cssClass + "-preview"; //this.preview.setAttribute(":content", "");
@@ -4163,11 +4406,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this.content.append(this.preview);
                 this.append(this.bar);
                 this.append(this.content);
-                this.field = this.getAttribute("field");
-                _context.next = 23;
-                return this.update();
+                this.field = this.getAttribute("field"); //await this.updatePreview();
 
-              case 23:
+              case 19:
               case "end":
                 return _context.stop();
             }
@@ -4182,40 +4423,17 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       return create;
     }()
   }, {
-    key: "update",
+    key: "created",
     value: function () {
-      var _update = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+      var _created = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!this._updating) {
-                  _context2.next = 2;
-                  break;
-                }
-
-                return _context2.abrupt("return");
+                _context2.next = 2;
+                return this.updatePreview();
 
               case 2:
-                this._updating = true;
-                this.preview.innerHTML = this._code;
-                _context2.next = 6;
-                return _IUI.IUI.create(this.preview);
-
-              case 6:
-                _context2.next = 8;
-                return _IUI.IUI.created(this.preview);
-
-              case 8:
-                _IUI.IUI.bind(this.preview, this.preview, "preview");
-
-                _context2.next = 11;
-                return _IUI.IUI.render(this.preview, this._data, true);
-
-              case 11:
-                this._updating = false;
-
-              case 12:
               case "end":
                 return _context2.stop();
             }
@@ -4223,11 +4441,79 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         }, _callee2, this);
       }));
 
-      function update() {
-        return _update.apply(this, arguments);
+      function created() {
+        return _created.apply(this, arguments);
       }
 
-      return update;
+      return created;
+    }()
+  }, {
+    key: "scope",
+    get: function get() {
+      return {
+        view: this,
+        refs: this.refs
+      };
+    }
+  }, {
+    key: "updatePreview",
+    value: function () {
+      var _updatePreview = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var _window$app;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!this._updating) {
+                  _context3.next = 2;
+                  break;
+                }
+
+                return _context3.abrupt("return");
+
+              case 2:
+                this._updating = true;
+                this.preview.innerHTML = this._code; //this.editor.innerHTML = hljs.highlightAuto(this._code).value;
+                //        this.editor.innerHTML = hljs.highlight(this._code, {language: 'html'}).value
+                //     this.editor.innerHTML = hljs.highlightElement(this.editor, {language: 'html'}).value;
+
+                if (!((_window$app = window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
+                  _context3.next = 13;
+                  break;
+                }
+
+                _context3.next = 7;
+                return _IUI.IUI.create(this.preview);
+
+              case 7:
+                _context3.next = 9;
+                return _IUI.IUI.created(this.preview);
+
+              case 9:
+                _IUI.IUI.bind(this.preview, true, "preview", this.scope);
+
+                this.refs._build();
+
+                _context3.next = 13;
+                return _IUI.IUI.render(this.preview, this._data, true);
+
+              case 13:
+                this._updating = false;
+
+              case 14:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function updatePreview() {
+        return _updatePreview.apply(this, arguments);
+      }
+
+      return updatePreview;
     }()
   }]);
 
@@ -4236,7 +4522,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],20:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Core/RefsCollection.js":7}],23:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4325,7 +4611,6 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       this.nextMonth = document.createElement("div");
       this.nextMonth.className = this.cssClass + "-next";
       this.previousMonth = document.createElement("div");
-      ;
       this.previousMonth.className = this.cssClass + "-previous";
       this.month.appendChild(this.previousMonth);
       this.month.appendChild(this.monthName);
@@ -4397,23 +4682,23 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       this.calendar.appendChild(this.tools);
       this.calendar.appendChild(this.calendarContent);
       /*
-      this.minutes = document.createElement("div");
-      this.minutes.className = this.cssClass + "-clock";
-        for (var i = 1; i < 61; i++) {
-          var range = document.createElement("div");
-            range.className = this.cssClass + "-time";
-          range.innerHTML = i;
-          this.minutes.appendChild(range);
-        }
-        this.hours = document.createElement("div");
-      this.hours.className = this.cssClass + "-clock";
-        for (var i = 1; i < 25; i++) {
-          var range = document.createElement("div");
-            range.className = this.cssClass + "-time";
-          range.innerHTML = i;
-          this.hours.appendChild(range);
+        this.minutes = document.createElement("div");
+        this.minutes.className = this.cssClass + "-clock";
+         for (var i = 1; i < 61; i++) {
+            var range = document.createElement("div");
+             range.className = this.cssClass + "-time";
+            range.innerHTML = i;
+            this.minutes.appendChild(range);
+         }
+         this.hours = document.createElement("div");
+        this.hours.className = this.cssClass + "-clock";
+         for (var i = 1; i < 25; i++) {
+            var range = document.createElement("div");
+             range.className = this.cssClass + "-time";
+            range.innerHTML = i;
+            this.hours.appendChild(range);
           }
-      */
+        */
 
       this.clock = document.createElement("div");
       this.clock.className = this.cssClass + "-clock";
@@ -4438,7 +4723,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
           self.render();
         });
       } //this.timeList = document.createElement("div");
-      //this.timeList = 
+      //this.timeList =
 
 
       this.appendChild(this.calendar);
@@ -4458,7 +4743,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       this.layout = {
         day: {
           formatter: function formatter(index) {
-            return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index]; //return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][index];
+            return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][index]; //return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][index];
           }
         },
         month: {
@@ -4590,7 +4875,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],21:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],24:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4706,17 +4991,17 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIWind
           self._startDragging(e);
         });
       } else {
-        this.header.addEventListener('mousedown', function (e) {
+        this.header.addEventListener("mousedown", function (e) {
           self._startDragging(e);
         });
       }
 
-      document.addEventListener('mouseup', function () {
+      document.addEventListener("mouseup", function () {
         self._stopDragging();
 
         self._stopExpanding();
       });
-      document.addEventListener('mousemove', function (e) {
+      document.addEventListener("mousemove", function (e) {
         if (self._dragging) self._drag(e);else if (self._expanding) self._expand(e);
       });
       this.addEventListener("mousedown", function (e) {
@@ -4853,13 +5138,13 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIWind
         /*
         IUI._nav_list.pop
         if (IUI._previousWindow)
-        	if (IUI._previousWindow.visible)
-        		IUI._previousWindow.focus();
-        	else
-        		window.location.hash = "";
+        if (IUI._previousWindow.visible)
+        IUI._previousWindow.focus();
         else
-        	window.location.hash = "";
-        	*/
+        window.location.hash = "";
+        else
+        window.location.hash = "";
+        */
       }
 
       this._emit("visible", {
@@ -4901,7 +5186,7 @@ document.addEventListener("keydown", function (e) {
   }
 }); //IUI.module("dialog", IUIDialog, function(el, modal, properties){ return new IUIDialog(el, modal, properties);});
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Window.js":33}],22:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Window.js":36}],25:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -4956,7 +5241,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, DropDown);
 
     _this = _super.call(this, {
-      "direction": "down"
+      direction: "down"
     });
 
     var self = _assertThisInitialized(_this);
@@ -4987,21 +5272,21 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
     _IUI.IUI._menus.push(_assertThisInitialized(_this));
     /*
-    document.body.addEventListener("click", function(e)
-        {
-            if (!self.visible)
-                return;
-    	
-            var x = e.target;
-            do {
-                if (x == self.menu || x == self.el)
-                    return;
-            } while (x = x.parentNode)
-        	
-            if (e.target.id == "iui_app_background")
-                return;
-                  self.setVisible(false);
-        });*/
+      document.body.addEventListener("click", function(e)
+          {
+              if (!self.visible)
+                  return;
+      	
+              var x = e.target;
+              do {
+                  if (x == self.menu || x == self.el)
+                      return;
+              } while (x = x.parentNode)
+          	
+              if (e.target.id == "iui_app_background")
+                  return;
+                   self.setVisible(false);
+          });*/
 
 
     return _this;
@@ -5138,7 +5423,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],23:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],26:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5234,15 +5519,15 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       var self = this;
       win.setAttribute("draggable", true);
       win.addEventListener("dragstart", function (e) {
-        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.effectAllowed = "move";
         self._dragItem = this;
-        this.classList.add(self.cssClass + '-window-drag');
+        this.classList.add(self.cssClass + "-window-drag");
       });
       win.addEventListener("dragover", function (e) {
         if (self._dragItem) {
           e.preventDefault();
-          this.classList.add(self.cssClass + '-window-over');
-          e.dataTransfer.dropEffect = 'move'; // See the section on the DataTransfer object.
+          this.classList.add(self.cssClass + "-window-over");
+          e.dataTransfer.dropEffect = "move"; // See the section on the DataTransfer object.
         }
       });
       win.addEventListener("dragleave", function (e) {
@@ -5250,7 +5535,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         this.classList.remove(self.cssClass + "-window-over");
       });
       win.addEventListener("dragend", function (e) {
-        this.classList.remove(self.cssClass + '-window-drag');
+        this.classList.remove(self.cssClass + "-window-drag");
         self._dragItem = null;
       });
       win.addEventListener("drop", function (e) {
@@ -5290,15 +5575,15 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
       li.setAttribute("draggable", true);
       li.addEventListener("dragstart", function (e) {
-        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.effectAllowed = "move";
         self._dragItem = this;
-        this.classList.add(self.cssClass + '-window-drag');
+        this.classList.add(self.cssClass + "-window-drag");
       });
       li.addEventListener("dragover", function (e) {
         if (self._dragItem) {
           e.preventDefault();
-          this.classList.add(self.cssClass + '-window-over');
-          e.dataTransfer.dropEffect = 'move'; // See the section on the DataTransfer object.
+          this.classList.add(self.cssClass + "-window-over");
+          e.dataTransfer.dropEffect = "move"; // See the section on the DataTransfer object.
         }
       });
       li.addEventListener("dragleave", function (e) {
@@ -5306,7 +5591,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         this.classList.remove(self.cssClass + "-window-over");
       });
       li.addEventListener("dragend", function (e) {
-        this.classList.remove(self.cssClass + '-window-drag');
+        this.classList.remove(self.cssClass + "-window-drag");
         self._dragItem = null;
       });
       li.addEventListener("drop", function (e) {
@@ -5377,7 +5662,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],24:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],27:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5600,15 +5885,15 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _get(_getPrototypeOf(Input.prototype), "setData", this).call(this, value);
 
               case 2:
-                if (this.type == "checkbox") this._input.checked = value;else if (this.type == "date") this._input.value = value != null ? value.toISOString().slice(0, 10) : value;else if (this.type == null || this.type == "text" || this.type == "search" || this.type == "password") this._input.value = value == null ? '' : value;else this._input.value = value;
+                if (this.type == "checkbox") this._input.checked = value;else if (this.type == "date") this._input.value = value != null ? value.toISOString().slice(0, 10) : value;else if (this.type == null || this.type == "text" || this.type == "search" || this.type == "password") this._input.value = value == null ? "" : value;else this._input.value = value;
                 if (this._checkValidity() && this.isAuto) this.revert();
                 /*
-                await super.setData(value);
-                if (value != null && this.field != null)
-                    this.value = value[this.field];
-                else if (this.field != null)
-                    this.value = null;
-                    */
+                  await super.setData(value);
+                  if (value != null && this.field != null)
+                      this.value = value[this.field];
+                  else if (this.field != null)
+                      this.value = null;
+                      */
 
               case 4:
               case "end":
@@ -5704,7 +5989,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
             return new Date(this._input.value);
         else if (this.type == "file")
         {
-          }
+         }
         else
             return this._input.value;
     }
@@ -5712,7 +5997,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     // set value(value) {
     //     if (this.type == "checkbox")
     //         this._input.checked = value;
-    //     else if (this.type == "date") 
+    //     else if (this.type == "date")
     //         this._input.value = value != null ? value.toISOString().slice(0, 10) : value;
     //     else if (this.type == null || this.type == "text")
     //         this._input.value = value == null ? '' : value;
@@ -5728,7 +6013,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],25:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],28:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5782,10 +6067,11 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     value: function create() {
       var self = this;
       window.router.on("route", function (e) {
-        self.textContent = ''; // clear everything
+        self.textContent = ""; // clear everything
 
-        let route = e.route;
-        let current = document.createElement("div");
+        var html = "";
+        var route = e.route;
+        var current = document.createElement("div");
         current.innerHTML = route.caption;
         self.append(current);
 
@@ -5806,7 +6092,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"../Router/Link.js":12}],26:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Router/Link.js":15}],29:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5993,7 +6279,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],27:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],30:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -6240,7 +6526,6 @@ var Menu = /*#__PURE__*/function (_IUIElement) {
 }(_IUIElement2["default"]);
 
 exports["default"] = Menu;
-;
 
 _IUI.IUI.module(Menu);
 
@@ -6277,7 +6562,7 @@ window.addEventListener("load", function () {
   document.body.addEventListener("touchstart", handler);
 });
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Background.js":16,"./DropDown.js":22}],28:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Background.js":19,"./DropDown.js":25}],31:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -6339,7 +6624,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         var el = this._container.children[i];
 
         if (el.title.toLowerCase().includes(text)) {
-          el.text.innerHTML = el.title.replace(new RegExp(text, 'gi'), function (str) {
+          el.text.innerHTML = el.title.replace(new RegExp(text, "gi"), function (str) {
             return "<span>".concat(str, "</span>");
           });
           el.style.display = "";
@@ -6373,7 +6658,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         var link = item.link;
 
         if (link.title.toLowerCase().includes(text)) {
-          link.text.innerHTML = link.title.replace(new RegExp(text, 'gi'), function (str) {
+          link.text.innerHTML = link.title.replace(new RegExp(text, "gi"), function (str) {
             return "<span>".concat(str, "</span>");
           });
           item.style.display = ""; //if (within != null)
@@ -6400,7 +6685,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     value: function expand_old(link, value) {
       var next = link; // = link.nextElementSibling;
 
-      var level = parseInt(link.getAttribute("data-level")); // save 
+      var level = parseInt(link.getAttribute("data-level")); // save
       //window.localStorage.setItem("iui.navbar/" + link.link, value);
 
       if (link.expand && link.expand.checked != value) link.expand.checked = value;
@@ -6555,7 +6840,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"../Router/Link.js":12,"./Check.js":18}],29:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Router/Link.js":15,"./Check.js":21}],32:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -6626,7 +6911,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       },
       //_formatter: (x) => x,
       _autocomplete: false,
-      cssClass: 'select'
+      cssClass: "select"
     });
 
     _this._register("select");
@@ -6844,7 +7129,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return this.menu.create();
 
               case 31:
-                _IUI.IUI.bind(this.menu, this, "menu");
+                _IUI.IUI.bind(this.menu, false, "menu");
 
                 _context2.next = 34;
                 return _IUI.IUI.create(this.menu);
@@ -6886,7 +7171,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     }
     /*
     set(item) {
-          if (this.autocomplete != undefined) {
+         if (this.autocomplete != undefined) {
             if (item != null)
                 this.textbox.value = this.layout.text.formatter ? this.layout.text.formatter(item[this.layout.text.field], item) : item[this.layout.text.field];
             else
@@ -6897,7 +7182,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
             else
                 this.label.innerHTML = "";
         }
-          this.selected = item;
+         this.selected = item;
         this._emit("select", item);
     }
     */
@@ -7061,17 +7346,17 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     value: function _computeMenuOuterWidth() {
       return this.menu.offsetWidth - this.menu.clientWidth;
       /*
-      var style = window.getComputedStyle(this.menu.el, null);
-      var paddingLeft = style.getPropertyValue('padding-left');
-      var paddingRight = style.getPropertyValue('padding-right');
-      var borderLeft = style.getPropertyValue('border-left');
-      var borderRight = style.getPropertyValue('border-right');
-        paddingLeft = parseInt(paddingLeft.substr(0, paddingLeft.length - 2));
-      paddingRight = parseInt(paddingRight.substr(0, paddingRight.length - 2));
-      borderLeft = parseInt(borderLeft.substr(0, borderLeft.length - 2));
-      borderRight = parseInt(borderRight.substr(0, borderRight.length - 2));
-        return paddingLeft + paddingRight + borderLeft + borderRight;
-      */
+        var style = window.getComputedStyle(this.menu.el, null);
+        var paddingLeft = style.getPropertyValue('padding-left');
+        var paddingRight = style.getPropertyValue('padding-right');
+        var borderLeft = style.getPropertyValue('border-left');
+        var borderRight = style.getPropertyValue('border-right');
+         paddingLeft = parseInt(paddingLeft.substr(0, paddingLeft.length - 2));
+        paddingRight = parseInt(paddingRight.substr(0, paddingRight.length - 2));
+        borderLeft = parseInt(borderLeft.substr(0, borderLeft.length - 2));
+        borderRight = parseInt(borderRight.substr(0, borderRight.length - 2));
+         return paddingLeft + paddingRight + borderLeft + borderRight;
+        */
     }
   }]);
 
@@ -7080,7 +7365,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"../Data/Layout.js":8,"../Data/Repeat.js":10,"../UI/Menu.js":27}],30:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":11,"../Data/Repeat.js":13,"../UI/Menu.js":30}],33:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -7147,7 +7432,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],31:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],34:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -7287,7 +7572,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
           self._resizingColumnWidth = cell.clientWidth;
           self._resizingTableWidth = self.table.clientWidth;
           self._resizing = true;
-          self._resizingColumn = cell; // self.headers.indexOf(cell); 
+          self._resizingColumn = cell; // self.headers.indexOf(cell);
 
           document.onselectstart = function () {
             return false;
@@ -7485,14 +7770,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
           self.selectBox.style.height = "0px";
         }
       });
-      document.addEventListener('mouseup', function () {
+      document.addEventListener("mouseup", function () {
         self._resizing = false;
 
         document.onselectstart = function () {
           return true;
         };
       });
-      document.addEventListener('mousemove', function (e) {
+      document.addEventListener("mousemove", function (e) {
         if (self._resizing) {
           var x = e.pageX || e.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft); //var y = e.pageY || e.clientY + (document.documentElement.scrollTop ?
           //  document.documentElement.scrollTop :
@@ -7515,9 +7800,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
             tw = 0;
             for(var i = 0; i < self.headers.length; i++)
             {
-            	if (i != self.resizingColumn)
-            		tw += self.headers[i].clientWidth;
-            	//self.headers[self.resizingColumn];
+            if (i != self.resizingColumn)
+            tw += self.headers[i].clientWidth;
+            //self.headers[self.resizingColumn];
             }
             */
             //tw += cw;
@@ -7660,7 +7945,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
           if (button.length > 0) {
             // hide ?
-            if (button[0].getAttribute("data-expand") == '0') {
+            if (button[0].getAttribute("data-expand") == "0") {
               for (i = i + 1; i < this.body.rows.length; i++) {
                 var subRow = this.body.rows[i];
                 var l = parseInt(subRow.getAttribute("data-level"));
@@ -7814,7 +8099,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       button.addEventListener("click", function () {
         var eState = this.getAttribute("data-expand");
 
-        if (eState == '2') {
+        if (eState == "2") {
           var ev = {
             button: button,
             item: item,
@@ -7827,7 +8112,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
               this.setAttribute("data-expand", 2);
             }
           };
-          this.setAttribute("data-expand", 3); // raise event 
+          this.setAttribute("data-expand", 3); // raise event
 
           self._emit("expand", ev);
         } else if (eState == "0") {
@@ -7840,8 +8125,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     }
   }, {
     key: "add",
-    value: function add(item, dynamicLoading) //fast)
-    {
+    value: function add(item, dynamicLoading //fast)
+    ) {
       this.list.push(item);
       var self = this;
       var parents = this.parents_getter(item);
@@ -7862,7 +8147,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               newRow = this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, false, parentRow.rowIndex);
             } else {
-              newRow = this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, treeButton[0].getAttribute("data-expand") == '1', parentRow.rowIndex);
+              newRow = this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, treeButton[0].getAttribute("data-expand") == "1", parentRow.rowIndex);
             }
           } // perhaps parent row depends on children
 
@@ -7917,7 +8202,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         var cl = column.node.cloneNode(true); // tr.insertCell();
         //this._make_bindings(cl)
 
-        _IUI.IUI.bind(cl, _this3, "table");
+        _IUI.IUI.bind(cl, false, "table", _IUI.IUI.extend(_this3.__i_bindings, {
+          index: i
+        }, true));
 
         tr.appendChild(cl);
         if (cl.dataMap != null) cl.dataMap.render(item).then(function () {
@@ -8249,7 +8536,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     //			var column = this.layout[i];
     //			if (column.formatter)
     //			{
-    //				var rt = column.formatter(item[column.field], item, row.cells[i]);							
+    //				var rt = column.formatter(item[column.field], item, row.cells[i]);
     //				if (rt instanceof Element)
     //				{
     //					row.cells[i].innerHTML = "";
@@ -8326,7 +8613,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                   this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, false, parentRow.rowIndex);
                 } else {
-                  this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, treeButton[0].getAttribute("data-expand") == '1', parentRow.rowIndex);
+                  this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, treeButton[0].getAttribute("data-expand") == "1", parentRow.rowIndex);
                 }
               }
             }
@@ -8421,7 +8708,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"../Data/Layout.js":8}],32:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":11}],35:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -8604,7 +8891,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     key: "select",
     value: function select(item) {
       var tab;
-      if (item instanceof _Tab["default"]) tab = item;else if (typeof o === 'string' || o instanceof String) for (var i = 0; i < this.list.length; i++) {
+      if (item instanceof _Tab["default"]) tab = item;else if (typeof o === "string" || o instanceof String) for (var i = 0; i < this.list.length; i++) {
         if (this.list[i].id == item) {
           tab = item;
           break;
@@ -8639,7 +8926,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4,"./Check.js":18,"./Tab.js":30}],33:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Check.js":21,"./Tab.js":33}],36:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -8785,34 +9072,34 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIElem
     /*
     setFocus(v) {
         this.focus = v;
-          var self = this;
-          if (v) {
+         var self = this;
+         if (v) {
             this.classList.add(this.cssClass + "-active");
-              return;
+             return;
             var last = IUI._nav_list[IUI._nav_list.length - 1];
-              if (last && last != this) {
+             if (last && last != this) {
                 last.classList.remove(this.cssClass + "-active");
                 last.focus = false;
             }
-              if (last != this) {
+             if (last != this) {
                 if (window.location.hash != "#" + this._uid) {
                     IUI._nav_ignore = true;
                     window.location.hash = this._uid;
                     //window.location.replace("#" + this._uid);
                 }
             }
-              var i = IUI._nav_list.indexOf(this);
+             var i = IUI._nav_list.indexOf(this);
             if (i > -1)
                 IUI._nav_list.splice(i, 1);
-              IUI._nav_list.push(this);
-          }
+             IUI._nav_list.push(this);
+         }
         else {
             var last = IUI._nav_list[IUI._nav_list.length - 1];
             if (last == this) {
                 IUI._nav_list.pop();
                 last = IUI._nav_list.pop();
-                  IUI._nav_list.push(this);
-                    if (last) {
+                 IUI._nav_list.push(this);
+                  if (last) {
                     last.classList.add(this.cssClass + "-active");
                     last.focus = true;
                     IUI._nav_list.push(last);
@@ -8827,15 +9114,15 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIElem
                         IUI._nav_ignore = true;
                         var x = window.scrollX;
                         var y = window.scrollY;
-                          window.location.hash = "#";
-                          window.scrollTo(x, y);
+                         window.location.hash = "#";
+                         window.scrollTo(x, y);
                         //window.location.replace("#");
-                      }
+                     }
                 }
             }
-              this.classList.remove(this.cssClass + "-active");
-          }
-          return this;
+             this.classList.remove(this.cssClass + "-active");
+         }
+         return this;
     }
     */
 
@@ -8968,7 +9255,7 @@ window.addEventListener("hashchange", function(e){
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":3,"../Core/IUIElement.js":4}],34:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],37:[function(require,module,exports){
 "use strict";
 
 var _IUI = require("./Core/IUI.js");
@@ -9060,6 +9347,9 @@ window.addEventListener("load", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/reg
           return _IUI.IUI.created(document.body);
 
         case 4:
+          window.router.navigate(window.router.origin);
+
+        case 5:
         case "end":
           return _context.stop();
       }
@@ -9068,4 +9358,4 @@ window.addEventListener("load", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/reg
 })));
 window.iui = _IUI.iui;
 
-},{"./Core/App.js":1,"./Core/IUI.js":3,"./Core/IUIElement.js":4,"./Data/Field.js":5,"./Data/Form.js":6,"./Data/Include.js":7,"./Data/Layout.js":8,"./Data/Repeat.js":10,"./Data/TableRow.js":11,"./Router/Link.js":12,"./Router/Route.js":13,"./Router/Router.js":14,"./Router/Target.js":15,"./UI/Background.js":16,"./UI/Button.js":17,"./UI/Check.js":18,"./UI/CodePreview.js":19,"./UI/DateTimePicker.js":20,"./UI/Dialog.js":21,"./UI/DropDown.js":22,"./UI/Grid.js":23,"./UI/Input.js":24,"./UI/Location.js":25,"./UI/Login.js":26,"./UI/Menu.js":27,"./UI/Navbar.js":28,"./UI/Select.js":29,"./UI/Tab.js":30,"./UI/Table.js":31,"./UI/Tabs.js":32,"./UI/Window.js":33}]},{},[34]);
+},{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":8,"./Data/Form.js":9,"./Data/Include.js":10,"./Data/Layout.js":11,"./Data/Repeat.js":13,"./Data/TableRow.js":14,"./Router/Link.js":15,"./Router/Route.js":16,"./Router/Router.js":17,"./Router/Target.js":18,"./UI/Background.js":19,"./UI/Button.js":20,"./UI/Check.js":21,"./UI/CodePreview.js":22,"./UI/DateTimePicker.js":23,"./UI/Dialog.js":24,"./UI/DropDown.js":25,"./UI/Grid.js":26,"./UI/Input.js":27,"./UI/Location.js":28,"./UI/Login.js":29,"./UI/Menu.js":30,"./UI/Navbar.js":31,"./UI/Select.js":32,"./UI/Tab.js":33,"./UI/Table.js":34,"./UI/Tabs.js":35,"./UI/Window.js":36}]},{},[37]);
