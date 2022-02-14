@@ -2085,12 +2085,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                this.original = value; //var copy = {};
-                //Object.assign(copy, value);
+                this.original = value;
 
-                _get(_getPrototypeOf(Form.prototype), "setData", this).call(this, new _Modifiable["default"](this.original)); //  Form._copy(this.original));
-                //super.setData({ ...this.original });
-
+                _get(_getPrototypeOf(Form.prototype), "setData", this).call(this, new _Modifiable["default"](this.original, true));
 
               case 2:
               case "end":
@@ -2544,10 +2541,12 @@ var Modifiable = /*#__PURE__*/function () {
   function Modifiable(original) {
     var _this = this;
 
+    var copy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
     _classCallCheck(this, Modifiable);
 
     this._events = {};
-    this._data = Modifiable._copy(original);
+    this._data = copy ? Modifiable._copy(original) : original;
     this._original = original;
 
     var _loop = function _loop(p) {
@@ -3217,7 +3216,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         parent = parent.parent;
       }
 
-      return link;
+      return (window.router.base ? window.router.base + "/" : "") + link;
     }
   }, {
     key: "name",
@@ -3289,7 +3288,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                   break;
                 }
 
-                _src = this.getAttribute("src").replace(/^\/+|\/+$/g, '');
+                _src = this.getAttribute("src").replace(/^\/+|\/+$/g, "");
                 _context2.next = 5;
                 return fetch(_src);
 
@@ -3504,8 +3503,15 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
   }, {
     key: "getRoute",
     value: function getRoute(url, data) {
+      /**
+       * @type {String[]}
+       */
       var p = url.split("/");
       var searchRoutes = this.routes;
+
+      if (p[0] == this.base) {
+        p.shift();
+      }
 
       for (var i = 0; i < p.length; i++) {
         var route = this._routeInPath(p[i], searchRoutes);
@@ -3517,7 +3523,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
           if (route.dst == null) return [route, route];else {
             var dst = route.dst instanceof Function ? route.dst(data) : route.dst;
 
-            var _url = dst.replace(/^[/]*(.*?)[/]*$/g, '$1').trim();
+            var _url = dst.replace(/^[/]*(.*?)[/]*$/g, "$1").trim();
 
             return [route, this.getRoute(_url)[1]];
           }
@@ -3550,14 +3556,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
   }, {
     key: "_fromQuery",
     value: function _fromQuery(q) {
-      var kv = q.replace("&&", "\0").split('&');
+      var kv = q.replace("&&", "\0").split("&");
       var rt = {};
 
       for (var i = 0; i < kv.length; i++) {
-        var d = kv[i].replace("\0", "&").split('=', 2);
-        var v = decodeURI(d[1] || ''); //decodeURIComponent(d[1] || '');
+        var d = kv[i].replace("\0", "&").split("=", 2);
+        var v = decodeURI(d[1] || ""); //decodeURIComponent(d[1] || '');
 
-        if (v != null && v.trim() != '' && !isNaN(v)) v = new Number(v);
+        if (v != null && v.trim() != "" && !isNaN(v)) v = new Number(v);
         rt[d[0]] = v;
       }
 
@@ -3669,7 +3675,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
 
                 target.show(viewRoute, this.active);
                 viewRoute.set(true);
-                this.active = viewRoute; //{ url: "/", data: null, target: null }; 
+                this.active = viewRoute; //{ url: "/", data: null, target: null };
 
                 this._emit("route", {
                   route: stateRoute
@@ -3765,6 +3771,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
     value: function create() {
       // save origin
       this.origin = window.location.pathname + window.location.search;
+      this.base = this.getAttribute("base") || "";
     }
   }, {
     key: "destroy",
@@ -3785,8 +3792,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
         }
       }
 
-      this._emit("created"); //console.log("Router created", this);
+      this._emit("created");
 
+      this.navigate(this.origin); //console.log("Router created", this);
     }
   }, {
     key: "connectedCallback",
@@ -5876,7 +5884,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _get(_getPrototypeOf(Input.prototype), "setData", this).call(this, value);
 
               case 2:
-                if (this.type == "checkbox") this._input.checked = value;else if (this.type == "date") this._input.value = value != null ? value.toISOString().slice(0, 10) : value;else if (this.type == null || this.type == "text" || this.type == "search" || this.type == "password") this._input.value = value == null ? '' : value;else this._input.value = value;
+                if (this.type == "checkbox") this._input.checked = value;else if (this.type == "date") this._input.value = value != null ? value.toISOString().slice(0, 10) : value;else if (this.type == null || this.type == "text" || this.type == "search" || this.type == "password") this._input.value = value == null ? '' : value;else if (this.type == "file") {// can't set value on file input
+                } else this._input.value = value;
                 if (this._checkValidity() && this.isAuto) this.revert();
                 /*
                 await super.setData(value);
@@ -5884,7 +5893,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                     this.value = value[this.field];
                 else if (this.field != null)
                     this.value = null;
-                    */
+                */
 
               case 4:
               case "end":
@@ -9312,6 +9321,10 @@ require("./UI/Location.js");
 
 require("./UI/CodePreview.js");
 
+var _Modifiable = _interopRequireDefault(require("./Data/Modifiable.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -9346,5 +9359,6 @@ window.addEventListener("load", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/reg
   }, _callee);
 })));
 window.iui = _IUI.iui;
+window.Modifiable = _Modifiable["default"];
 
-},{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":7,"./Data/Form.js":8,"./Data/Include.js":9,"./Data/Layout.js":10,"./Data/Repeat.js":12,"./Data/TableRow.js":13,"./Router/Link.js":14,"./Router/Route.js":15,"./Router/Router.js":16,"./Router/Target.js":17,"./UI/Background.js":18,"./UI/Button.js":19,"./UI/Check.js":20,"./UI/CodePreview.js":21,"./UI/DateTimePicker.js":22,"./UI/Dialog.js":23,"./UI/DropDown.js":24,"./UI/Grid.js":25,"./UI/Input.js":26,"./UI/Location.js":27,"./UI/Login.js":28,"./UI/Menu.js":29,"./UI/Navbar.js":30,"./UI/Select.js":31,"./UI/Tab.js":32,"./UI/Table.js":33,"./UI/Tabs.js":34,"./UI/Window.js":35}]},{},[36]);
+},{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":7,"./Data/Form.js":8,"./Data/Include.js":9,"./Data/Layout.js":10,"./Data/Modifiable.js":11,"./Data/Repeat.js":12,"./Data/TableRow.js":13,"./Router/Link.js":14,"./Router/Route.js":15,"./Router/Router.js":16,"./Router/Target.js":17,"./UI/Background.js":18,"./UI/Button.js":19,"./UI/Check.js":20,"./UI/CodePreview.js":21,"./UI/DateTimePicker.js":22,"./UI/Dialog.js":23,"./UI/DropDown.js":24,"./UI/Grid.js":25,"./UI/Input.js":26,"./UI/Location.js":27,"./UI/Login.js":28,"./UI/Menu.js":29,"./UI/Navbar.js":30,"./UI/Select.js":31,"./UI/Tab.js":32,"./UI/Table.js":33,"./UI/Tabs.js":34,"./UI/Window.js":35}]},{},[36]);
