@@ -57,7 +57,7 @@ export default IUI.module(class Input extends IUIElement {
         this._span.innerHTML =  this.getAttribute("caption");
 
         this._input = document.createElement("input");
-        this._input.placeholder = " ";
+        this._input.placeholder = this.getAttribute("placeholder") || "";
 
         let self = this;
 
