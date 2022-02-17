@@ -1,6 +1,5 @@
 import { IUI, iui } from "./Core/IUI.js";
 
- 
 import "./Core/IUIElement.js";
 import "./Core/App.js";
 
@@ -39,8 +38,8 @@ import "./UI/Select.js";
 import "./UI/DropDown.js";
 import "./UI/Grid.js";
 
-import './UI/Location.js';
-import './UI/CodePreview.js';
+import "./UI/Location.js";
+import "./UI/CodePreview.js";
 import Modifiable from "./Data/Modifiable.js";
 
 window.addEventListener("beforeprint", e => {
@@ -56,9 +55,10 @@ window.addEventListener("afterprint", e => {
 });
 
 window.addEventListener("load", async function () {
-    await IUI.create(document.body);
-    await IUI.created(document.body);
+  await IUI.create(document.body);
+  await IUI.created(document.body);
 
+  console.log("IUI.create()");
 });
 
 window.iui = iui;
