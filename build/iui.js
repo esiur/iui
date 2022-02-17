@@ -5777,7 +5777,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       this._span = document.createElement("span");
       this._span.innerHTML = this.getAttribute("caption");
       this._input = document.createElement("input");
-      this._input.placeholder = " ";
+      this._input.placeholder = this.getAttribute("placeholder") || "";
       var self = this;
 
       this._input.addEventListener("input", function () {
