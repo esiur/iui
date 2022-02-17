@@ -116,8 +116,6 @@ export default IUI.module(
     async navigate(url, data, target, state, dataToQuery = true) {
       let q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
 
-      //debugger;
-
       var path;
 
       // do we have a query string ?
@@ -180,7 +178,7 @@ export default IUI.module(
       if (!(target instanceof Target)) target = this;
 
       if (state == null) {
-        let id = Math.random().toString(36).substr(2, 10);
+        let id = Math.random().toString(36).substring(2, 12);
         state = { id, url, data, target, stateRoute, viewRoute };
         this._states.set(id, state);
         history.pushState(
@@ -250,9 +248,11 @@ export default IUI.module(
     create() {
       // save origin
       this.origin = window.location.pathname + window.location.search;
-      this.base = this.getAttribute("base") || "";
     }
 
+    get base() {
+      return this.getAttribute("base") || "";
+    }
     destroy() {
       console.log("Destroyed", this);
     }
@@ -274,7 +274,7 @@ export default IUI.module(
       }
 
       this._emit("created");
-      this.navigate(this.origin);
+      // this.navigate(this.origin);
       //console.log("Router created", this);
     }
 
