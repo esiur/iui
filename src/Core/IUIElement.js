@@ -18,6 +18,7 @@ export default class IUIElement extends HTMLElement {
                 }
 
         this._register("data");
+        this._register("rendered");
     }
 
     static get moduleName(){ 
@@ -57,6 +58,7 @@ export default class IUIElement extends HTMLElement {
         this._data = value;
         this._emit("data", {data: value});
         await IUI.render(this, value);
+        this._emit("rendered", {data: value});
     }
 
 
