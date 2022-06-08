@@ -7,7 +7,7 @@ export default IUI.module(class Include extends IUIElement
     constructor()
     {
         super();
-        this.refs = new RefsCollection();
+        this.refs = new RefsCollection(this);
     }
 
     get src(){

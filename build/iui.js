@@ -2220,7 +2220,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     _classCallCheck(this, Include);
 
     _this = _super.call(this);
-    _this.refs = new _RefsCollection["default"]();
+    _this.refs = new _RefsCollection["default"](_assertThisInitialized(_this));
     return _this;
   }
 
@@ -3589,7 +3589,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
             switch (_context.prev = _context.next) {
               case 0:
                 dataToQuery = _args.length > 4 && _args[4] !== undefined ? _args[4] : true;
-                q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/); //debugger;
+                q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
 
                 // do we have a query string ?
                 if (q[2] !== undefined) {
@@ -3655,7 +3655,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 if (!(target instanceof _Target2["default"])) target = this;
 
                 if (state == null) {
-                  id = Math.random().toString(36).substr(2, 10);
+                  id = Math.random().toString(36).substring(2, 12);
                   state = {
                     id: id,
                     url: url,
@@ -3771,7 +3771,11 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
     value: function create() {
       // save origin
       this.origin = window.location.pathname + window.location.search;
-      this.base = this.getAttribute("base") || "";
+    }
+  }, {
+    key: "base",
+    get: function get() {
+      return this.getAttribute("base") || "";
     }
   }, {
     key: "destroy",
@@ -3792,9 +3796,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
         }
       }
 
-      this._emit("created");
+      this._emit("created"); // this.navigate(this.origin);
+      //console.log("Router created", this);
 
-      this.navigate(this.origin); //console.log("Router created", this);
     }
   }, {
     key: "connectedCallback",
@@ -5884,16 +5888,20 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _get(_getPrototypeOf(Input.prototype), "setData", this).call(this, value);
 
               case 2:
-                if (this.type == "checkbox") this._input.checked = value;else if (this.type == "date") this._input.value = value != null ? value.toISOString().slice(0, 10) : value;else if (this.type == null || this.type == "text" || this.type == "search" || this.type == "password") this._input.value = value == null ? '' : value;else if (this.type == "file") {// can't set value on file input
+                if (this.type == "checkbox") this._input.checked = value;else if (this.type == "date") {
+                  this._input.value = value ? value.toISOString().slice(0, 10) : value;
+                } else if (this.type == "datetime-local") {
+                  this._input.value = value ? value.toISOString().substring(0, 19) : value;
+                } else if (this.type == null || this.type == "text" || this.type == "search" || this.type == "password") this._input.value = value == null ? "" : value;else if (this.type == "file") {// can't set value on file input
                 } else this._input.value = value;
                 if (this._checkValidity() && this.isAuto) this.revert();
                 /*
-                await super.setData(value);
-                if (value != null && this.field != null)
-                    this.value = value[this.field];
-                else if (this.field != null)
-                    this.value = null;
-                */
+                  await super.setData(value);
+                  if (value != null && this.field != null)
+                      this.value = value[this.field];
+                  else if (this.field != null)
+                      this.value = null;
+                  */
 
               case 4:
               case "end":
@@ -5930,7 +5938,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _context3.abrupt("return", this._input.checked);
 
               case 4:
-                if (!(this.type == "date")) {
+                if (!(this.type == "date" || this.type == "datetime-local")) {
                   _context3.next = 8;
                   break;
                 }
@@ -5973,7 +5981,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     get: function get() {
       var _this3 = this;
 
-      if (this.type == "checkbox") return this._input.checked;else if (this.type == "date") return new Date(this._input.value);else if (this.type == "file") {
+      if (this.type == "checkbox") return this._input.checked;else if (this.type == "date" || this.type == "datetime-local") return new Date(this._input.value);else if (this.type == "file") {
         return new Promise(function (resolve) {
           _this3._input.files[0].arrayBuffer().then(function (x) {
             resolve(new Uint8Array(x));
@@ -5997,7 +6005,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     // set value(value) {
     //     if (this.type == "checkbox")
     //         this._input.checked = value;
-    //     else if (this.type == "date") 
+    //     else if (this.type == "date")
     //         this._input.value = value != null ? value.toISOString().slice(0, 10) : value;
     //     else if (this.type == null || this.type == "text")
     //         this._input.value = value == null ? '' : value;
@@ -9352,6 +9360,9 @@ window.addEventListener("load", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/reg
           return _IUI.IUI.created(document.body);
 
         case 4:
+          console.log("IUI.create()");
+
+        case 5:
         case "end":
           return _context.stop();
       }
