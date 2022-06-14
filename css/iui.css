@@ -202,14 +202,12 @@
     transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
     opacity: 0.5;
     color: var(--default-link-color);
+    left: 0;
 }
 
 html[dir="rtl"] .textbox-with-label > span {
     right: 0;
-}
-
-html[dir="ltr"] .textbox-with-label > span {
-    left: 0;
+    left: unset;
 }
 
 .textbox-with-label:focus-within {
