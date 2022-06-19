@@ -62,5 +62,5 @@ window.addEventListener("load", async function () {
 });
 
 window.iui = iui;
-
+window.IUI = IUI;
 window.Modifiable = Modifiable;

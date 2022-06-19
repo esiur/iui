@@ -43,6 +43,7 @@ export default class IUIElement extends HTMLElement {
         await IUI.render(this, this._data);
     }
 
+
     _getParentData() {
         var p = this.parentElement;
         do {
@@ -58,8 +59,14 @@ export default class IUIElement extends HTMLElement {
         this._emit("data", {data: value});
         await IUI.render(this, value);
         
+        // notify updated callback
+        await this.updated();
     }
 
+    
+    async updated() {
+        // to be implemented by the user.
+    }
 
     get data() {
         return this._data;

@@ -162,6 +162,8 @@ export class IUI {
 				
 		if (scope == null)
 		    scope = {};
+		else
+			scope = {...scope};
 
 		// get refs before they get overwritten
 		//let refs = scope?.refs;
@@ -169,7 +171,8 @@ export class IUI {
 		// some element extended or overwritten the binding arguments
 		if (element.scope != null)
 			IUI.extend(scope, element.scope, true);
-		else if (element.hasAttribute(":scope"))
+		
+		if (element.hasAttribute(":scope"))
 		{
 			let script = element.getAttribute(":scope");
 			let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
@@ -281,8 +284,7 @@ export class IUI {
 
 					let rt = func.apply(el.parentElement, scopeValues);
 
-					console.log("rt", rt);
-
+					// Apply the returned object to the parent element.
 					if (typeof (rt) === "object") {
 						for (var k in rt)
 							el.parentElement[k] = rt[k];

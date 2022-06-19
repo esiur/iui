@@ -22,7 +22,7 @@ export default IUI.module(
     }
 
     get scope() {
-      return { route: this, view: this };
+      return { route: this, view: this, refs: this.refs };
     }
 
     _updateLinks() {
