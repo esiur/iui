@@ -328,22 +328,23 @@ export class IUI {
         // render children
         for (var i = 0; i < element.children.length; i++) {
             let el = element.children[i];
-            if (el instanceof IUIElement)
+            if (el instanceof IUIElement) {
                 // @TODO should check if the element depends on parent or not
                 if (el.dataMap != null) {
                     // if map function failed to call setData, we will render without it
                     if (!(await el.dataMap.render(data)))
                         await el.render();
                 }
-                else
+                else {
                     await el.setData(data);
+				}
+			}
             else {
                 if (el.dataMap != null)
                     await el.dataMap.render(data);
                 else
 					el.data = data;
 
-                //let data = e.mapData(data);
                 await IUI.render(el, el.data);
             }
         }

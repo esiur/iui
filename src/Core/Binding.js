@@ -29,12 +29,11 @@ export class Binding {
         if (nodeOrAttributeOrIUIElement instanceof IUIElement) {
             isAsync = nodeOrAttributeOrIUIElement.hasAttribute("async");
             type = BindingType.IUIElement;
-        } else if (nodeOrAttributeOrIUIElement instanceof Text) {// nodeOrAttribute.nodeType == 3) {
+        } else if (nodeOrAttributeOrIUIElement instanceof Text) {
             if (!nodeOrAttributeOrIUIElement.wholeText.match(/\${.*}/))
                 return null;
             type = BindingType.TextNode;
             isAsync = nodeOrAttributeOrIUIElement.parentElement.hasAttribute("async");
-            //code = "return `" + nodeOrAttributeOrIUIElement.wholeText + "`;";
 
             script = nodeOrAttributeOrIUIElement.wholeText;
             
@@ -76,10 +75,6 @@ export class Binding {
             else {
                 return null;
             }
-
-           // isAsync = nodeOrAttributeOrIUIElement.value.search("await");
-
-//            code = "return " + nodeOrAttributeOrIUIElement.value + ";";
 
             script = nodeOrAttributeOrIUIElement.value
             code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
@@ -178,7 +173,7 @@ export class Binding {
         var rt = this.func.apply(thisArg, [data, data, context, false, 
                                 ...this.scopeValues]);
 
-        //console.log(rt);
+        
         if (rt instanceof Promise)
             await rt;
 
@@ -247,10 +242,7 @@ export class Binding {
 
         try {
             if (this.type === BindingType.IUIElement) {
-                //let d = this.func.apply(this.target, [data, data]);
-                //if (d instanceof Promise)
-                //    d = await d;
-
+                
                 let d = await this._execute(this.target, data);
 
                 await this.target.setData(d);
@@ -263,10 +255,8 @@ export class Binding {
                     
                     if (d === undefined)
                         return false;
-                    //if (d instanceof Promise)
-                    //    d = await d;
 
-                    this.target.data = d;// (d === undefined) ? "" : d;
+                    this.target.data = d;
 
                     if (data != this.data) {
                         this.data = data;
@@ -288,9 +278,6 @@ export class Binding {
                 if (d === undefined)
                     return false;
 
-                //if (d instanceof Promise)
-                  //  d = await d;
-
                 targetElement.innerHTML = d;
  
                 if (window?.app?.loaded)
@@ -302,15 +289,12 @@ export class Binding {
                     await IUI.created(targetElement);
                     await IUI.render(targetElement, targetElement._data, true);
                 }
-                //await IUI.updateTree(targetElement);
+                
               
             }
             else if (this.type == BindingType.IfAttribute)
             {
                 let d = await this._execute(this.target.ownerElement, data);
-
-                //if (d === undefined)
-                //    return false;
 
                 this.target.ownerElement.style.display = d ? "" : "none";
             }
@@ -319,23 +303,15 @@ export class Binding {
                 let d = await this._execute(this.target.ownerElement, data);
                 if (d === undefined)
                     return false;
-                //if (d instanceof Promise)
-                  //  d = await d;
                 
             }
             // Attribute
             else if (this.type === BindingType.Attribute) {
 
-                //if (this.target.ownerElement.hasAttribute("debug"))
-                  //  debugger;
-
                 let d = await this._execute(this.target.ownerElement, data);
 
                 if (d === undefined)
                     return false;
-
-                //if (d instanceof Promise)
-                  //  d = await d;
 
                 if (this.attrType == AttributeBindingDestination.Field)
                     this.target.ownerElement[this.attrKey] = d;
@@ -351,14 +327,8 @@ export class Binding {
             // Data Attribute of IUI Element
             else if (this.type === BindingType.IUIElementDataAttribute) {
 
-     
-
                 let d = await this._execute(this.target.ownerElement, data);
-                //if (d === undefined)
-                //    return false;
-               
-                //if (d instanceof Promise)
-                  //  d = await d;
+
                 await this.target.ownerElement.setData(d);
             }
             // Data Attribute of HTML Element
@@ -367,15 +337,13 @@ export class Binding {
                 let d = await this._execute(this.target.ownerElement, data);
                 if (d === undefined)
                     return false;
-                //if (d instanceof Promise)
-                  //  d = await d;
                 this.target.ownerElement.data = d;
             }
 
             return true;
         }
         catch (ex) {
-            //            console.log(ex);
+
             return false;
         }
     }

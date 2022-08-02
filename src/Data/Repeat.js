@@ -22,7 +22,9 @@ export default IUI.module(class Repeat extends IUIElement
         //////////////
         /// Create ///
         //////////////
-                
+
+        console.log(this, this.innerHTML);
+
         if (this._created)
             debugger;
 
@@ -45,8 +47,12 @@ export default IUI.module(class Repeat extends IUIElement
         {
             if (this.children.length > 0)
                 this._repeatNode = this.children[0].cloneNode(true);
-            else
+            else {
                 this._repeatNode = document.createElement("div");
+
+                if (this.childNodes.length > 0 && this.childNodes[0].data.trim() != "")
+                    this._repeatNode.innerHTML = this.childNodes[0].data.trim();
+            }
 
             this.innerHTML = "";
             this._container = this;
@@ -134,25 +140,44 @@ export default IUI.module(class Repeat extends IUIElement
         
         for (let i = 0; i < value.length; i++) {
 
-            let e = this._repeatNode.cloneNode(true);
+            let el = this._repeatNode.cloneNode(true);
 
-            this.list.push(e);
+            this.list.push(el);
 
-            await IUI.create(e);
+            await IUI.create(el);
 
-            IUI.bind(e, false, "repeat", 
+            IUI.bind(el, false, "repeat", 
                       IUI.extend(this.__i_bindings?.scope, 
                                 {index: i, repeat: this}, true));
             
-            this._container.insertBefore(e, this._beforeNode);
+            this._container.insertBefore(el, this._beforeNode);
             
             // update referencing
             this.__i_bindings?.scope?.refs?._build();
 
-            await IUI.created(e);
+            await IUI.created(el);
+
+            if (el instanceof IUIElement){
+                // @TODO should check if the element depends on parent or not
+                if (el.dataMap != null) {
+                    // if map function failed to call setData, we will render without it
+                    if (!(await el.dataMap.render(value[i])))
+                        await el.render();
+                }
+                else {
+                    await el.setData(value[i]);
+                }
+            }
+            else 
+            {
+                if (el.dataMap != null)
+                    await el.dataMap.render(value[i]);
+                else
+                    el.data = value[i];
+
+                await IUI.render(el, el.data, false);
+            }
             
-            await IUI.render(e, value[i], false);
-        
         }
 
 

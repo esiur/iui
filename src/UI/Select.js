@@ -15,7 +15,7 @@ export default IUI.module(class Select extends IUIElement {
             query: (x) => null,
             //_formatter: (x) => x,
             _autocomplete: false,
-            cssClass: 'select'
+            //cssClass: 'select'
         });
 
         this._register("select");
@@ -109,18 +109,24 @@ export default IUI.module(class Select extends IUIElement {
         this.repeat = new Repeat();
         this.repeat.cssClass = "select-menu-repeat";
         //this.repeat.innerHTML = this.innerHTML;
-        this.repeat.setAttribute(":data", "d[1]");
 
-        this.counter = document.createElement("div");
-        this.counter.className = this.cssClass + "-counter";
-        this.counter.innerHTML = "${d[0]}";
-        
+        if (this.hasAttribute("menu")) {
+            let menuData = this.getAttribute("menu");
+            this.repeat.setAttribute(":data", menuData);// "d[1]");
+        }
+
+        if (this.hasAttribute("footer")) {
+            let footer = this.getAttribute("footer");
+            this.footer = document.createElement("div");
+            this.footer.className = this.cssClass + "-footer";
+            this.footer.innerHTML = footer;// "${d[0]}";
+        }
 
         this.menu = new Menu({ cssClass: this.cssClass + "-menu", "target-class": "" });
         
         this.menu.on("click", async (e) => {
             
-            if (e.target != self.textbox && e.target != self.counter && e.target !== self.menu) {
+            if (e.target != self.textbox && e.target != self.footer && e.target !== self.menu) {
                 await self.setData(e.target.data);
 
                 self._emit("input", { value: e.target.data });
@@ -155,8 +161,6 @@ export default IUI.module(class Select extends IUIElement {
         // get collection
         let layout = Layout.get(this, "div", true, true); 
 
-        //debugger;
-
 
         if (layout != null && layout.label != undefined && layout.menu != undefined) {
             this.label = layout.label.node;
@@ -185,7 +189,8 @@ export default IUI.module(class Select extends IUIElement {
         });
 
         this.menu.appendChild(this.repeat);
-        this.menu.appendChild(this.counter);
+        if (this.footer != null)
+            this.menu.appendChild(this.footer);
 
     
         if (this.hasArrow) {
@@ -221,12 +226,23 @@ export default IUI.module(class Select extends IUIElement {
             if (app.loaded)
             {
 
-                ///console.log("Append", this.menu);
-                await this.menu.create();
-                IUI.bind(this.menu, false, "menu");
+
                 await IUI.create(this.menu);
-            
-                //this._make_bindings(this.menu);    
+
+                IUI.bind(this.menu, false, "menu", this.__i_bindings?.scope, false);
+                // update referencing
+                this.__i_bindings?.scope?.refs?._build();
+
+                await IUI.created(this.menu);
+
+                /////console.log("Append", this.menu);
+                //await this.menu.create();
+                
+                //IUI.bind(this.menu, false, "menu");
+                //await IUI.create(this.menu);
+
+                //await await IUI.create(e);
+
             }
         }
 
@@ -304,19 +320,26 @@ export default IUI.module(class Select extends IUIElement {
 
         let self = this;
         let text = this._autocomplete ? this.textbox.value : null;
+        let res;
 
-        var res = this.query(0, text)
-        if (res instanceof Promise)
-            res = await res;
-
-        //.then(async (res) => {
-        if (res[1].length == 0)
-            await self.setData(null);
+        if (this.query instanceof Array) {
+            res = this.query;
+        }
+        else if (this.query instanceof Function) {
+            res = this.query(0, text)
+            if (res instanceof Promise)
+                res = await res;
+        }
+        
+        
+        
+        //if (res[1].length == 0)
+          //  await self.setData(null);
 
         await this.menu.setData(res);
 
-
-       
+        if (this.repeat.data.length == 0)
+            await self.setData(null);
     }
 
 
