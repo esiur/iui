@@ -204,7 +204,7 @@ var Binding = /*#__PURE__*/function () {
               case 0:
                 if (!this.checked) this._findMap(thisArg);
                 context = {};
-                rt = this.func.apply(thisArg, [data, data, context, false].concat(_toConsumableArray(this.scopeValues))); //console.log(rt);
+                rt = this.func.apply(thisArg, [data, data, context, false].concat(_toConsumableArray(this.scopeValues)));
 
                 if (!(rt instanceof Promise)) {
                   _context2.next = 6;
@@ -356,9 +356,7 @@ var Binding = /*#__PURE__*/function () {
                 return _context3.abrupt("return", false);
 
               case 17:
-                //if (d instanceof Promise)
-                //    d = await d;
-                this.target.data = _d; // (d === undefined) ? "" : d;
+                this.target.data = _d;
 
                 if (data != this.data) {
                   this.data = data;
@@ -398,8 +396,6 @@ var Binding = /*#__PURE__*/function () {
                 return _context3.abrupt("return", false);
 
               case 33:
-                //if (d instanceof Promise)
-                //  d = await d;
                 targetElement.innerHTML = _d2;
 
                 if (!((_window = window) !== null && _window !== void 0 && (_window$app = _window.app) !== null && _window$app !== void 0 && _window$app.loaded)) {
@@ -437,8 +433,6 @@ var Binding = /*#__PURE__*/function () {
 
               case 48:
                 _d3 = _context3.sent;
-                //if (d === undefined)
-                //    return false;
                 this.target.ownerElement.style.display = _d3 ? "" : "none";
                 _context3.next = 85;
                 break;
@@ -486,8 +480,6 @@ var Binding = /*#__PURE__*/function () {
                 return _context3.abrupt("return", false);
 
               case 66:
-                //if (d instanceof Promise)
-                //  d = await d;
                 if (this.attrType == AttributeBindingDestination.Field) this.target.ownerElement[this.attrKey] = _d5;else this.target.ownerElement.setAttribute(this.attrKey, _d5);
 
                 if (data != this.data) {
@@ -536,8 +528,6 @@ var Binding = /*#__PURE__*/function () {
                 return _context3.abrupt("return", false);
 
               case 84:
-                //if (d instanceof Promise)
-                //  d = await d;
                 this.target.ownerElement.data = _d7;
 
               case 85:
@@ -572,11 +562,9 @@ var Binding = /*#__PURE__*/function () {
         isAsync = nodeOrAttributeOrIUIElement.hasAttribute("async");
         type = BindingType.IUIElement;
       } else if (nodeOrAttributeOrIUIElement instanceof Text) {
-        // nodeOrAttribute.nodeType == 3) {
         if (!nodeOrAttributeOrIUIElement.wholeText.match(/\${.*}/)) return null;
         type = BindingType.TextNode;
-        isAsync = nodeOrAttributeOrIUIElement.parentElement.hasAttribute("async"); //code = "return `" + nodeOrAttributeOrIUIElement.wholeText + "`;";
-
+        isAsync = nodeOrAttributeOrIUIElement.parentElement.hasAttribute("async");
         script = nodeOrAttributeOrIUIElement.wholeText;
         code = "try {\r\n context.value = `".concat(script, "`\r\n}\r\n catch(ex) { context.error = ex; }");
         nodeOrAttributeOrIUIElement.data = "";
@@ -604,9 +592,7 @@ var Binding = /*#__PURE__*/function () {
           //     return null;
         } else {
           return null;
-        } // isAsync = nodeOrAttributeOrIUIElement.value.search("await");
-        //            code = "return " + nodeOrAttributeOrIUIElement.value + ";";
-
+        }
 
         script = nodeOrAttributeOrIUIElement.value;
         code = "try {\r\n context.value = ".concat(script, "; \r\n}\r\n catch(ex) { context.error = ex; }");
@@ -787,6 +773,10 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -977,11 +967,13 @@ var IUI = /*#__PURE__*/function () {
       //return;
 
       var bindings;
-      if (scope == null) scope = {}; // get refs before they get overwritten
+      if (scope == null) scope = {};else scope = _objectSpread({}, scope); // get refs before they get overwritten
       //let refs = scope?.refs;
       // some element extended or overwritten the binding arguments
 
-      if (element.scope != null) IUI.extend(scope, element.scope, true);else if (element.hasAttribute(":scope")) {
+      if (element.scope != null) IUI.extend(scope, element.scope, true);
+
+      if (element.hasAttribute(":scope")) {
         var script = element.getAttribute(":scope");
         var code = "try {\r\n context.value = ".concat(script, "; \r\n}\r\n catch(ex) { context.error = ex; }");
         var func = new Function("context", code);
@@ -989,6 +981,7 @@ var IUI = /*#__PURE__*/function () {
         func.call(element, context);
         if (context.error != undefined) console.log("Scope binding failed", context.error.name + ": " + context.error.message, this.script, this.target);else if (context.value != undefined && context.value instanceof Object) IUI.extend(scope, context.value, true);
       }
+
       var scopeArgs = Object.keys(scope);
       var scopeValues = Object.values(scope);
       bindings = new _BindingList["default"](element, scope);
@@ -1060,9 +1053,8 @@ var IUI = /*#__PURE__*/function () {
             /// let func = new Function("//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n return " + el.text.trim());
             var _func = _construct(Function, _toConsumableArray(scopeArgs).concat(["//# sourceURL=iui://" + sourcePath + "-" + Math.round(Math.random() * 10000) + "\r\n" + el.text.trim()]));
 
-            var rt = _func.apply(el.parentElement, scopeValues);
+            var rt = _func.apply(el.parentElement, scopeValues); // Apply the returned object to the parent element.
 
-            console.log("rt", rt);
 
             if (_typeof(rt) === "object") {
               for (var k in rt) {
@@ -1579,6 +1571,10 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
                 return _IUI.IUI.render(this, value);
 
               case 4:
+                _context2.next = 6;
+                return this.updated();
+
+              case 6:
               case "end":
                 return _context2.stop();
             }
@@ -1593,6 +1589,27 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
       return setData;
     }()
   }, {
+    key: "updated",
+    value: function () {
+      var _updated = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      function updated() {
+        return _updated.apply(this, arguments);
+      }
+
+      return updated;
+    }()
+  }, {
     key: "data",
     get: function get() {
       return this._data;
@@ -1600,11 +1617,11 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "revert",
     value: function () {
-      var _revert = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+      var _revert = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
         var e, p;
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 e = this;
 
@@ -1612,25 +1629,25 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
                 p = e.parentElement;
 
                 if (!(e.revertMap != null)) {
-                  _context3.next = 5;
+                  _context4.next = 5;
                   break;
                 }
 
-                _context3.next = 5;
+                _context4.next = 5;
                 return e.revertMap.render(p === null || p === void 0 ? void 0 : p.data);
 
               case 5:
                 if (e = p) {
-                  _context3.next = 1;
+                  _context4.next = 1;
                   break;
                 }
 
               case 6:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
       function revert() {
@@ -1642,59 +1659,59 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
   }, {
     key: "update",
     value: function () {
-      var _update = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(data) {
-        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      var _update = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(data) {
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 if (!(data == undefined)) {
-                  _context4.next = 10;
+                  _context5.next = 10;
                   break;
                 }
 
                 if (!(this.dataMap != null)) {
-                  _context4.next = 6;
+                  _context5.next = 6;
                   break;
                 }
 
-                _context4.next = 4;
+                _context5.next = 4;
                 return this.dataMap.render(this._getParentData());
 
               case 4:
-                _context4.next = 8;
+                _context5.next = 8;
                 break;
 
               case 6:
-                _context4.next = 8;
+                _context5.next = 8;
                 return this.setData(this.data);
 
               case 8:
-                _context4.next = 17;
+                _context5.next = 17;
                 break;
 
               case 10:
                 if (!(this.dataMap != null)) {
-                  _context4.next = 15;
+                  _context5.next = 15;
                   break;
                 }
 
-                _context4.next = 13;
+                _context5.next = 13;
                 return this.dataMap.render(data);
 
               case 13:
-                _context4.next = 17;
+                _context5.next = 17;
                 break;
 
               case 15:
-                _context4.next = 17;
+                _context5.next = 17;
                 return this.setData(data);
 
               case 17:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee5, this);
       }));
 
       function update(_x2) {
@@ -2751,6 +2768,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       //////////////
       /// Create ///
       //////////////
+      console.log(this, this.innerHTML);
       if (this._created) debugger;
       this._created = true; // create template to speed avoid HTML parsing each time.
 
@@ -2765,7 +2783,10 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         this._beforeNode = repeatables[0].nextSibling;
         repeatables[0].parentElement.removeChild(repeatables[0]);
       } else {
-        if (this.children.length > 0) this._repeatNode = this.children[0].cloneNode(true);else this._repeatNode = document.createElement("div");
+        if (this.children.length > 0) this._repeatNode = this.children[0].cloneNode(true);else {
+          this._repeatNode = document.createElement("div");
+          if (this.childNodes.length > 0 && this.childNodes[0].data.trim() != "") this._repeatNode.innerHTML = this.childNodes[0].data.trim();
+        }
         this.innerHTML = "";
         this._container = this;
       } // var newElements = this.querySelectorAll("*");
@@ -2823,7 +2844,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(value) {
         var _value;
 
-        var i, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2, e;
+        var i, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2, el;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -2851,38 +2872,89 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 9:
                 if (!(i < value.length)) {
-                  _context.next = 24;
+                  _context.next = 43;
                   break;
                 }
 
-                e = this._repeatNode.cloneNode(true);
-                this.list.push(e);
+                el = this._repeatNode.cloneNode(true);
+                this.list.push(el);
                 _context.next = 14;
-                return _IUI.IUI.create(e);
+                return _IUI.IUI.create(el);
 
               case 14:
-                _IUI.IUI.bind(e, false, "repeat", _IUI.IUI.extend((_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, {
+                _IUI.IUI.bind(el, false, "repeat", _IUI.IUI.extend((_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, {
                   index: i,
                   repeat: this
                 }, true));
 
-                this._container.insertBefore(e, this._beforeNode); // update referencing
+                this._container.insertBefore(el, this._beforeNode); // update referencing
 
 
                 (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
                 _context.next = 19;
-                return _IUI.IUI.created(e);
+                return _IUI.IUI.created(el);
 
               case 19:
-                _context.next = 21;
-                return _IUI.IUI.render(e, value[i], false);
+                if (!(el instanceof _IUIElement2["default"])) {
+                  _context.next = 32;
+                  break;
+                }
 
-              case 21:
+                if (!(el.dataMap != null)) {
+                  _context.next = 28;
+                  break;
+                }
+
+                _context.next = 23;
+                return el.dataMap.render(value[i]);
+
+              case 23:
+                if (_context.sent) {
+                  _context.next = 26;
+                  break;
+                }
+
+                _context.next = 26;
+                return el.render();
+
+              case 26:
+                _context.next = 30;
+                break;
+
+              case 28:
+                _context.next = 30;
+                return el.setData(value[i]);
+
+              case 30:
+                _context.next = 40;
+                break;
+
+              case 32:
+                if (!(el.dataMap != null)) {
+                  _context.next = 37;
+                  break;
+                }
+
+                _context.next = 35;
+                return el.dataMap.render(value[i]);
+
+              case 35:
+                _context.next = 38;
+                break;
+
+              case 37:
+                el.data = value[i];
+
+              case 38:
+                _context.next = 40;
+                return _IUI.IUI.render(el, el.data, false);
+
+              case 40:
                 i++;
                 _context.next = 9;
                 break;
 
-              case 24:
+              case 43:
                 // @TODO: check if this works for event names starting with ":"
                 this._emit(":data", {
                   data: value
@@ -2891,7 +2963,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 this._busy = false;
 
-              case 26:
+              case 45:
               case "end":
                 return _context.stop();
             }
@@ -3191,7 +3263,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     get: function get() {
       return {
         route: this,
-        view: this
+        view: this,
+        refs: this.refs
       };
     }
   }, {
@@ -6919,8 +6992,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         return null;
       },
       //_formatter: (x) => x,
-      _autocomplete: false,
-      cssClass: 'select'
+      _autocomplete: false //cssClass: 'select'
+
     });
 
     _this._register("select");
@@ -6992,7 +7065,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     key: "create",
     value: function () {
       var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-        var self, layout;
+        var self, menuData, footer, layout, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2;
+
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -7013,10 +7087,18 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this.repeat = new _Repeat["default"]();
                 this.repeat.cssClass = "select-menu-repeat"; //this.repeat.innerHTML = this.innerHTML;
 
-                this.repeat.setAttribute(":data", "d[1]");
-                this.counter = document.createElement("div");
-                this.counter.className = this.cssClass + "-counter";
-                this.counter.innerHTML = "${d[0]}";
+                if (this.hasAttribute("menu")) {
+                  menuData = this.getAttribute("menu");
+                  this.repeat.setAttribute(":data", menuData); // "d[1]");
+                }
+
+                if (this.hasAttribute("footer")) {
+                  footer = this.getAttribute("footer");
+                  this.footer = document.createElement("div");
+                  this.footer.className = this.cssClass + "-footer";
+                  this.footer.innerHTML = footer; // "${d[0]}";
+                }
+
                 this.menu = new _Menu["default"]({
                   cssClass: this.cssClass + "-menu",
                   "target-class": ""
@@ -7027,7 +7109,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                       while (1) {
                         switch (_context.prev = _context.next) {
                           case 0:
-                            if (!(e.target != self.textbox && e.target != self.counter && e.target !== self.menu)) {
+                            if (!(e.target != self.textbox && e.target != self.footer && e.target !== self.menu)) {
                               _context.next = 5;
                               break;
                             }
@@ -7073,7 +7155,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 } // get collection
 
 
-                layout = _Layout["default"].get(this, "div", true, true); //debugger;
+                layout = _Layout["default"].get(this, "div", true, true);
 
                 if (layout != null && layout.label != undefined && layout.menu != undefined) {
                   this.label = layout.label.node;
@@ -7094,7 +7176,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                   self.show();
                 });
                 this.menu.appendChild(this.repeat);
-                this.menu.appendChild(this.counter);
+                if (this.footer != null) this.menu.appendChild(this.footer);
 
                 if (this.hasArrow) {
                   this.arrow = document.createElement("div");
@@ -7118,37 +7200,39 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 }
 
                 if (!this.searchlist) {
-                  _context2.next = 27;
+                  _context2.next = 25;
                   break;
                 }
 
                 this.appendChild(this.menu);
-                _context2.next = 34;
+                _context2.next = 33;
                 break;
 
-              case 27:
+              case 25:
                 app.appendChild(this.menu);
 
                 if (!app.loaded) {
-                  _context2.next = 34;
+                  _context2.next = 33;
                   break;
                 }
 
-                _context2.next = 31;
-                return this.menu.create();
-
-              case 31:
-                _IUI.IUI.bind(this.menu, false, "menu");
-
-                _context2.next = 34;
+                _context2.next = 29;
                 return _IUI.IUI.create(this.menu);
 
-              case 34:
+              case 29:
+                _IUI.IUI.bind(this.menu, false, "menu", (_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, false); // update referencing
+
+
+                (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
+                _context2.next = 33;
+                return _IUI.IUI.created(this.menu);
+
+              case 33:
                 this.addEventListener("click", function (e) {
                   if (e.target == self.textbox) self.show();
                 });
 
-              case 35:
+              case 34:
               case "end":
                 return _context2.stop();
             }
@@ -7240,33 +7324,49 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
               case 3:
                 self = this;
                 text = this._autocomplete ? this.textbox.value : null;
+
+                if (!(this.query instanceof Array)) {
+                  _context3.next = 9;
+                  break;
+                }
+
+                res = this.query;
+                _context3.next = 15;
+                break;
+
+              case 9:
+                if (!(this.query instanceof Function)) {
+                  _context3.next = 15;
+                  break;
+                }
+
                 res = this.query(0, text);
 
                 if (!(res instanceof Promise)) {
-                  _context3.next = 10;
+                  _context3.next = 15;
                   break;
                 }
 
-                _context3.next = 9;
+                _context3.next = 14;
                 return res;
 
-              case 9:
+              case 14:
                 res = _context3.sent;
 
-              case 10:
-                if (!(res[1].length == 0)) {
-                  _context3.next = 13;
+              case 15:
+                _context3.next = 17;
+                return this.menu.setData(res);
+
+              case 17:
+                if (!(this.repeat.data.length == 0)) {
+                  _context3.next = 20;
                   break;
                 }
 
-                _context3.next = 13;
+                _context3.next = 20;
                 return self.setData(null);
 
-              case 13:
-                _context3.next = 15;
-                return this.menu.setData(res);
-
-              case 15:
+              case 20:
               case "end":
                 return _context3.stop();
             }
@@ -9370,6 +9470,7 @@ window.addEventListener("load", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/reg
   }, _callee);
 })));
 window.iui = _IUI.iui;
+window.IUI = _IUI.IUI;
 window.Modifiable = _Modifiable["default"];
 
 },{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":7,"./Data/Form.js":8,"./Data/Include.js":9,"./Data/Layout.js":10,"./Data/Modifiable.js":11,"./Data/Repeat.js":12,"./Data/TableRow.js":13,"./Router/Link.js":14,"./Router/Route.js":15,"./Router/Router.js":16,"./Router/Target.js":17,"./UI/Background.js":18,"./UI/Button.js":19,"./UI/Check.js":20,"./UI/CodePreview.js":21,"./UI/DateTimePicker.js":22,"./UI/Dialog.js":23,"./UI/DropDown.js":24,"./UI/Grid.js":25,"./UI/Input.js":26,"./UI/Location.js":27,"./UI/Login.js":28,"./UI/Menu.js":29,"./UI/Navbar.js":30,"./UI/Select.js":31,"./UI/Tab.js":32,"./UI/Table.js":33,"./UI/Tabs.js":34,"./UI/Window.js":35}]},{},[36]);
