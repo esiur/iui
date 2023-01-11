@@ -203,14 +203,18 @@ export default IUI.module(
 
       target.setLoading(true);
 
-      if (stateRoute.dataMap != null) {
-        // if map function failed to call setData, we will render without it
-        if (!(await stateRoute.dataMap.render(data || {})))
-          await stateRoute.render();
+      try {
+          if (stateRoute.dataMap != null) {
+            // if map function failed to call setData, we will render without it
+            if (!(await stateRoute.dataMap.render(data || {})))
+              await stateRoute.render();
 
-        if (viewRoute != stateRoute) await viewRoute.setData(stateRoute.data);
-      } //if (data !== undefined)
-      else await viewRoute.setData(data);
+            if (viewRoute != stateRoute) await viewRoute.setData(stateRoute.data);
+          } //if (data !== undefined)
+          else await viewRoute.setData(data);
+      } catch (ex){
+        console.log("EXXXXXXXXXX", ex);
+      }
 
       target.setLoading(false);
     }

@@ -23,7 +23,7 @@ export default IUI.module(class Repeat extends IUIElement
         /// Create ///
         //////////////
 
-        console.log(this, this.innerHTML);
+        //console.log(this, this.innerHTML);
 
         if (this._created)
             debugger;
