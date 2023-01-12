@@ -3099,3 +3099,19 @@ html[dir='rtl'] .navbar-item[level='1'] {
 {
     
 }
+
+.iui-error {
+    background: #7171714d;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+
+.iui-error > span {
+    background: red;
+    color: white;
+    padding: 4px;
+}

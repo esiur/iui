@@ -6,6 +6,8 @@ import BindingList  from "./BindingList.js";
 
 export class IUI {
 
+	static debugMode = true;
+	
 	static _menus = [];
 	static views = [];
 	static modules = {};
