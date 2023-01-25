@@ -114,6 +114,10 @@ export default IUI.module(
     }
 
     async navigate(url, data, target, state, dataToQuery = true) {
+
+      if (url == null)
+        throw new Error("URL not specified.");
+        
       let q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
 
       var path;
