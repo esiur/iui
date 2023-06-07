@@ -144,12 +144,17 @@ export default IUI.module(class Repeat extends IUIElement
 
             this.list.push(el);
 
-            await IUI.create(el);
+            try {
+                await IUI.create(el);
 
-            IUI.bind(el, false, "repeat", 
-                      IUI.extend(this.__i_bindings?.scope, 
-                                {index: i, repeat: this}, true));
-            
+                IUI.bind(el, false, "repeat", 
+                        IUI.extend(this.__i_bindings?.scope, 
+                                    {index: i, repeat: this}, true));
+                
+            } catch (ex) {
+                console.log(ex);
+            }
+
             this._container.insertBefore(el, this._beforeNode);
             
             // update referencing

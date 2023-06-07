@@ -3,6 +3,7 @@ import { Binding, BindingType } from "./Binding.js";
 //import Route from '../Router/Route.js';
 import BindingList  from "./BindingList.js";
 
+const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 
 export class IUI {
 
@@ -228,7 +229,7 @@ export class IUI {
 
 					bindings.addEvent(attr.name.substr(1), handler);
 				} 
-				else if (attr.name.startsWith(":::"))
+				else if (attr.name.startsWith("event:"))
 				{
 					// make events
 					let code = attr.value;
@@ -238,8 +239,19 @@ export class IUI {
 						func.call(element, event, ...scopeValues);
 					}
 
-					bindings.addEvent(attr.name.substr(3), handler);
+					bindings.addEvent(attr.name.substr(6), handler);
 
+				}
+				else if (attr.name.startsWith("async-event:")) {
+					// make events
+					let code = attr.value;
+					//let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+					let func = new AsyncFunction("event", ...scopeArgs, code);
+					let handler = (event) => {
+						func.call(element, event, ...scopeValues);
+					}
+
+					bindings.addEvent(attr.name.substr(12), handler);
 				}
 				else
 				{
