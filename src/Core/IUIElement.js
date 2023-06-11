@@ -63,6 +63,22 @@ export default class IUIElement extends HTMLElement {
         await this.updated();
     }
 
+
+    setError(exception) {
+        if (!IUI.debugMode)
+            return;
+
+        if (this._errorElement == null) {
+            this._errorElement = document.createElement("div");
+            this._errorElement.className = "iui-error";
+            this.append(this._errorElement);
+        }
+
+        var label = document.createElement("span");
+        label.innerHTML = exception;
+        this._errorElement.append(label);
+    }
+
     
     async updated() {
         // to be implemented by the user.

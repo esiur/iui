@@ -3,9 +3,12 @@ import { Binding, BindingType } from "./Binding.js";
 //import Route from '../Router/Route.js';
 import BindingList  from "./BindingList.js";
 
+const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 
 export class IUI {
 
+	static debugMode = true;
+	
 	static _menus = [];
 	static views = [];
 	static modules = {};
@@ -198,7 +201,7 @@ export class IUI {
 		{
 			// copy attributes bindings
 			if (element.__i_bindings != null)
-				for(var i = 0; i < element.__i_bindings.length; i++)
+				for(let i = 0; i < element.__i_bindings.length; i++)
 					if (element.__i_bindings[i].type != BindingType.TextNode)
 						bindings.push(element.__i_bindings[i]);
 		}
@@ -207,28 +210,52 @@ export class IUI {
 			element.__i_bindings?.destroy();
 
             // compile attributes
-            for (var i = 0; i < element.attributes.length; i++) {
+            for (let i = 0; i < element.attributes.length; i++) {
+				let attr = element.attributes[i];
 
 				// skip scope
-				if (element.attributes[i].name == ":scope")
+				if (attr.name == ":scope")
 					continue;
 
-				if (element.attributes[i].name.startsWith("@")){
+				if (attr.name.startsWith("@")){
 
 					// make events
-					let code = element.attributes[i].value;
+					let code = attr.value;
 					//let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
 					let func = new Function("event", ...scopeArgs, code);
 					let handler = (event) => {
 						func.call(element, event, ...scopeValues);
 					}
 
-					bindings.addEvent(element.attributes[i].name.substr(1), handler);
+					bindings.addEvent(attr.name.substr(1), handler);
+				} 
+				else if (attr.name.startsWith("event:"))
+				{
+					// make events
+					let code = attr.value;
+					//let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+					let func = new Function("event", ...scopeArgs, code);
+					let handler = (event) => {
+						func.call(element, event, ...scopeValues);
+					}
+
+					bindings.addEvent(attr.name.substr(6), handler);
+
+				}
+				else if (attr.name.startsWith("async-event:")) {
+					// make events
+					let code = attr.value;
+					//let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+					let func = new AsyncFunction("event", ...scopeArgs, code);
+					let handler = (event) => {
+						func.call(element, event, ...scopeValues);
+					}
+
+					bindings.addEvent(attr.name.substr(12), handler);
 				}
 				else
 				{
-					let b = Binding.create(element.attributes[i], 
-												bindings.scope);
+					let b = Binding.create(attr,  bindings.scope);
 
 					if (b != null) {
 						if (b.type == BindingType.HTMLElementDataAttribute 

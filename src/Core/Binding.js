@@ -179,6 +179,10 @@ export class Binding {
 
         if (context.error != undefined)
         {
+            if (thisArg instanceof IUIElement){
+                thisArg.setError(context.error);
+            }
+
             console.log("Execution failed", context.error.name + ": " + context.error.message, this.script, this.target);
             return;
         }
@@ -192,6 +196,11 @@ export class Binding {
             {
                 return await context.value;
             } catch(ex) {
+
+                if (thisArg instanceof IUIElement){
+                    thisArg.setError(ex);
+                }
+    
                 console.log("Execution failed", ex.name + ": " + ex.message, this.script, this.target);
             }
         }
