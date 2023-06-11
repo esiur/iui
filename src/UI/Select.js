@@ -161,7 +161,7 @@ export default IUI.module(class Select extends IUIElement {
         // get collection
         let layout = Layout.get(this, "div", true, true); 
 
-
+        
         if (layout != null && layout.label != undefined && layout.menu != undefined) {
             this.label = layout.label.node;
             this.repeat.appendChild(layout.menu.node);
@@ -174,6 +174,7 @@ export default IUI.module(class Select extends IUIElement {
         else
         {
             this.label = document.createElement("div");
+            this.label.innerHTML = this.innerHTML;
             this.repeat.innerHTML = this.innerHTML;
         }
 
