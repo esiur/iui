@@ -216,52 +216,61 @@ var Binding = /*#__PURE__*/function () {
 
               case 6:
                 if (!(context.error != undefined)) {
-                  _context2.next = 11;
+                  _context2.next = 12;
                   break;
+                }
+
+                if (thisArg instanceof _IUIElement["default"]) {
+                  thisArg.setError(context.error);
                 }
 
                 console.log("Execution failed", context.error.name + ": " + context.error.message, this.script, this.target);
                 return _context2.abrupt("return");
 
-              case 11:
+              case 12:
                 if (!(context.value == undefined)) {
-                  _context2.next = 15;
+                  _context2.next = 16;
                   break;
                 }
 
                 return _context2.abrupt("return");
 
-              case 15:
+              case 16:
                 if (!(context.value instanceof Promise)) {
-                  _context2.next = 27;
+                  _context2.next = 29;
                   break;
                 }
 
-                _context2.prev = 16;
-                _context2.next = 19;
+                _context2.prev = 17;
+                _context2.next = 20;
                 return context.value;
 
-              case 19:
+              case 20:
                 return _context2.abrupt("return", _context2.sent);
 
-              case 22:
-                _context2.prev = 22;
-                _context2.t0 = _context2["catch"](16);
+              case 23:
+                _context2.prev = 23;
+                _context2.t0 = _context2["catch"](17);
+
+                if (thisArg instanceof _IUIElement["default"]) {
+                  thisArg.setError(_context2.t0);
+                }
+
                 console.log("Execution failed", _context2.t0.name + ": " + _context2.t0.message, this.script, this.target);
 
-              case 25:
-                _context2.next = 28;
+              case 27:
+                _context2.next = 30;
                 break;
 
-              case 27:
+              case 29:
                 return _context2.abrupt("return", context.value);
 
-              case 28:
+              case 30:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[16, 22]]);
+        }, _callee2, this, [[17, 23]]);
       }));
 
       function _execute(_x, _x2) {
@@ -778,10 +787,6 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -789,6 +794,22 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var AsyncFunction = Object.getPrototypeOf( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+  return regeneratorRuntime.wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _callee);
+}))).constructor;
 
 var IUI = /*#__PURE__*/function () {
   function IUI() {
@@ -808,57 +829,7 @@ var IUI = /*#__PURE__*/function () {
   }, {
     key: "created",
     value: function () {
-      var _created = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(element) {
-        var i, e;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                i = 0;
-
-              case 1:
-                if (!(i < element.children.length)) {
-                  _context.next = 11;
-                  break;
-                }
-
-                e = element.children[i];
-
-                if (!(e instanceof _IUIElement["default"])) {
-                  _context.next = 6;
-                  break;
-                }
-
-                _context.next = 6;
-                return e.created();
-
-              case 6:
-                _context.next = 8;
-                return IUI.created(e);
-
-              case 8:
-                i++;
-                _context.next = 1;
-                break;
-
-              case 11:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
-
-      function created(_x) {
-        return _created.apply(this, arguments);
-      }
-
-      return created;
-    }()
-  }, {
-    key: "create",
-    value: function () {
-      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(element) {
+      var _created = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(element) {
         var i, e;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
@@ -880,11 +851,11 @@ var IUI = /*#__PURE__*/function () {
                 }
 
                 _context2.next = 6;
-                return e.create();
+                return e.created();
 
               case 6:
                 _context2.next = 8;
-                return IUI.create(e);
+                return IUI.created(e);
 
               case 8:
                 i++;
@@ -897,6 +868,56 @@ var IUI = /*#__PURE__*/function () {
             }
           }
         }, _callee2);
+      }));
+
+      function created(_x) {
+        return _created.apply(this, arguments);
+      }
+
+      return created;
+    }()
+  }, {
+    key: "create",
+    value: function () {
+      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(element) {
+        var i, e;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                i = 0;
+
+              case 1:
+                if (!(i < element.children.length)) {
+                  _context3.next = 11;
+                  break;
+                }
+
+                e = element.children[i];
+
+                if (!(e instanceof _IUIElement["default"])) {
+                  _context3.next = 6;
+                  break;
+                }
+
+                _context3.next = 6;
+                return e.create();
+
+              case 6:
+                _context3.next = 8;
+                return IUI.create(e);
+
+              case 8:
+                i++;
+                _context3.next = 1;
+                break;
+
+              case 11:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
       }));
 
       function create(_x2) {
@@ -988,22 +1009,23 @@ var IUI = /*#__PURE__*/function () {
 
       if (skipAttributes) {
         // copy attributes bindings
-        if (element.__i_bindings != null) for (var i = 0; i < element.__i_bindings.length; i++) {
-          if (element.__i_bindings[i].type != _Binding.BindingType.TextNode) bindings.push(element.__i_bindings[i]);
+        if (element.__i_bindings != null) for (var _i = 0; _i < element.__i_bindings.length; _i++) {
+          if (element.__i_bindings[_i].type != _Binding.BindingType.TextNode) bindings.push(element.__i_bindings[_i]);
         }
       } else {
         var _element$__i_bindings;
 
         (_element$__i_bindings = element.__i_bindings) === null || _element$__i_bindings === void 0 ? void 0 : _element$__i_bindings.destroy(); // compile attributes
 
-        for (var i = 0; i < element.attributes.length; i++) {
-          // skip scope
-          if (element.attributes[i].name == ":scope") continue;
+        for (var _i2 = 0; _i2 < element.attributes.length; _i2++) {
+          var attr = element.attributes[_i2]; // skip scope
 
-          if (element.attributes[i].name.startsWith("@")) {
+          if (attr.name == ":scope") continue;
+
+          if (attr.name.startsWith("@")) {
             (function () {
               // make events
-              var code = element.attributes[i].value; //let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+              var code = attr.value; //let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
 
               var func = _construct(Function, ["event"].concat(_toConsumableArray(scopeArgs), [code]));
 
@@ -1011,10 +1033,36 @@ var IUI = /*#__PURE__*/function () {
                 func.call.apply(func, [element, event].concat(_toConsumableArray(scopeValues)));
               };
 
-              bindings.addEvent(element.attributes[i].name.substr(1), handler);
+              bindings.addEvent(attr.name.substr(1), handler);
+            })();
+          } else if (attr.name.startsWith("event:")) {
+            (function () {
+              // make events
+              var code = attr.value; //let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+
+              var func = _construct(Function, ["event"].concat(_toConsumableArray(scopeArgs), [code]));
+
+              var handler = function handler(event) {
+                func.call.apply(func, [element, event].concat(_toConsumableArray(scopeValues)));
+              };
+
+              bindings.addEvent(attr.name.substr(6), handler);
+            })();
+          } else if (attr.name.startsWith("async-event:")) {
+            (function () {
+              // make events
+              var code = attr.value; //let code = `try {\r\n context.value = ${script}; \r\n}\r\n catch(ex) { context.error = ex; }`
+
+              var func = _construct(AsyncFunction, ["event"].concat(_toConsumableArray(scopeArgs), [code]));
+
+              var handler = function handler(event) {
+                func.call.apply(func, [element, event].concat(_toConsumableArray(scopeValues)));
+              };
+
+              bindings.addEvent(attr.name.substr(12), handler);
             })();
           } else {
-            var b = _Binding.Binding.create(element.attributes[i], bindings.scope);
+            var b = _Binding.Binding.create(attr, bindings.scope);
 
             if (b != null) {
               if (b.type == _Binding.BindingType.HTMLElementDataAttribute || b.type == _Binding.BindingType.IUIElementDataAttribute) element.dataMap = b;else if (b.type == _Binding.BindingType.RevertAttribute) element.revertMap = b;else bindings.push(b);
@@ -1078,30 +1126,30 @@ var IUI = /*#__PURE__*/function () {
   }, {
     key: "render",
     value: function () {
-      var _render = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(element, data) {
+      var _render = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(element, data) {
         var textNodesOnly,
             bindings,
             i,
             el,
-            _args3 = arguments;
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+            _args4 = arguments;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                textNodesOnly = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : false;
+                textNodesOnly = _args4.length > 2 && _args4[2] !== undefined ? _args4[2] : false;
 
                 if (element.__i_bindings) {
-                  _context3.next = 3;
+                  _context4.next = 3;
                   break;
                 }
 
-                return _context3.abrupt("return");
+                return _context4.abrupt("return");
 
               case 3:
                 bindings = element.__i_bindings;
 
                 if (!textNodesOnly) {
-                  _context3.next = 15;
+                  _context4.next = 15;
                   break;
                 }
 
@@ -1109,25 +1157,25 @@ var IUI = /*#__PURE__*/function () {
 
               case 6:
                 if (!(i < bindings.length)) {
-                  _context3.next = 13;
+                  _context4.next = 13;
                   break;
                 }
 
                 if (!(bindings[i].type == _Binding.BindingType.TextNode)) {
-                  _context3.next = 10;
+                  _context4.next = 10;
                   break;
                 }
 
-                _context3.next = 10;
+                _context4.next = 10;
                 return bindings[i].render(data);
 
               case 10:
                 i++;
-                _context3.next = 6;
+                _context4.next = 6;
                 break;
 
               case 13:
-                _context3.next = 22;
+                _context4.next = 22;
                 break;
 
               case 15:
@@ -1135,16 +1183,16 @@ var IUI = /*#__PURE__*/function () {
 
               case 16:
                 if (!(i < bindings.length)) {
-                  _context3.next = 22;
+                  _context4.next = 22;
                   break;
                 }
 
-                _context3.next = 19;
+                _context4.next = 19;
                 return bindings[i].render(data);
 
               case 19:
                 i++;
-                _context3.next = 16;
+                _context4.next = 16;
                 break;
 
               case 22:
@@ -1152,77 +1200,77 @@ var IUI = /*#__PURE__*/function () {
 
               case 23:
                 if (!(i < element.children.length)) {
-                  _context3.next = 49;
+                  _context4.next = 49;
                   break;
                 }
 
                 el = element.children[i];
 
                 if (!(el instanceof _IUIElement["default"])) {
-                  _context3.next = 38;
+                  _context4.next = 38;
                   break;
                 }
 
                 if (!(el.dataMap != null)) {
-                  _context3.next = 34;
+                  _context4.next = 34;
                   break;
                 }
 
-                _context3.next = 29;
+                _context4.next = 29;
                 return el.dataMap.render(data);
 
               case 29:
-                if (_context3.sent) {
-                  _context3.next = 32;
+                if (_context4.sent) {
+                  _context4.next = 32;
                   break;
                 }
 
-                _context3.next = 32;
+                _context4.next = 32;
                 return el.render();
 
               case 32:
-                _context3.next = 36;
+                _context4.next = 36;
                 break;
 
               case 34:
-                _context3.next = 36;
+                _context4.next = 36;
                 return el.setData(data);
 
               case 36:
-                _context3.next = 46;
+                _context4.next = 46;
                 break;
 
               case 38:
                 if (!(el.dataMap != null)) {
-                  _context3.next = 43;
+                  _context4.next = 43;
                   break;
                 }
 
-                _context3.next = 41;
+                _context4.next = 41;
                 return el.dataMap.render(data);
 
               case 41:
-                _context3.next = 44;
+                _context4.next = 44;
                 break;
 
               case 43:
                 el.data = data;
 
               case 44:
-                _context3.next = 46;
+                _context4.next = 46;
                 return IUI.render(el, el.data);
 
               case 46:
                 i++;
-                _context3.next = 23;
+                _context4.next = 23;
                 break;
 
               case 49:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3);
+        }, _callee4);
       }));
 
       function render(_x3, _x4) {
@@ -1237,6 +1285,8 @@ var IUI = /*#__PURE__*/function () {
 }();
 
 exports.IUI = IUI;
+
+_defineProperty(IUI, "debugMode", true);
 
 _defineProperty(IUI, "_menus", []);
 
@@ -1588,6 +1638,22 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
 
       return setData;
     }()
+  }, {
+    key: "setError",
+    value: function setError(exception) {
+      if (!_IUI.IUI.debugMode) return;
+
+      if (this._errorElement == null) {
+        this._errorElement = document.createElement("div");
+        this._errorElement.className = "iui-error";
+        this.append(this._errorElement);
+      }
+
+      var label = document.createElement("span");
+      label.innerHTML = exception;
+
+      this._errorElement.append(label);
+    }
   }, {
     key: "updated",
     value: function () {
@@ -2768,7 +2834,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       //////////////
       /// Create ///
       //////////////
-      console.log(this, this.innerHTML);
+      //console.log(this, this.innerHTML);
       if (this._created) debugger;
       this._created = true; // create template to speed avoid HTML parsing each time.
 
@@ -2844,7 +2910,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(value) {
         var _value;
 
-        var i, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2, el;
+        var i, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2, el, _this$__i_bindings;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -2872,89 +2938,99 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 9:
                 if (!(i < value.length)) {
-                  _context.next = 43;
+                  _context.next = 49;
                   break;
                 }
 
                 el = this._repeatNode.cloneNode(true);
                 this.list.push(el);
-                _context.next = 14;
+                _context.prev = 12;
+                _context.next = 15;
                 return _IUI.IUI.create(el);
 
-              case 14:
+              case 15:
                 _IUI.IUI.bind(el, false, "repeat", _IUI.IUI.extend((_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, {
                   index: i,
                   repeat: this
                 }, true));
 
+                _context.next = 21;
+                break;
+
+              case 18:
+                _context.prev = 18;
+                _context.t0 = _context["catch"](12);
+                console.log(_context.t0);
+
+              case 21:
                 this._container.insertBefore(el, this._beforeNode); // update referencing
 
 
                 (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
-                _context.next = 19;
+                _context.next = 25;
                 return _IUI.IUI.created(el);
 
-              case 19:
+              case 25:
                 if (!(el instanceof _IUIElement2["default"])) {
+                  _context.next = 38;
+                  break;
+                }
+
+                if (!(el.dataMap != null)) {
+                  _context.next = 34;
+                  break;
+                }
+
+                _context.next = 29;
+                return el.dataMap.render(value[i]);
+
+              case 29:
+                if (_context.sent) {
                   _context.next = 32;
                   break;
                 }
 
-                if (!(el.dataMap != null)) {
-                  _context.next = 28;
-                  break;
-                }
-
-                _context.next = 23;
-                return el.dataMap.render(value[i]);
-
-              case 23:
-                if (_context.sent) {
-                  _context.next = 26;
-                  break;
-                }
-
-                _context.next = 26;
+                _context.next = 32;
                 return el.render();
 
-              case 26:
-                _context.next = 30;
+              case 32:
+                _context.next = 36;
                 break;
 
-              case 28:
-                _context.next = 30;
+              case 34:
+                _context.next = 36;
                 return el.setData(value[i]);
 
-              case 30:
-                _context.next = 40;
+              case 36:
+                _context.next = 46;
                 break;
 
-              case 32:
+              case 38:
                 if (!(el.dataMap != null)) {
-                  _context.next = 37;
+                  _context.next = 43;
                   break;
                 }
 
-                _context.next = 35;
+                _context.next = 41;
                 return el.dataMap.render(value[i]);
 
-              case 35:
-                _context.next = 38;
+              case 41:
+                _context.next = 44;
                 break;
 
-              case 37:
+              case 43:
                 el.data = value[i];
 
-              case 38:
-                _context.next = 40;
+              case 44:
+                _context.next = 46;
                 return _IUI.IUI.render(el, el.data, false);
 
-              case 40:
+              case 46:
                 i++;
                 _context.next = 9;
                 break;
 
-              case 43:
+              case 49:
                 // @TODO: check if this works for event names starting with ":"
                 this._emit(":data", {
                   data: value
@@ -2963,12 +3039,12 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 this._busy = false;
 
-              case 45:
+              case 51:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this);
+        }, _callee, this, [[12, 18]]);
       }));
 
       function setData(_x) {
@@ -3662,6 +3738,15 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
             switch (_context.prev = _context.next) {
               case 0:
                 dataToQuery = _args.length > 4 && _args[4] !== undefined ? _args[4] : true;
+
+                if (!(url == null)) {
+                  _context.next = 3;
+                  break;
+                }
+
+                throw new Error("URL not specified.");
+
+              case 3:
                 q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
 
                 // do we have a query string ?
@@ -3681,14 +3766,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 _this$getRoute = this.getRoute(path, data), _this$getRoute2 = _slicedToArray(_this$getRoute, 2), stateRoute = _this$getRoute2[0], viewRoute = _this$getRoute2[1];
 
                 if (!(stateRoute == null)) {
-                  _context.next = 7;
+                  _context.next = 9;
                   break;
                 }
 
                 console.warn("State not found ", path);
                 return _context.abrupt("return");
 
-              case 7:
+              case 9:
                 ok = this._emit("navigate", {
                   url: url,
                   stateRoute: stateRoute,
@@ -3699,14 +3784,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 });
 
                 if (ok) {
-                  _context.next = 11;
+                  _context.next = 13;
                   break;
                 }
 
                 console.warn("Route not allowed", path);
                 return _context.abrupt("return");
 
-              case 11:
+              case 13:
                 // destination view not found
                 if (viewRoute == null) {
                   console.log("Destination route not found ".concat(stateRoute.dst));
@@ -3757,50 +3842,60 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 viewRoute.query = data || {};
                 stateRoute.query = viewRoute.query;
                 target.setLoading(true);
+                _context.prev = 24;
 
                 if (!(stateRoute.dataMap != null)) {
-                  _context.next = 33;
-                  break;
-                }
-
-                _context.next = 25;
-                return stateRoute.dataMap.render(data || {});
-
-              case 25:
-                if (_context.sent) {
-                  _context.next = 28;
+                  _context.next = 36;
                   break;
                 }
 
                 _context.next = 28;
-                return stateRoute.render();
+                return stateRoute.dataMap.render(data || {});
 
               case 28:
-                if (!(viewRoute != stateRoute)) {
+                if (_context.sent) {
                   _context.next = 31;
                   break;
                 }
 
                 _context.next = 31;
-                return viewRoute.setData(stateRoute.data);
+                return stateRoute.render();
 
               case 31:
-                _context.next = 35;
+                if (!(viewRoute != stateRoute)) {
+                  _context.next = 34;
+                  break;
+                }
+
+                _context.next = 34;
+                return viewRoute.setData(stateRoute.data);
+
+              case 34:
+                _context.next = 38;
                 break;
 
-              case 33:
-                _context.next = 35;
+              case 36:
+                _context.next = 38;
                 return viewRoute.setData(data);
 
-              case 35:
+              case 38:
+                _context.next = 43;
+                break;
+
+              case 40:
+                _context.prev = 40;
+                _context.t0 = _context["catch"](24);
+                console.log("EXXXXXXXXXX", _context.t0);
+
+              case 43:
                 target.setLoading(false);
 
-              case 36:
+              case 44:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this);
+        }, _callee, this, [[24, 40]]);
       }));
 
       function navigate(_x, _x2, _x3, _x4) {
@@ -7165,6 +7260,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                   this.repeat.appendChild(layout["null"].node.cloneNode(true));
                 } else {
                   this.label = document.createElement("div");
+                  this.label.innerHTML = this.innerHTML;
                   this.repeat.innerHTML = this.innerHTML;
                 } // clear everything else
                 //this.innerHTML = "";
@@ -9460,9 +9556,6 @@ window.addEventListener("load", /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/reg
           return _IUI.IUI.created(document.body);
 
         case 4:
-          console.log("IUI.create()");
-
-        case 5:
         case "end":
           return _context.stop();
       }
