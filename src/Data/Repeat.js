@@ -166,8 +166,10 @@ export default IUI.module(class Repeat extends IUIElement
                 // @TODO should check if the element depends on parent or not
                 if (el.dataMap != null) {
                     // if map function failed to call setData, we will render without it
-                    if (!(await el.dataMap.render(value[i])))
-                        await el.render();
+                    if (!(await el.dataMap.render(value[i]))) {
+						// @BUG @TODO this causes stackoverflow
+						// await el.render();
+                    }
                 }
                 else {
                     await el.setData(value[i]);

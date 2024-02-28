@@ -210,8 +210,10 @@ export default IUI.module(
       try {
           if (stateRoute.dataMap != null) {
             // if map function failed to call setData, we will render without it
-            if (!(await stateRoute.dataMap.render(data || {})))
-              await stateRoute.render();
+            if (!(await stateRoute.dataMap.render(data || {}))){
+              // @BUG @TODO this causes stackoverflow
+              // await stateRoute.render();
+            }
 
             if (viewRoute != stateRoute) await viewRoute.setData(stateRoute.data);
           } //if (data !== undefined)
