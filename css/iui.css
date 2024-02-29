@@ -2926,6 +2926,8 @@ html[dir='rtl'] .navbar-item[level='3'] > .link {
 .sitebar {
     display: flex;
     height: 100%;
+    flex-flow: row-reverse;
+    align-items: center;
 }
 
 .sitebar-container {
@@ -2936,14 +2938,14 @@ html[dir='rtl'] .navbar-item[level='3'] > .link {
     position: relative;
 }
 
-    .sitebar-item > i-link {
-        display: flex;
-        background: #e9e9e9;
-    }
+.sitebar-item > i-link {
+    display: flex;
+}
 
-        .sitebar-item > i-link:hover {
-            border-radius: 0;
-        }
+.sitebar-item > i-link:hover {
+    border-radius: 0;
+    color:var(--menu-item-hover-color);
+}
 
 .sitebar-menu {
     position: absolute;

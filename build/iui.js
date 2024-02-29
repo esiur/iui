@@ -1200,19 +1200,19 @@ var IUI = /*#__PURE__*/function () {
 
               case 23:
                 if (!(i < element.children.length)) {
-                  _context4.next = 49;
+                  _context4.next = 47;
                   break;
                 }
 
                 el = element.children[i];
 
                 if (!(el instanceof _IUIElement["default"])) {
-                  _context4.next = 38;
+                  _context4.next = 36;
                   break;
                 }
 
                 if (!(el.dataMap != null)) {
-                  _context4.next = 34;
+                  _context4.next = 32;
                   break;
                 }
 
@@ -1221,51 +1221,48 @@ var IUI = /*#__PURE__*/function () {
 
               case 29:
                 if (_context4.sent) {
-                  _context4.next = 32;
+                  _context4.next = 30;
                   break;
                 }
 
-                _context4.next = 32;
-                return el.render();
+              case 30:
+                _context4.next = 34;
+                break;
 
               case 32:
-                _context4.next = 36;
-                break;
-
-              case 34:
-                _context4.next = 36;
+                _context4.next = 34;
                 return el.setData(data);
 
-              case 36:
-                _context4.next = 46;
-                break;
-
-              case 38:
-                if (!(el.dataMap != null)) {
-                  _context4.next = 43;
-                  break;
-                }
-
-                _context4.next = 41;
-                return el.dataMap.render(data);
-
-              case 41:
+              case 34:
                 _context4.next = 44;
                 break;
 
-              case 43:
+              case 36:
+                if (!(el.dataMap != null)) {
+                  _context4.next = 41;
+                  break;
+                }
+
+                _context4.next = 39;
+                return el.dataMap.render(data);
+
+              case 39:
+                _context4.next = 42;
+                break;
+
+              case 41:
                 el.data = data;
 
-              case 44:
-                _context4.next = 46;
+              case 42:
+                _context4.next = 44;
                 return IUI.render(el, el.data);
 
-              case 46:
+              case 44:
                 i++;
                 _context4.next = 23;
                 break;
 
-              case 49:
+              case 47:
               case "end":
                 return _context4.stop();
             }
@@ -2938,7 +2935,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 9:
                 if (!(i < value.length)) {
-                  _context.next = 49;
+                  _context.next = 47;
                   break;
                 }
 
@@ -2972,12 +2969,12 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 25:
                 if (!(el instanceof _IUIElement2["default"])) {
-                  _context.next = 38;
+                  _context.next = 36;
                   break;
                 }
 
                 if (!(el.dataMap != null)) {
-                  _context.next = 34;
+                  _context.next = 32;
                   break;
                 }
 
@@ -2986,51 +2983,48 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 29:
                 if (_context.sent) {
-                  _context.next = 32;
+                  _context.next = 30;
                   break;
                 }
 
-                _context.next = 32;
-                return el.render();
+              case 30:
+                _context.next = 34;
+                break;
 
               case 32:
-                _context.next = 36;
-                break;
-
-              case 34:
-                _context.next = 36;
+                _context.next = 34;
                 return el.setData(value[i]);
 
-              case 36:
-                _context.next = 46;
-                break;
-
-              case 38:
-                if (!(el.dataMap != null)) {
-                  _context.next = 43;
-                  break;
-                }
-
-                _context.next = 41;
-                return el.dataMap.render(value[i]);
-
-              case 41:
+              case 34:
                 _context.next = 44;
                 break;
 
-              case 43:
+              case 36:
+                if (!(el.dataMap != null)) {
+                  _context.next = 41;
+                  break;
+                }
+
+                _context.next = 39;
+                return el.dataMap.render(value[i]);
+
+              case 39:
+                _context.next = 42;
+                break;
+
+              case 41:
                 el.data = value[i];
 
-              case 44:
-                _context.next = 46;
+              case 42:
+                _context.next = 44;
                 return _IUI.IUI.render(el, el.data, false);
 
-              case 46:
+              case 44:
                 i++;
                 _context.next = 9;
                 break;
 
-              case 49:
+              case 47:
                 // @TODO: check if this works for event names starting with ":"
                 this._emit(":data", {
                   data: value
@@ -3039,7 +3033,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 this._busy = false;
 
-              case 51:
+              case 49:
               case "end":
                 return _context.stop();
             }
@@ -3845,7 +3839,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 _context.prev = 24;
 
                 if (!(stateRoute.dataMap != null)) {
-                  _context.next = 36;
+                  _context.next = 34;
                   break;
                 }
 
@@ -3854,48 +3848,45 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
 
               case 28:
                 if (_context.sent) {
-                  _context.next = 31;
+                  _context.next = 29;
                   break;
                 }
 
-                _context.next = 31;
-                return stateRoute.render();
-
-              case 31:
+              case 29:
                 if (!(viewRoute != stateRoute)) {
-                  _context.next = 34;
+                  _context.next = 32;
                   break;
                 }
 
-                _context.next = 34;
+                _context.next = 32;
                 return viewRoute.setData(stateRoute.data);
 
-              case 34:
-                _context.next = 38;
+              case 32:
+                _context.next = 36;
                 break;
 
-              case 36:
-                _context.next = 38;
+              case 34:
+                _context.next = 36;
                 return viewRoute.setData(data);
 
-              case 38:
-                _context.next = 43;
+              case 36:
+                _context.next = 41;
                 break;
 
-              case 40:
-                _context.prev = 40;
+              case 38:
+                _context.prev = 38;
                 _context.t0 = _context["catch"](24);
                 console.log("EXXXXXXXXXX", _context.t0);
 
-              case 43:
+              case 41:
                 target.setLoading(false);
 
-              case 44:
+              case 42:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[24, 40]]);
+        }, _callee, this, [[24, 38]]);
       }));
 
       function navigate(_x, _x2, _x3, _x4) {
