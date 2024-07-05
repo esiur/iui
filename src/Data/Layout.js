@@ -24,6 +24,10 @@ export default IUI.module(class Layout extends HTMLElement// IUIElement
 	//	this.style.display = "none";
 	//}
 
+	async create() {
+		await super.create();
+	}
+
 	static getHTML(el, removeSelf = false) {
 		for (var i = 0; i < el.children.length; i++)
 			if (el.children[i] instanceof Layout) {

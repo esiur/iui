@@ -35,6 +35,7 @@ export default IUI.module(class Select extends IUIElement {
         if (!this.searchlist && this.menu)
             app.appendChild(this.menu);        
     }
+    
     get autocomplete() {
         return this._autocomplete;
     }

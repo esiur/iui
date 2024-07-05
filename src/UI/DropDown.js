@@ -1,34 +1,59 @@
 ﻿import IUIElement from "../Core/IUIElement.js";
 import { IUI } from "../Core/IUI.js";
-
+import Layout from "../Data/Layout.js";
+import Menu from "./Menu.js";
 export default IUI.module(class DropDown extends IUIElement {
+
+    visible = false;
+
     constructor() {
         super({"direction": "down" });
 
-        var self = this;
-
         this._register("visible");
 
-        this.visible = false;
 
-       // this.classList.add(this.cssClass + "-" + this.direction);
-
-        this.menu = this.getElementsByClassName(this.cssClass + "-menu")[0];
+    }
 
 
-        //this.arrow = document.createElement("div");
-        //this.arrow.className = this.customClass + "-arrow";
 
+    async create()
+    {
+        await super.create();
 
-        //this.el.appendChild(this.arrow);
+        this.menu = new Menu({ cssClass: this.cssClass + "-menu", "target-class": "" });
+
+        let layout = Layout.get(this, "div", true, true); 
+
+        if (layout != null && layout.label != undefined && layout.menu != undefined) {
+            this.label = layout.label.node;
+            this.menu.appendChild(layout.menu.node);
+        }
+        else if (layout != null && layout.null != null)
+        {
+            this.label = layout.null.node;
+            this.menu.appendChild(layout.null.node.cloneNode(true));
+        }
+        else
+        {
+            this.label = document.createElement("div");
+            this.label.innerHTML = this.innerHTML;
+        }
+
+        this.label.className = this.cssClass + "-label";
+
+        this.appendChild(this.label);
+
+        let self = this;
+
+        this.label.addEventListener("click", function (e) {
+            self.show();
+        });
 
         if (this.getAttribute("fixed"))
         {
             this._fixed = true;
             document.body.appendChild(this.menu);
         }
-
-        //this.el.appendChild(this.menu);
 
         this.addEventListener("click", function (e) {
             var t = e.target
@@ -40,25 +65,19 @@ export default IUI.module(class DropDown extends IUIElement {
             self.setVisible(!self.visible);
         });
 
-        IUI._menus.push(this);
 
-        /*
-        document.body.addEventListener("click", function(e)
-            {
-                if (!self.visible)
-                    return;
-        	
-                var x = e.target;
-                do {
-                    if (x == self.menu || x == self.el)
-                        return;
-                } while (x = x.parentNode)
-            	
-                if (e.target.id == "iui_app_background")
-                    return;
-    
-                self.setVisible(false);
-            });*/
+        app.appendChild(this.menu);
+
+        if (app.loaded)
+        {
+            await IUI.create(this.menu);
+
+            IUI.bind(this.menu, false, "menu", this.__i_bindings?.scope, false);
+            // update referencing
+            this.__i_bindings?.scope?.refs?._build();
+
+            await IUI.created(this.menu);
+        }
     }
 
     set fixed(value) {
@@ -79,6 +98,18 @@ export default IUI.module(class DropDown extends IUIElement {
         return this.setVisible(true);
     }
 
+
+    disconnectedCallback() {
+        if (this.menu)
+            app.removeChild(this.menu);
+    }
+
+    connectedCallback(){
+        super.connectedCallback();
+        if (this.menu)
+            app.appendChild(this.menu);        
+    }
+
     getOffset() {
         var el = this;
         var _x = 0;
@@ -94,12 +125,46 @@ export default IUI.module(class DropDown extends IUIElement {
         return { top: _y, left: _x, width: this.clientWidth, height: this.clientHeight };
     }
 
-    set data(value) {
-       // console.log("DD", value);
-        super.data = value;
-//        console.log("VV", this._uiBindings, this._dataBindings);
-    }
+
+    
     setVisible(visible) {
+
+        if (visible == this.visible)
+            return;
+
+        if (visible) {
+            // show menu
+            var rect = this.getBoundingClientRect();
+            this.menu.style.width = (this.clientWidth - this._computeMenuOuterWidth()) + "px";
+            this.menu.style.paddingTop = rect.height + "px";
+            this.menu.setVisible(true, rect.left, rect.top);//, this.menu);
+            this.visible = true;
+
+            this.classList.add(this.cssClass + "-visible");
+
+            if (this._autocomplete)
+                setTimeout(() => {
+                    this.textbox.focus();        
+                }, 100);
+
+        }
+        else {
+            this.visible = false;
+            this.classList.remove(this.cssClass + "-visible");
+            
+            this.menu.hide();
+        }
+
+        //this.textbox.focus();
+
+    }
+
+
+    _computeMenuOuterWidth() {
+        return this.menu.offsetWidth - this.menu.clientWidth;
+    }
+
+    setVisibleOld(visible) {
         this.visible = visible;
 
         if (!this.fixed) {
