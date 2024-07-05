@@ -55,7 +55,11 @@ export default IUI.module(
       this._span = document.createElement("span");
       this._span.innerHTML = this.getAttribute("caption");
 
-      this._input = document.createElement("input");
+      let type = this.hasAttribute("type")
+            ? this.getAttribute("type").toLowerCase()
+            : "text";
+
+      this._input = document.createElement(type == "multiline" ? "textarea" : "input");
       this._input.placeholder = this.getAttribute("placeholder") || "";
 
       let self = this;
@@ -69,9 +73,6 @@ export default IUI.module(
         self._emit("change", { value: self.value });
       });
 
-      this.type = this.hasAttribute("type")
-        ? this.getAttribute("type").toLowerCase()
-        : "text";
 
       this.accept = this.getAttribute("accept");
 
