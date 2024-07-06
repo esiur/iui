@@ -13,6 +13,7 @@ export default IUI.module(
 
       this._register("show");
       this._register("hide");
+      this._register("load");
     }
 
     async setData(value) {
@@ -150,6 +151,7 @@ export default IUI.module(
 
     created() {
       this.refs._build();
+      this._emit("load", { route: this });
     }
 
     set(value) {

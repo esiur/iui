@@ -157,7 +157,8 @@ export default IUI.module(
         // can't set value on file input
       } else this._input.value = value;
 
-      if (this._checkValidity() && this.isAuto) this.revert();
+      if (this._checkValidity() && this.isAuto) 
+        this.revert();
 
       /*
         await super.setData(value);

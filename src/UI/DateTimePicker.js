@@ -8,7 +8,7 @@ export default IUI.module(class DateTimePicker extends IUIElement {
         super();
     }
 
-   
+
 
     get layout() {
         return this._layout;
@@ -41,7 +41,7 @@ export default IUI.module(class DateTimePicker extends IUIElement {
         for (var i = 0; i < 7; i++) {
             var td = tr.insertCell();
             td.innerHTML = this.layout.day.formatter((i + this.layout.weekStart) % 7);
-            td.className =  this.cssClass + "-day";
+            td.className = this.cssClass + "-day";
         }
 
         this.tools = document.createElement("div");
@@ -76,7 +76,7 @@ export default IUI.module(class DateTimePicker extends IUIElement {
         this.tools.appendChild(this.month);
         this.tools.appendChild(this.year);
 
-        let self = this; 
+        let self = this;
 
         this.nextMonth.addEventListener("click", function () {
             self._month = (self._month + 1) % 12;
@@ -114,6 +114,10 @@ export default IUI.module(class DateTimePicker extends IUIElement {
                     self._value.setFullYear(self._year);
                     self._value.setMonth(self._month);
                     self.render();
+
+                    if (self.isAuto)
+                        self.revert();
+
                     self._emit("select", { value: self._value });
                     self._emit(":value", { value });
                 });
@@ -165,6 +169,10 @@ export default IUI.module(class DateTimePicker extends IUIElement {
                 var m = Math.floor(t % 60);
                 self._value.setHours(h);
                 self._value.setMinutes(m);
+
+                if (self.isAuto)
+                    self.revert();
+
                 self._emit("select", self._value);
                 self.render();
             });
@@ -174,13 +182,26 @@ export default IUI.module(class DateTimePicker extends IUIElement {
         //this.timeList = 
         this.appendChild(this.calendar);
         this.appendChild(this.clock);
-  //      this.appendChild(this.minutes);
-//        this.appendChild(this.hours);
+        //      this.appendChild(this.minutes);
+        //        this.appendChild(this.hours);
 
         this.value = new Date();
     }
 
-    create() {
+    async create() {
+
+        await super.create();
+
+        this.isAuto = this.hasAttribute("auto");
+        this.field = this.getAttribute("field");
+
+        if (this.field != null) {
+            this.setAttribute(":data", `d != null ? d['${this.field}'] : null`);
+            this.setAttribute(
+                "async:revert",
+                `d != null ? d['${this.field}'] = this.data : null`
+            );
+        }
 
         var self = this;
 
@@ -286,13 +307,25 @@ export default IUI.module(class DateTimePicker extends IUIElement {
     }
 
     get data() {
-        return super.data;
+        return this.value;
     }
 
+
+    async setData(value) {
+        await super.setData(value);
+
+        this.value = value;
+
+        if (this.isAuto)
+            this.revert();
+    }
+
+    /*
     modified(name, value) {
         if (name == this.field)
             this.value = value;
     }
+    */
 
     set value(value) {
         if (value && !isNaN(value.getTime())) {
@@ -305,6 +338,9 @@ export default IUI.module(class DateTimePicker extends IUIElement {
             this._emit("modified", { value, property: "value" });
             //this.modified("value", );
             //this.modified("modified", { value });
+
+            if (this.isAuto)
+                this.revert();
         }
     }
 

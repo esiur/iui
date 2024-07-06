@@ -165,6 +165,7 @@
     --grid-window-drag-border: #46b7e6 dotted 3px;
     --datetimepicker-calendar-border-right: 3px solid pink;
     --datetimepicker-clock-background: gainsboro;
+    --datetimepicker-calendar-content-background: var(--default-background-color);
     --datetimepicker-different-month-color: #bebebe;
     --datetimepicker-day-background-hover: #a7e3fc;
     --datetimepicker-day-selected-background: #46b7e6;
@@ -2366,6 +2367,7 @@ html[dir='rtl'] .multiselect-list-remove {
 .datetimepicker-calendar-content {
     display: flex;
     flex: 1;
+    background: var(--datetimepicker-calendar-content-background);
 }
 
 .datetimepicker-clock {
