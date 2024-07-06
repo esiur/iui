@@ -2489,11 +2489,19 @@ var _IUI = require("../Core/IUI.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -2526,11 +2534,9 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_HTMLElement) {
     return _super.call(this);
   }
 
-  _createClass(Layout, null, [{
-    key: "moduleName",
-    get: function get() {
-      return this.name.toLowerCase();
-    } //create()
+  _createClass(Layout, [{
+    key: "create",
+    value: //create()
     //{
     //       for (var i = 0; i < this.children.length; i++)
     //           if (this.children[i] instanceof Field) {
@@ -2539,7 +2545,34 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_HTMLElement) {
     //           }
     //	this.style.display = "none";
     //}
+    function () {
+      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return _get(_getPrototypeOf(Layout.prototype), "create", this).call(this);
 
+              case 2:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function create() {
+        return _create.apply(this, arguments);
+      }
+
+      return create;
+    }()
+  }], [{
+    key: "moduleName",
+    get: function get() {
+      return this.name.toLowerCase();
+    }
   }, {
     key: "getHTML",
     value: function getHTML(el) {
@@ -3296,6 +3329,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
     _this._register("hide");
 
+    _this._register("load");
+
     return _this;
   }
 
@@ -3492,6 +3527,10 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     key: "created",
     value: function created() {
       this.refs._build();
+
+      this._emit("load", {
+        route: this
+      });
     }
   }, {
     key: "set",
@@ -4829,6 +4868,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
             self._value.setMonth(self._month);
 
             self.render();
+            if (self.isAuto) self.revert();
 
             self._emit("select", {
               value: self._value
@@ -4880,6 +4920,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
           self._value.setMinutes(m);
 
+          if (self.isAuto) self.revert();
+
           self._emit("select", self._value);
 
           self.render();
@@ -4896,43 +4938,75 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
     }
   }, {
     key: "create",
-    value: function create() {
-      var self = this;
+    value: function () {
+      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var self;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return _get(_getPrototypeOf(DateTimePicker.prototype), "create", this).call(this);
 
-      this._register("select");
+              case 2:
+                this.isAuto = this.hasAttribute("auto");
+                this.field = this.getAttribute("field");
 
-      this.classList.add(this.cssClass);
-      this.layout = {
-        day: {
-          formatter: function formatter(index) {
-            return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index]; //return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][index];
-          }
-        },
-        month: {
-          formatter: function formatter(index) {
-            return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][index];
-          }
-        },
-        year: {
-          formatter: function formatter(value) {
-            return value;
-          }
-        },
-        time: {
-          formatter: function formatter(value) {
-            var formatDigit = function formatDigit(d) {
-              return d < 10 ? "0" + d : d;
-            };
+                if (this.field != null) {
+                  this.setAttribute(":data", "d != null ? d['".concat(this.field, "'] : null"));
+                  this.setAttribute("async:revert", "d != null ? d['".concat(this.field, "'] = this.data : null"));
+                }
 
-            var h = Math.floor(value / 60);
-            var m = Math.floor(value % 60);
-            return formatDigit(h) + ":" + formatDigit(m);
-          },
-          range: 15
-        },
-        weekStart: 5
-      };
-    }
+                self = this;
+
+                this._register("select");
+
+                this.classList.add(this.cssClass);
+                this.layout = {
+                  day: {
+                    formatter: function formatter(index) {
+                      return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index]; //return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][index];
+                    }
+                  },
+                  month: {
+                    formatter: function formatter(index) {
+                      return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][index];
+                    }
+                  },
+                  year: {
+                    formatter: function formatter(value) {
+                      return value;
+                    }
+                  },
+                  time: {
+                    formatter: function formatter(value) {
+                      var formatDigit = function formatDigit(d) {
+                        return d < 10 ? "0" + d : d;
+                      };
+
+                      var h = Math.floor(value / 60);
+                      var m = Math.floor(value % 60);
+                      return formatDigit(h) + ":" + formatDigit(m);
+                    },
+                    range: 15
+                  },
+                  weekStart: 5
+                };
+
+              case 9:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function create() {
+        return _create.apply(this, arguments);
+      }
+
+      return create;
+    }()
   }, {
     key: "render",
     value: function render() {
@@ -4970,23 +5044,24 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   }, {
     key: "setData",
     value: function () {
-      var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(value) {
-        return regeneratorRuntime.wrap(function _callee$(_context) {
+      var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(value) {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                _context.next = 2;
+                _context2.next = 2;
                 return _get(_getPrototypeOf(DateTimePicker.prototype), "setData", this).call(this, value);
 
               case 2:
-                if (value != null && this.field != null) this.value = this.data[this.field];
+                this.value = value;
+                if (this.isAuto) this.revert();
 
-              case 3:
+              case 4:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
 
       function setData(_x) {
@@ -4995,15 +5070,17 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
       return setData;
     }()
+    /*
+    modified(name, value) {
+        if (name == this.field)
+            this.value = value;
+    }
+    */
+
   }, {
     key: "data",
     get: function get() {
-      return _get(_getPrototypeOf(DateTimePicker.prototype), "data", this);
-    }
-  }, {
-    key: "modified",
-    value: function modified(name, value) {
-      if (name == this.field) this.value = value;
+      return this.value;
     }
   }, {
     key: "value",
@@ -5028,6 +5105,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         }); //this.modified("value", );
         //this.modified("modified", { value });
 
+
+        if (this.isAuto) this.revert();
       }
     }
   }]);
@@ -5362,7 +5441,15 @@ var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 
 var _IUI = require("../Core/IUI.js");
 
+var _Layout = _interopRequireDefault(require("../Data/Layout.js"));
+
+var _Menu = _interopRequireDefault(require("./Menu.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -5370,11 +5457,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function set(target, property, value, receiver) { if (typeof Reflect !== "undefined" && Reflect.set) { set = Reflect.set; } else { set = function set(target, property, value, receiver) { var base = _superPropBase(target, property); var desc; if (base) { desc = Object.getOwnPropertyDescriptor(base, property); if (desc.set) { desc.set.call(receiver, value); return true; } else if (!desc.writable) { return false; } } desc = Object.getOwnPropertyDescriptor(receiver, property); if (desc) { if (!desc.writable) { return false; } desc.value = value; Object.defineProperty(receiver, property, desc); } else { _defineProperty(receiver, property, value); } return true; }; } return set(target, property, value, receiver); }
-
-function _set(target, property, value, receiver, isStrict) { var s = set(target, property, value, receiver || target); if (!s && isStrict) { throw new Error('failed to set property'); } return value; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
 
 function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
@@ -5397,6 +5480,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
   var _super = _createSuper(DropDown);
 
+  //visible = false;
   function DropDown() {
     var _this;
 
@@ -5406,55 +5490,116 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       "direction": "down"
     });
 
-    var self = _assertThisInitialized(_this);
-
     _this._register("visible");
-
-    _this.visible = false; // this.classList.add(this.cssClass + "-" + this.direction);
-
-    _this.menu = _this.getElementsByClassName(_this.cssClass + "-menu")[0]; //this.arrow = document.createElement("div");
-    //this.arrow.className = this.customClass + "-arrow";
-    //this.el.appendChild(this.arrow);
-
-    if (_this.getAttribute("fixed")) {
-      _this._fixed = true;
-      document.body.appendChild(_this.menu);
-    } //this.el.appendChild(this.menu);
-
-
-    _this.addEventListener("click", function (e) {
-      var t = e.target;
-
-      do {
-        if (t == self.menu) return;
-      } while (t = t.parentElement);
-
-      self.setVisible(!self.visible);
-    });
-
-    _IUI.IUI._menus.push(_assertThisInitialized(_this));
-    /*
-    document.body.addEventListener("click", function(e)
-        {
-            if (!self.visible)
-                return;
-    	
-            var x = e.target;
-            do {
-                if (x == self.menu || x == self.el)
-                    return;
-            } while (x = x.parentNode)
-        	
-            if (e.target.id == "iui_app_background")
-                return;
-                  self.setVisible(false);
-        });*/
-
 
     return _this;
   }
 
   _createClass(DropDown, [{
+    key: "create",
+    value: function () {
+      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var layout, self, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2;
+
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return _get(_getPrototypeOf(DropDown.prototype), "create", this).call(this);
+
+              case 2:
+                this.menu = new _Menu["default"]({
+                  cssClass: this.cssClass + "-menu",
+                  "target-class": ""
+                });
+                layout = _Layout["default"].get(this, "div", true, true);
+
+                if (layout != null && layout.label != undefined && layout.menu != undefined) {
+                  this.label = layout.label.node;
+                  this.menu.appendChild(layout.menu.node);
+                } else if (layout != null && layout["null"] != null) {
+                  this.label = layout["null"].node;
+                  this.menu.appendChild(layout["null"].node.cloneNode(true));
+                } else {
+                  this.label = document.createElement("div");
+                  this.label.innerHTML = this.innerHTML;
+                }
+
+                this.label.className = this.cssClass + "-label";
+                this.appendChild(this.label);
+                self = this;
+                this.label.addEventListener("click", function (e) {
+                  self.show();
+                });
+
+                if (this.getAttribute("fixed")) {
+                  this._fixed = true;
+                  document.body.appendChild(this.menu);
+                }
+
+                app.appendChild(this.menu);
+
+                if (!app.loaded) {
+                  _context.next = 18;
+                  break;
+                }
+
+                _context.next = 14;
+                return _IUI.IUI.create(this.menu);
+
+              case 14:
+                _IUI.IUI.bind(this.menu, false, "menu", (_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, false); // update referencing
+
+
+                (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
+                _context.next = 18;
+                return _IUI.IUI.created(this.menu);
+
+              case 18:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function create() {
+        return _create.apply(this, arguments);
+      }
+
+      return create;
+    }()
+  }, {
+    key: "setData",
+    value: function () {
+      var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(value) {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _get(_getPrototypeOf(DropDown.prototype), "setData", this).call(this, value);
+
+              case 2:
+                _context2.next = 4;
+                return this.menu.setData(value);
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function setData(_x) {
+        return _setData.apply(this, arguments);
+      }
+
+      return setData;
+    }()
+  }, {
     key: "fixed",
     get: function get() {
       return this._fixed;
@@ -5474,109 +5619,44 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       return this.setVisible(true);
     }
   }, {
-    key: "getOffset",
-    value: function getOffset() {
-      var el = this;
-      var _x = 0;
-      var _y = 0;
-
-      while (!isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
-        _x += el.offsetLeft - el.scrollLeft;
-        _y += el.offsetTop - el.scrollTop;
-        el = el.offsetParent;
-      }
-
-      _x += window.pageXOffset;
-      _y += window.pageYOffset;
-      return {
-        top: _y,
-        left: _x,
-        width: this.clientWidth,
-        height: this.clientHeight
-      };
+    key: "disconnectedCallback",
+    value: function disconnectedCallback() {
+      if (this.menu) app.removeChild(this.menu);
     }
   }, {
-    key: "data",
-    set: function set(value) {
-      // console.log("DD", value);
-      _set(_getPrototypeOf(DropDown.prototype), "data", value, this, true); //        console.log("VV", this._uiBindings, this._dataBindings);
+    key: "connectedCallback",
+    value: function connectedCallback() {
+      _get(_getPrototypeOf(DropDown.prototype), "connectedCallback", this).call(this);
 
+      if (this.menu) app.appendChild(this.menu);
     }
   }, {
     key: "setVisible",
     value: function setVisible(visible) {
-      this.visible = visible;
+      var _this2 = this;
 
-      if (!this.fixed) {
-        if (visible) {
-          this.menu.classList.add(this.cssClass + "-menu-visible");
-          this.classList.add(this.cssClass + "-visible");
-        } else {
-          this.menu.classList.remove(this.cssClass + "-menu-visible");
-          this.classList.remove(this.cssClass + "-visible");
-        }
+      if (visible == this.menu.visible) return;
+
+      if (visible) {
+        // show menu
+        var rect = this.getBoundingClientRect(); //this.menu.style.width = (this.clientWidth - this._computeMenuOuterWidth()) + "px";
+
+        this.menu.style.marginTop = rect.height + "px";
+        this.menu.setVisible(true, rect.left, rect.top); //, this.menu);
+
+        this.classList.add(this.cssClass + "-visible");
+        if (this._autocomplete) setTimeout(function () {
+          _this2.textbox.focus();
+        }, 100);
       } else {
-        if (visible) {
-          var rect = this.getBoundingClientRect();
-          var menuWidth = this.menu.clientWidth;
-          var menuHeight = this.menu.clientHeight;
-
-          if (menuWidth > document.body.clientWidth) {
-            menuWidth = document.body.clientWidth - 10;
-            this.menu.style.width = menuWidth + "px";
-          }
-
-          var startX = rect.left + (rect.width / 2 - menuWidth / 2);
-
-          if (this.direction == "up") {
-            //					var menuTop = rect.top - this.arrow.clientHeight - this.menu.clientHeight;
-            var menuTop = rect.top - this.menu.clientHeight;
-
-            if (menuTop < 0) {
-              menuTop = 5; //						this.menu.style.height = (rect.top  - this.arrow.clientHeight ) + "px";
-
-              this.menu.style.height = rect.top + "px";
-              this.menu.classList.add(this.cssClass + "-menu-oversized");
-            } else this.menu.classList.remove(this.cssClass + "-menu-oversized"); //this.arrow.classList.remove(this.customClass + "-arrow-down");
-            //this.arrow.classList.add(this.customClass + "-arrow-up");
-            //this.arrow.style.top = ( rect.top - this.arrow.clientHeight ) + "px";
-
-
-            this.menu.style.top = menuTop + "px";
-          } else {
-            //var menuTop = rect.top + rect.height + this.arrow.clientHeight;
-            var menuTop = rect.top + rect.height; //this.arrow.classList.remove(this.customClass + "-arrow-up");
-            //this.arrow.classList.add(this.customClass + "-arrow-down");
-            //this.arrow.style.top = ( rect.top + rect.height ) + "px";
-
-            this.menu.style.top = menuTop + "px";
-
-            if (menuTop + menuHeight > document.body.clientHeight) {
-              this.menu.style.height = document.body.clientHeight - menuTop + "px";
-              this.menu.classList.add(this.cssClass + "-menu-oversized");
-            } else {
-              this.menu.classList.remove(this.cssClass + "-menu-oversized");
-            }
-          }
-
-          if (startX < 0) startX = 5;else if (startX + menuWidth > document.body.clientWidth) startX = document.body.clientWidth - menuWidth - 5; //this.arrow.style.left = (rect.left + (rect.width/2 - this.arrow.clientWidth/2)) + "px";
-
-          this.menu.style.left = startX + "px"; //this.arrow.classList.add(this.customClass + "-arrow-visible");
-
-          this.menu.classList.add(this.cssClass + "-menu-visible");
-          this.classList.add(this.cssClass + "-visible");
-        } else {
-          //this.arrow.classList.remove(this.customClass + "-arrow-visible");
-          this.menu.classList.remove(this.cssClass + "-menu-visible");
-          this.classList.remove(this.cssClass + "-visible");
-        }
+        this.classList.remove(this.cssClass + "-visible");
+        this.menu.hide();
       }
-
-      this._emit("visible", {
-        visible: visible
-      });
-
-      return this;
+    }
+  }, {
+    key: "_computeMenuOuterWidth",
+    value: function _computeMenuOuterWidth() {
+      return this.menu.offsetWidth - this.menu.clientWidth;
     }
   }]);
 
@@ -5585,7 +5665,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],25:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"./Menu.js":29}],25:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -5939,7 +6019,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
       this._span = document.createElement("span");
       this._span.innerHTML = this.getAttribute("caption");
-      this._input = document.createElement("input");
+      var type = this.hasAttribute("type") ? this.getAttribute("type").toLowerCase() : "text";
+      this._input = document.createElement(type == "multiline" ? "textarea" : "input");
       this._input.placeholder = this.getAttribute("placeholder") || "";
       var self = this;
 
@@ -5953,7 +6034,6 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
         });
       });
 
-      this.type = this.hasAttribute("type") ? this.getAttribute("type").toLowerCase() : "text";
       this.accept = this.getAttribute("accept");
       this.appendChild(this._input);
       this.appendChild(this._span);
