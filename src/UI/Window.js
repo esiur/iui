@@ -15,7 +15,12 @@ export default IUI.module(class IUIWindow extends IUIElement {
 
     static moduleName = "window";
 
-    create() {
+    async create() {
+
+        await super.create();
+
+        //debugger;
+
         var self = this;
 
         this.tabIndex = 0;
@@ -46,16 +51,12 @@ export default IUI.module(class IUIWindow extends IUIElement {
         else
             this._body = b[0];
 
-        if (this.icon) {
-            this._icon = document.createElement("div");
-            this._icon.className = this.cssClass + "-icon";
-            //this._icon.src = this.icon;
-
-
-       
-            this._icon.style.setProperty("--icon", `url('${this.icon}')`);
-            this._header.appendChild(this._icon);
-        }
+        //if (this.icon) {
+        this._icon = document.createElement("div");
+        this._icon.className = this.cssClass + "-icon";
+        this._icon.style.setProperty("--icon", `url('${this.icon}')`);
+        this._header.appendChild(this._icon);
+        //}
 
         this._caption = document.createElement("div");
         this._caption.className = this.cssClass + "-caption";
@@ -100,6 +101,13 @@ export default IUI.module(class IUIWindow extends IUIElement {
     get icon() {
         return this.getAttribute("icon");
     }
+
+    set icon(value) {
+        this._icon.style.setProperty("--icon", `url('${value}')`);
+        this.setAttribute("icon", value);
+    }
+
+
     /*
     setFocus(v) {
         this.focus = v;
