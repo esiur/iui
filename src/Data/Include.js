@@ -44,18 +44,15 @@ export default IUI.module(class Include extends IUIElement
             this.innerHTML = t;
 
             //let xeval = (code) => eval(code);
-
-            if (window?.app?.loaded)
-            {
-                await IUI.create(this);
-                IUI.bind(this, true, "include:" + src, 
-                    IUI.extend(this._i__bindings.scope, this.scope, true));
             
+            if (window?.app?.loaded) {
+                await IUI.create(this);
+                IUI.bind(this, true, "include:" + src, this.scope);
                 this.refs._build();
                 await IUI.created(this);
                 await IUI.render(this, this._data, true);
             }
-
+            
             // // call create for the new elements
             // var newElements = this.querySelectorAll("*");
             // for (var i = 0; i < newElements.length; i++) {
