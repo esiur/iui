@@ -830,39 +830,53 @@ var IUI = /*#__PURE__*/function () {
     key: "created",
     value: function () {
       var _created = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(element) {
-        var i, e;
+        var includeThisElement,
+            i,
+            e,
+            _args2 = arguments;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                includeThisElement = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : false;
+
+                if (!(includeThisElement && element instanceof _IUIElement["default"])) {
+                  _context2.next = 4;
+                  break;
+                }
+
+                _context2.next = 4;
+                return element.created();
+
+              case 4:
                 i = 0;
 
-              case 1:
+              case 5:
                 if (!(i < element.children.length)) {
-                  _context2.next = 11;
+                  _context2.next = 15;
                   break;
                 }
 
                 e = element.children[i];
 
                 if (!(e instanceof _IUIElement["default"])) {
-                  _context2.next = 6;
+                  _context2.next = 10;
                   break;
                 }
 
-                _context2.next = 6;
+                _context2.next = 10;
                 return e.created();
 
-              case 6:
-                _context2.next = 8;
+              case 10:
+                _context2.next = 12;
                 return IUI.created(e);
 
-              case 8:
+              case 12:
                 i++;
-                _context2.next = 1;
+                _context2.next = 5;
                 break;
 
-              case 11:
+              case 15:
               case "end":
                 return _context2.stop();
             }
@@ -880,39 +894,53 @@ var IUI = /*#__PURE__*/function () {
     key: "create",
     value: function () {
       var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(element) {
-        var i, e;
+        var includeThisElement,
+            i,
+            e,
+            _args3 = arguments;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
+                includeThisElement = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : false;
+
+                if (!(includeThisElement && element instanceof _IUIElement["default"])) {
+                  _context3.next = 4;
+                  break;
+                }
+
+                _context3.next = 4;
+                return element.create();
+
+              case 4:
                 i = 0;
 
-              case 1:
+              case 5:
                 if (!(i < element.children.length)) {
-                  _context3.next = 11;
+                  _context3.next = 15;
                   break;
                 }
 
                 e = element.children[i];
 
                 if (!(e instanceof _IUIElement["default"])) {
-                  _context3.next = 6;
+                  _context3.next = 10;
                   break;
                 }
 
-                _context3.next = 6;
+                _context3.next = 10;
                 return e.create();
 
-              case 6:
-                _context3.next = 8;
+              case 10:
+                _context3.next = 12;
                 return IUI.create(e);
 
-              case 8:
+              case 12:
                 i++;
-                _context3.next = 1;
+                _context3.next = 5;
                 break;
 
-              case 11:
+              case 15:
               case "end":
                 return _context3.stop();
             }
@@ -2976,7 +3004,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this.list.push(el);
                 _context.prev = 12;
                 _context.next = 15;
-                return _IUI.IUI.create(el);
+                return _IUI.IUI.create(el, true);
 
               case 15:
                 _IUI.IUI.bind(el, false, "repeat", _IUI.IUI.extend((_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, {
@@ -2998,7 +3026,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
                 _context.next = 25;
-                return _IUI.IUI.created(el);
+                return _IUI.IUI.created(el, true);
 
               case 25:
                 if (!(el instanceof _IUIElement2["default"])) {

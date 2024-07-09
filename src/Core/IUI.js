@@ -44,18 +44,28 @@ export class IUI {
 	}, { threshold: [0] });
 
 
-    static async created (element) {
+    static async created(element, includeThisElement = false) { 
 
-        for (var i = 0; i < element.children.length; i++) {
-            let e = element.children[i];
-            if (e instanceof IUIElement)
-                await e.created();
-            await IUI.created(e);
-        }
+		// @TODO: this should grow from root to leef
+		if (includeThisElement && element instanceof IUIElement) {
+			await element.created();
+		}
+
+		for (var i = 0; i < element.children.length; i++) {
+			let e = element.children[i];
+			if (e instanceof IUIElement)
+				await e.created();
+			await IUI.created(e);
+		}
+		
     }
 
-    static async create(element)
+    static async create(element, includeThisElement = false)
     {
+
+		if (includeThisElement && element instanceof IUIElement) {
+			await element.create();
+		}
 
         for (let i = 0; i < element.children.length; i++) {
             let e = element.children[i];

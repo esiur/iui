@@ -145,11 +145,11 @@ export default IUI.module(class Repeat extends IUIElement
             this.list.push(el);
 
             try {
-                await IUI.create(el);
+                await IUI.create(el, true);
 
                 IUI.bind(el, false, "repeat", 
-                        IUI.extend(this.__i_bindings?.scope, 
-                                    {index: i, repeat: this}, true));
+                         IUI.extend(this.__i_bindings?.scope, 
+                                        {index: i, repeat: this}, true));
                 
             } catch (ex) {
                 console.log(ex);
@@ -160,7 +160,7 @@ export default IUI.module(class Repeat extends IUIElement
             // update referencing
             this.__i_bindings?.scope?.refs?._build();
 
-            await IUI.created(el);
+            await IUI.created(el, true);
 
             if (el instanceof IUIElement){
                 // @TODO should check if the element depends on parent or not
