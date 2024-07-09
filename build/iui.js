@@ -2370,7 +2370,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 return _IUI.IUI.create(this);
 
               case 16:
-                _IUI.IUI.bind(this, true, "include:" + src, _IUI.IUI.extend(this._i__bindings.scope, this.scope, true));
+                _IUI.IUI.bind(this, true, "include:" + src, this.scope);
 
                 this.refs._build();
 
@@ -9220,11 +9220,19 @@ var _class, _temp;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -9270,66 +9278,91 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIElem
 
   _createClass(IUIWindow, [{
     key: "create",
-    value: function create() {
-      var self = this;
-      this.tabIndex = 0; // create header
+    value: function () {
+      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var self, f, b;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return _get(_getPrototypeOf(IUIWindow.prototype), "create", this).call(this);
 
-      this._header = document.createElement("div");
-      this._header.className = this.cssClass + "-header";
-      if (this.draggable) this._header.setAttribute("draggable", true);
-      var f = this.getElementsByClassName(this.cssClass + "-footer");
-      this._footer = f.length > 0 ? f[0] : null;
-      var b = this.getElementsByClassName(this.cssClass + "-body"); //this.body = b.length > 0 ? b[0]: null;
+              case 2:
+                //debugger;
+                self = this;
+                this.tabIndex = 0; // create header
 
-      if (b.length == 0) {
-        this._body = document.createElement("div");
-        this._body.className = this.cssClass + "-body";
+                this._header = document.createElement("div");
+                this._header.className = this.cssClass + "-header";
+                if (this.draggable) this._header.setAttribute("draggable", true);
+                f = this.getElementsByClassName(this.cssClass + "-footer");
+                this._footer = f.length > 0 ? f[0] : null;
+                b = this.getElementsByClassName(this.cssClass + "-body"); //this.body = b.length > 0 ? b[0]: null;
 
-        while (this.children.length > (this._footer == null ? 0 : 1)) {
-          this._body.appendChild(this.children[0]);
-        }
+                if (b.length == 0) {
+                  this._body = document.createElement("div");
+                  this._body.className = this.cssClass + "-body";
 
-        this.insertAdjacentElement("afterBegin", this._body);
-      } else this._body = b[0];
+                  while (this.children.length > (this._footer == null ? 0 : 1)) {
+                    this._body.appendChild(this.children[0]);
+                  }
 
-      if (this.icon) {
-        this._icon = document.createElement("div");
-        this._icon.className = this.cssClass + "-icon"; //this._icon.src = this.icon;
+                  this.insertAdjacentElement("afterBegin", this._body);
+                } else this._body = b[0]; //if (this.icon) {
 
-        this._icon.style.setProperty("--icon", "url('".concat(this.icon, "')"));
 
-        this._header.appendChild(this._icon);
+                this._icon = document.createElement("div");
+                this._icon.className = this.cssClass + "-icon";
+
+                this._icon.style.setProperty("--icon", "url('".concat(this.icon, "')"));
+
+                this._header.appendChild(this._icon); //}
+
+
+                this._caption = document.createElement("div");
+                this._caption.className = this.cssClass + "-caption";
+                this._caption.innerHTML = this.caption;
+                this._subtitle = document.createElement("div");
+                this._subtitle.className = this.cssClass + "-subtitle";
+                this._subtitle.innerHTML = this.subtitle;
+                this._tools = document.createElement("div");
+                this._tools.className = this.cssClass + "-tools";
+
+                this._header.appendChild(this._caption);
+
+                this._header.appendChild(this._subtitle);
+
+                this._header.appendChild(this._tools);
+
+                if (this.closeable) {
+                  this._close = document.createElement("div");
+                  this._close.className = this.cssClass + "-tools-close button";
+
+                  this._close.addEventListener("click", function () {
+                    self._emit("close");
+                  });
+                } //this.addEventListener("mousedown", function (e) {
+                //    self.setFocus(true);
+                //});
+
+
+                this.insertAdjacentElement("afterBegin", this._header);
+
+              case 28:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function create() {
+        return _create.apply(this, arguments);
       }
 
-      this._caption = document.createElement("div");
-      this._caption.className = this.cssClass + "-caption";
-      this._caption.innerHTML = this.caption;
-      this._subtitle = document.createElement("div");
-      this._subtitle.className = this.cssClass + "-subtitle";
-      this._subtitle.innerHTML = this.subtitle;
-      this._tools = document.createElement("div");
-      this._tools.className = this.cssClass + "-tools";
-
-      this._header.appendChild(this._caption);
-
-      this._header.appendChild(this._subtitle);
-
-      this._header.appendChild(this._tools);
-
-      if (this.closeable) {
-        this._close = document.createElement("div");
-        this._close.className = this.cssClass + "-tools-close button";
-
-        this._close.addEventListener("click", function () {
-          self._emit("close");
-        });
-      } //this.addEventListener("mousedown", function (e) {
-      //    self.setFocus(true);
-      //});
-
-
-      this.insertAdjacentElement("afterBegin", this._header);
-    }
+      return create;
+    }()
   }, {
     key: "setHeaderVisible",
     value: function setHeaderVisible(value) {
@@ -9344,6 +9377,11 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIElem
     key: "icon",
     get: function get() {
       return this.getAttribute("icon");
+    },
+    set: function set(value) {
+      this._icon.style.setProperty("--icon", "url('".concat(value, "')"));
+
+      this.setAttribute("icon", value);
     }
     /*
     setFocus(v) {
