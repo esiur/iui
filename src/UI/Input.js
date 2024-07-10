@@ -136,8 +136,8 @@ export default IUI.module(
       return !this._input.disabled;
     }
 
-    async setData(value) {
-      await super.setData(value);
+    async setData(value, radix) {
+      await super.setData(value, radix);
 
       if (this.type == "checkbox") this._input.checked = value;
       else if (this.type == "date") {

@@ -67,11 +67,11 @@ export default IUI.module(class DropDown extends IUIElement {
         }
     }  
 
-    async setData(value){
+    async setData(value, radix){
 
         //debugger;
-        await super.setData(value);
-        await this.menu.setData(value);
+        await super.setData(value, radix);
+        await this.menu.setData(value, radix);
 
     }
 

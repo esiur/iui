@@ -54,7 +54,16 @@ export default IUI.module(class Repeat extends IUIElement
                     this._repeatNode.innerHTML = this.childNodes[0].data.trim();
             }
 
-            this.innerHTML = "";
+            // keep script
+            var toBeRemoved = [];
+            for(let i = 0; i < this.childNodes.length; i++)
+                if (this.childNodes[i].tagName != "SCRIPT")
+                    toBeRemoved.push(this.childNodes[i]);
+
+            for(let i = 0; i < toBeRemoved.length; i++)
+                this.removeChild(toBeRemoved[i]);
+
+            //this.innerHTML = "";
             this._container = this;
         }
 
@@ -111,7 +120,7 @@ export default IUI.module(class Repeat extends IUIElement
     }
 
 
-    async setData(value)
+    async setData(value, radix)
     {
         
         
@@ -135,7 +144,7 @@ export default IUI.module(class Repeat extends IUIElement
 
 
             //debugger;
-        await super.setData(value);
+        await super.setData(value, radix);
 
         
         for (let i = 0; i < value.length; i++) {
@@ -166,23 +175,24 @@ export default IUI.module(class Repeat extends IUIElement
                 // @TODO should check if the element depends on parent or not
                 if (el.dataMap != null) {
                     // if map function failed to call setData, we will render without it
-                    if (!(await el.dataMap.render(value[i]))) {
+                    if (!(await el.dataMap.render(value[i], radix))) {
 						// @BUG @TODO this causes stackoverflow
 						// await el.render();
                     }
                 }
                 else {
-                    await el.setData(value[i]);
+                    await el.setData(value[i], radix);
                 }
             }
             else 
             {
                 if (el.dataMap != null)
-                    await el.dataMap.render(value[i]);
+                    await el.dataMap.render(value[i], radix);
                 else
                     el.data = value[i];
 
-                await IUI.render(el, el.data, false);
+                // data is now the radix 
+                await IUI.render(el, el.data, false, value[i]);
             }
             
         }

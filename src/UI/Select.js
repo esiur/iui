@@ -345,11 +345,11 @@ export default IUI.module(class Select extends IUIElement {
     }
 
 
-    async setData(value) {
+    async setData(value, radix) {
 
         // this.label.innerHTML = "";
             
-        await super.setData(value);
+        await super.setData(value, radix);
 
         try {
             //let text = this.formatter(value);

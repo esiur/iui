@@ -54,10 +54,10 @@ export default class IUIElement extends HTMLElement {
         return undefined;
     }
 
-    async setData(value) {
+    async setData(value, radix) {
         this._data = value;
         this._emit("data", {data: value});
-        await IUI.render(this, value);
+        await IUI.render(this, value, false, radix);
         
         // notify updated callback
         await this.updated();

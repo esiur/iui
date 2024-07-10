@@ -16,10 +16,10 @@ export default IUI.module(
       this._register("load");
     }
 
-    async setData(value) {
+    async setData(value, radix) {
       if (this.hasAttribute("debug")) debugger;
 
-      return await super.setData(value);
+      return await super.setData(value, radix);
     }
 
     get scope() {

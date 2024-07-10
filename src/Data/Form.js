@@ -28,9 +28,9 @@ export default IUI.module(class Form extends IUIElement {
 
     }
 
-    async setData(value) {
+    async setData(value, radix) {
         this.original = value;
-        super.setData(new Modifiable(this.original, true)); 
+        super.setData(new Modifiable(this.original, true), radix); 
 
     }
 

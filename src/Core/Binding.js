@@ -107,7 +107,7 @@ export class Binding {
         let scopeValues = Object.values(scope);
 
         try {
-            let args = ["data", "d", "context", "_test", 
+            let args = ["data", "d", "radix", "context", "_test", 
                         ...scopeKeys]
                         
             if (isAsync)
@@ -153,7 +153,7 @@ export class Binding {
         let proxy = new Proxy(map, detector);
 
         try {
-            let d = this.func.apply(thisArg, [proxy, proxy, {}, true
+            let d = this.func.apply(thisArg, [proxy, proxy, null, {}, true
                                     , ...this.scopeValues]);
 
             this.map = map;
@@ -165,12 +165,12 @@ export class Binding {
         }
     }
 
-    async _execute(thisArg, data) {
+    async _execute(thisArg, data, radix) {
         if (!this.checked)
             this._findMap(thisArg);
 
         let context = {};
-        var rt = this.func.apply(thisArg, [data, data, context, false, 
+        var rt = this.func.apply(thisArg, [data, data, radix, context, false, 
                                 ...this.scopeValues]);
 
         
@@ -243,7 +243,7 @@ export class Binding {
 
  
 
-    async render(data) {
+    async render(data, radix) {
 
         // @TODO: Checking properties bindings moved here
         if (data != this.data)
@@ -252,7 +252,7 @@ export class Binding {
         try {
             if (this.type === BindingType.IUIElement) {
                 
-                let d = await this._execute(this.target, data);
+                let d = await this._execute(this.target, data, radix);
 
                 await this.target.setData(d);
             }
@@ -260,7 +260,7 @@ export class Binding {
 
                 try {
 
-                    let d = await this._execute(this.target.parentElement, data);
+                    let d = await this._execute(this.target.parentElement, data, radix);
                     
                     if (d === undefined)
                         return false;
@@ -282,7 +282,7 @@ export class Binding {
 
                 let targetElement = this.target.ownerElement;
 
-                let d = await this._execute(targetElement, data);
+                let d = await this._execute(targetElement, data, radix);
 
                 if (d === undefined)
                     return false;
@@ -303,13 +303,13 @@ export class Binding {
             }
             else if (this.type == BindingType.IfAttribute)
             {
-                let d = await this._execute(this.target.ownerElement, data);
+                let d = await this._execute(this.target.ownerElement, data, radix);
 
                 this.target.ownerElement.style.display = d ? "" : "none";
             }
             else if (this.type == BindingType.RevertAttribute)
             {
-                let d = await this._execute(this.target.ownerElement, data);
+                let d = await this._execute(this.target.ownerElement, data, radix);
                 if (d === undefined)
                     return false;
                 
@@ -317,7 +317,7 @@ export class Binding {
             // Attribute
             else if (this.type === BindingType.Attribute) {
 
-                let d = await this._execute(this.target.ownerElement, data);
+                let d = await this._execute(this.target.ownerElement, data, radix);
 
                 if (d === undefined)
                     return false;
@@ -336,14 +336,15 @@ export class Binding {
             // Data Attribute of IUI Element
             else if (this.type === BindingType.IUIElementDataAttribute) {
 
-                let d = await this._execute(this.target.ownerElement, data);
+                let d = await this._execute(this.target.ownerElement, data, radix);
 
-                await this.target.ownerElement.setData(d);
+                // radix is data
+                await this.target.ownerElement.setData(d, data);
             }
             // Data Attribute of HTML Element
             else if (this.type == BindingType.HTMLElementDataAttribute) {
 
-                let d = await this._execute(this.target.ownerElement, data);
+                let d = await this._execute(this.target.ownerElement, data, radix);
                 if (d === undefined)
                     return false;
                 this.target.ownerElement.data = d;

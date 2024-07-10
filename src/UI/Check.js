@@ -32,8 +32,8 @@ export default IUI.module(class Check extends IUIElement {
         this.field = this.getAttribute("field");
     }
 
-    async setData(value) {
-        await super.setData(value);
+    async setData(value, radix) {
+        await super.setData(value, radix);
         if (value != null && this.field != null)
             this.value = value[this.field];
         else if (this.field != null)

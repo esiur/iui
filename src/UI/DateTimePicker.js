@@ -296,14 +296,16 @@ export default IUI.module(class DateTimePicker extends IUIElement {
             this.clock.children[time / this.layout.time.range].classList.add(this.cssClass + "-time-selected");
     }
 
-    async setData(value) {
+    async setData(value, radix) {
 
-        await super.setData(value);
+        await super.setData(value, radix);
 
 
         if (value != null && this.field != null)
             this.value = this.data[this.field];
-
+        else
+            this.value = value;
+        
     }
 
     get data() {
@@ -311,13 +313,10 @@ export default IUI.module(class DateTimePicker extends IUIElement {
     }
 
 
-    async setData(value) {
-        await super.setData(value);
+    async setData(value, radix) {
+        await super.setData(value, radix);
 
-        this.value = value;
 
-        if (this.isAuto)
-            this.revert();
     }
 
     /*

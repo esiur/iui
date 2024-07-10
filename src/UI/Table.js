@@ -1389,9 +1389,9 @@ export default IUI.module(class Table extends IUIElement {
 
 
 
-	async setData(value) 
+	async setData(value, radix) 
 	{
-		await super.setData(value);
+		await super.setData(value, radix);
 
 		this.clear();
 

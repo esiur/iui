@@ -344,7 +344,7 @@ export class IUI {
         element.__i_bindings = bindings;
 	}
 
-	static async render(element, data, textNodesOnly = false) {
+	static async render(element, data, textNodesOnly = false, radix = null) {
      
 		if (!element.__i_bindings) {
             return;
@@ -355,11 +355,11 @@ export class IUI {
 		if (textNodesOnly) {
 			for (var i = 0; i < bindings.length; i++)
 				if (bindings[i].type == BindingType.TextNode)
-					await bindings[i].render(data);
+					await bindings[i].render(data, radix);
 		} else {
 			// render attributes & text nodes
 			for (var i = 0; i < bindings.length; i++)
-				await bindings[i].render(data);
+				await bindings[i].render(data, radix);
 		}
 
         // render children
@@ -369,7 +369,7 @@ export class IUI {
                 // @TODO should check if the element depends on parent or not
                 if (el.dataMap != null) {
                     // if map function failed to call setData, we will render without it
-                    if (!(await el.dataMap.render(data))){
+                    if (!(await el.dataMap.render(data, radix))){
 						// @BUG @TODO this causes stackoverflow
 						// await el.render();
 					}
@@ -380,11 +380,11 @@ export class IUI {
 			}
             else {
                 if (el.dataMap != null)
-                    await el.dataMap.render(data);
+                    await el.dataMap.render(data, radix);
                 else
 					el.data = data;
 
-                await IUI.render(el, el.data);
+                await IUI.render(el, el.data, textNodesOnly, data);
             }
         }
 	}
