@@ -8,12 +8,37 @@ export default IUI.module(class IUIWindow extends IUIElement {
         this._register("resize");
         this._register("move");
         this._register("close");
+        this._register("config");
 
         this._uid = "d:" + Math.random().toString(36).substring(2);
 
     }
 
     static moduleName = "window";
+
+    get closeable(){
+        return this.hasAttribute("closeable");
+    }
+
+    set closeable(value){
+        if (!value)
+            this.removeAttribute("closeable");
+        else
+            this.setAttribute("closeable", true);
+    }
+
+
+    get configurable(){
+        return this.hasAttribute("configurable");
+    }
+
+    set configurable(value){
+        if (!value)
+            this.removeAttribute("configurable");
+        else
+            this.setAttribute("configurable", true);
+    }
+
 
     async create() {
 
@@ -73,13 +98,26 @@ export default IUI.module(class IUIWindow extends IUIElement {
         this._header.appendChild(this._subtitle);
         this._header.appendChild(this._tools);
 
+        if (this.configurable) {
+            this._config = document.createElement("div");
+            this._config.className = this.cssClass + "-tools-config button";
+            this._config.addEventListener("click", function () {
+                self._emit("config");
+            });
+            this._tools.appendChild(this._config);
+        }
+        
         if (this.closeable) {
             this._close = document.createElement("div");
             this._close.className = this.cssClass + "-tools-close button";
             this._close.addEventListener("click", function () {
                 self._emit("close");
             });
+            this._tools.appendChild(this._close);
         }
+
+
+
 
         //this.addEventListener("mousedown", function (e) {
         //    self.setFocus(true);

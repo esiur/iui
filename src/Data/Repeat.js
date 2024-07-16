@@ -143,14 +143,12 @@ export default IUI.module(class Repeat extends IUIElement
             value = [];
 
 
-            //debugger;
-        await super.setData(value, radix);
 
         
         for (let i = 0; i < value.length; i++) {
 
             let el = this._repeatNode.cloneNode(true);
-
+            el.setAttribute(":data", `d[${i}]`);
             this.list.push(el);
 
             try {
@@ -171,6 +169,7 @@ export default IUI.module(class Repeat extends IUIElement
 
             await IUI.created(el, true);
 
+            /*
             if (el instanceof IUIElement){
                 // @TODO should check if the element depends on parent or not
                 if (el.dataMap != null) {
@@ -194,9 +193,11 @@ export default IUI.module(class Repeat extends IUIElement
                 // data is now the radix 
                 await IUI.render(el, el.data, false, value[i]);
             }
+                */
             
         }
 
+        await super.setData(value, radix);
 
     
         // @TODO: check if this works for event names starting with ":"

@@ -16,10 +16,17 @@ export default IUI.module(class Grid extends IUIElement {
 		this.windows = [];
 	}
 
-    create() {
+    async create() {
         for (var i = 0; i < this.children.length; i++)
             this.add(this.children[i]);
     }
+
+	async updated(){
+		if (this.hasAttribute("dynamic")){
+			for (var i = 0; i < this.children.length; i++)
+				this.add(this.children[i]);
+		}
+	}
 
 	setGridLayout(style)
 	{

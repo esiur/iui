@@ -48,8 +48,13 @@
     --background-visible-background: rgba(0, 0, 0, 0.6);
     --window-caption-color: #444;
     --window-tools-close-background: linear-gradient(to bottom, #f1796b, #d66255);
-    --window-tools-close-border: 1px solid #f1786b;
+    --window-tools-close-border: 1px solid #d6d6d6;
     --window-tools-close-background-hover: #f03242;
+
+    --window-tools-config-background: linear-gradient(to bottom, #9de1e8, #55b1d6);
+    --window-tools-config-border: 1px solid #d6d6d6;
+    --window-tools-config-background-hover:rgb(0, 135, 208);
+
     --dialog-loading-background: rgb(167, 227, 252);
     --dialog-loading-content-border: 10px solid #fff;
     --dialog-loading-content-border-top: 10px solid #ffe3e3;
@@ -529,9 +534,11 @@ html[dir='rtl'] .window-tools, html[dir='rtl'] .dialog-tools {
 }
 
 .window-tools, .dialog-tools {
-    position: absolute;
-    top: 5px;
-    right: 5px;
+    flex: 1;
+    flex-flow: row-reverse;
+    display: flex;
+    margin: auto 0;
+    padding: 0 3px;
 }
 
 .window-icon, .dialog-icon {
@@ -565,27 +572,47 @@ html[dir='rtl'] .window-tools, html[dir='rtl'] .dialog-tools {
     background: wheat;
 }
 
-    .window-subtitle:empty, .dialog-subtitle:empty {
-        display: none;
-    }
-
-.window-tools-close, .dialog-tools-close {
-    float: left;
-    height: 16px;
-    line-height: 16px;
-    padding: 0 5px;
-    border: var(--window-tools-close-border);
-    border-radius: 5px;
-    background: var(--window-tools-close-background);
-    white-space: nowrap;
+.window-subtitle:empty, .dialog-subtitle:empty {
+    display: none;
 }
 
-    .window-tools-close:hover, .dialog-tools-close:hover {
-        background: var(--window-tools-close-background-hover);
-    }
+.window-tools-close, .dialog-tools-close, .window-tools-config, .dialog-tools-config {
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 5px;
+    white-space: nowrap;
+    
+}
+
+.window-tools-config, .dialog-tools-config{
+    background: var(--window-tools-config-background);
+    border: var(--window-tools-config-border);
+}
+
+.window-tools-close, .dialog-tools-close{
+    background: var(--window-tools-close-background);
+    border: var(--window-tools-close-border);
+}
+
+.window-tools-config:hover, .dialog-tools-config:hover {
+    background: var(--window-tools-config-background-hover);
+}
+
+.window-tools-close:hover, .dialog-tools-close:hover {
+    background: var(--window-tools-close-background-hover);
+}
+
+.dialog-tools-close:before, .window-tools-close:before {
+    content: "x";
+}
+
+.dialog-tools-config:before, .window-tools-config:before {
+    content: "⚙";
+    font-size: 18px;
+    padding-top: 2px;
+}
 
 .window-tools-max, .dialog-tools-max {
-    float: left;
     width: 1.4em;
     line-height: 1.4em;
     text-align: center;
@@ -1232,9 +1259,8 @@ html[dir='rtl'] .table-row[data-level='3'] .table-tree {
 }
 
 
-.dialog-tools-close:before, .window-tools-close:before {
-    content: "x";
-}
+
+
 
 @media only screen and (max-width: 500px) {
     .dialog {
