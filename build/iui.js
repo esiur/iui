@@ -2999,106 +2999,54 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 this._busy = true; // clear
 
                 this.clear();
-                if (((_value = value) === null || _value === void 0 ? void 0 : _value.toArray) instanceof Function) value = value.toArray();else if (value == null || !(value instanceof Array || value instanceof Int32Array)) value = []; //debugger;
-
-                _context.next = 8;
-                return _get(_getPrototypeOf(Repeat.prototype), "setData", this).call(this, value, radix);
-
-              case 8:
+                if (((_value = value) === null || _value === void 0 ? void 0 : _value.toArray) instanceof Function) value = value.toArray();else if (value == null || !(value instanceof Array || value instanceof Int32Array)) value = [];
                 i = 0;
 
-              case 9:
+              case 7:
                 if (!(i < value.length)) {
-                  _context.next = 47;
+                  _context.next = 27;
                   break;
                 }
 
                 el = this._repeatNode.cloneNode(true);
+                el.setAttribute(":data", "d[".concat(i, "]"));
                 this.list.push(el);
-                _context.prev = 12;
-                _context.next = 15;
+                _context.prev = 11;
+                _context.next = 14;
                 return _IUI.IUI.create(el, true);
 
-              case 15:
+              case 14:
                 _IUI.IUI.bind(el, false, "repeat", _IUI.IUI.extend((_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, {
                   index: i,
                   repeat: this
                 }, true));
 
-                _context.next = 21;
+                _context.next = 20;
                 break;
 
-              case 18:
-                _context.prev = 18;
-                _context.t0 = _context["catch"](12);
+              case 17:
+                _context.prev = 17;
+                _context.t0 = _context["catch"](11);
                 console.log(_context.t0);
 
-              case 21:
+              case 20:
                 this._container.insertBefore(el, this._beforeNode); // update referencing
 
 
                 (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
-                _context.next = 25;
+                _context.next = 24;
                 return _IUI.IUI.created(el, true);
 
-              case 25:
-                if (!(el instanceof _IUIElement2["default"])) {
-                  _context.next = 36;
-                  break;
-                }
+              case 24:
+                i++;
+                _context.next = 7;
+                break;
 
-                if (!(el.dataMap != null)) {
-                  _context.next = 32;
-                  break;
-                }
-
+              case 27:
                 _context.next = 29;
-                return el.dataMap.render(value[i], radix);
+                return _get(_getPrototypeOf(Repeat.prototype), "setData", this).call(this, value, radix);
 
               case 29:
-                if (_context.sent) {
-                  _context.next = 30;
-                  break;
-                }
-
-              case 30:
-                _context.next = 34;
-                break;
-
-              case 32:
-                _context.next = 34;
-                return el.setData(value[i], radix);
-
-              case 34:
-                _context.next = 44;
-                break;
-
-              case 36:
-                if (!(el.dataMap != null)) {
-                  _context.next = 41;
-                  break;
-                }
-
-                _context.next = 39;
-                return el.dataMap.render(value[i], radix);
-
-              case 39:
-                _context.next = 42;
-                break;
-
-              case 41:
-                el.data = value[i];
-
-              case 42:
-                _context.next = 44;
-                return _IUI.IUI.render(el, el.data, false, value[i]);
-
-              case 44:
-                i++;
-                _context.next = 9;
-                break;
-
-              case 47:
                 // @TODO: check if this works for event names starting with ":"
                 this._emit(":data", {
                   data: value
@@ -3107,12 +3055,12 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
                 this._busy = false;
 
-              case 49:
+              case 31:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[12, 18]]);
+        }, _callee, this, [[11, 17]]);
       }));
 
       function setData(_x, _x2) {
@@ -5718,6 +5666,10 @@ var _IUI = require("../Core/IUI.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -5778,11 +5730,60 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
   _createClass(Grid, [{
     key: "create",
-    value: function create() {
-      for (var i = 0; i < this.children.length; i++) {
-        this.add(this.children[i]);
+    value: function () {
+      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var i;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                for (i = 0; i < this.children.length; i++) {
+                  this.add(this.children[i]);
+                }
+
+              case 1:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function create() {
+        return _create.apply(this, arguments);
       }
-    }
+
+      return create;
+    }()
+  }, {
+    key: "updated",
+    value: function () {
+      var _updated = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        var i;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (this.hasAttribute("dynamic")) {
+                  for (i = 0; i < this.children.length; i++) {
+                    this.add(this.children[i]);
+                  }
+                }
+
+              case 1:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function updated() {
+        return _updated.apply(this, arguments);
+      }
+
+      return updated;
+    }()
   }, {
     key: "setGridLayout",
     value: function setGridLayout(style) {
@@ -9309,11 +9310,29 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIElem
 
     _this._register("close");
 
+    _this._register("config");
+
     _this._uid = "d:" + Math.random().toString(36).substring(2);
     return _this;
   }
 
   _createClass(IUIWindow, [{
+    key: "closeable",
+    get: function get() {
+      return this.hasAttribute("closeable");
+    },
+    set: function set(value) {
+      if (!value) this.removeAttribute("closeable");else this.setAttribute("closeable", true);
+    }
+  }, {
+    key: "configurable",
+    get: function get() {
+      return this.hasAttribute("configurable");
+    },
+    set: function set(value) {
+      if (!value) this.removeAttribute("configurable");else this.setAttribute("configurable", true);
+    }
+  }, {
     key: "create",
     value: function () {
       var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
@@ -9372,6 +9391,17 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIElem
 
                 this._header.appendChild(this._tools);
 
+                if (this.configurable) {
+                  this._config = document.createElement("div");
+                  this._config.className = this.cssClass + "-tools-config button";
+
+                  this._config.addEventListener("click", function () {
+                    self._emit("config");
+                  });
+
+                  this._tools.appendChild(this._config);
+                }
+
                 if (this.closeable) {
                   this._close = document.createElement("div");
                   this._close.className = this.cssClass + "-tools-close button";
@@ -9379,6 +9409,8 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIElem
                   this._close.addEventListener("click", function () {
                     self._emit("close");
                   });
+
+                  this._tools.appendChild(this._close);
                 } //this.addEventListener("mousedown", function (e) {
                 //    self.setFocus(true);
                 //});
@@ -9386,7 +9418,7 @@ var _default = _IUI.IUI.module((_temp = _class = /*#__PURE__*/function (_IUIElem
 
                 this.insertAdjacentElement("afterBegin", this._header);
 
-              case 28:
+              case 29:
               case "end":
                 return _context.stop();
             }
