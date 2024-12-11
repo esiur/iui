@@ -2719,20 +2719,32 @@ html[dir='rtl'] .multiselect-list-remove {
 }
 
 
+.router-loading-message {
 
-.router::after, .target::after {
+}
+
+.router-loading-progress {
+
+}
+
+.router-loading, .target-loading {
     opacity: 0;
     transition: all 1s;
-    content: ' ';
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 200px);
     visibility: hidden;
+    z-index: 10;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 200px;
+    flex-direction: column;
 }
 
-.router-loading::after, .target-loading::after {
+.router-loading-visible, .target-loading-visible {
     transition: all 1s 1s;
     opacity: 1;
     visibility: visible;

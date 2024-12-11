@@ -256,6 +256,7 @@ export default IUI.module(
     }
 
     create() {
+      super.create();
       // save origin
       this.origin = window.location.pathname + window.location.search;
     }
@@ -263,6 +264,7 @@ export default IUI.module(
     get base() {
       return this.getAttribute("base") || "";
     }
+    
     destroy() {
       console.log("Destroyed", this);
     }

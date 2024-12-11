@@ -14,6 +14,9 @@ export class IUI {
 	static modules = {};
 	static registry = [];
 
+	static $iuiElement = this.module(IUIElement, "element");
+
+
 	static format(input) {
         if (typeof input == "string" || input instanceof String) {
             let template = document.createElement("template");
@@ -112,7 +115,7 @@ export class IUI {
 		IUI.registry.push(o);
 	}
 
-	static  remove(id)
+	static remove(id)
 	{
 		for(var i = 0; i < IUI.registry.length; i++)
 			if (IUI.registry[i].el.id == id)
@@ -122,9 +125,9 @@ export class IUI {
 			}
 	}
 
-	static module(objectClass)
+	static module(objectClass, name = null)
     {
-		let moduleName = objectClass.moduleName;
+		let moduleName = name ?? objectClass.moduleName;
 
         if (IUI.modules[moduleName] === undefined) {
             customElements.define("i-" + moduleName, objectClass);

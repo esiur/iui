@@ -1,26 +1,58 @@
 ﻿import IUIElement from "../Core/IUIElement.js";
 import { IUI } from "../Core/IUI.js";
 import Route from "./Route.js";
+import Layout from '../Data/Layout.js';
 
 export default IUI.module(class Target extends IUIElement {
+
+    $messageElement;
+    $progressElement;
+
     constructor(properties) {
         super(IUI.extend(properties, { cssClass: 'target' }));
 
         this._register("show");
         this._register("hide");
-
     }
 
-    setLoading(value)
-    {
+    setLoading(value) {
         if (value)
-            this.classList.add(this.cssClass + "-loading");
+            this.$loadingElement.classList.add(this.cssClass + "-loading-visible");
         else
-            this.classList.remove(this.cssClass + "-loading");
+            this.$loadingElement.classList.remove(this.cssClass + "-loading-visible");
     }
+
+
+    async setMessage(message) {
+        await this.$messageElement.setData({ message });
+    }
+
+    async setProgress(progress, max) {
+        await this.$progressElement.setData({ progress, max });
+    }
+
 
     create() {
 
+        this.$loadingElement = document.createElement("div");
+        this.$loadingElement.className = this.cssClass + "-loading";
+        this.$loadingElement.setAttribute(":data", "{progress: 0, max: 0, message: '...'}");
+
+        this.appendChild(this.$loadingElement);
+
+        // get collection
+        let layout = Layout.get(this, "i-element", true, true);
+
+        for (let name in layout) {
+            if (name == "progress") {
+                this.$progressElement = layout[name].node;
+                this.$loadingElement.appendChild(this.$progressElement);
+            }
+            else if (name = "message") {
+                this.$messageElement = layout[name].node;
+                this.$loadingElement.appendChild(this.$messageElement);
+            }
+        }
     }
 
     show(route, previous) {
@@ -46,7 +78,7 @@ export default IUI.module(class Target extends IUIElement {
         if (route.parentElement != this)
             this.appendChild(route);
 
-        this._emit("show", { route, previous});
+        this._emit("show", { route, previous });
     }
 
     hide(route) {
