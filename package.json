@@ -1,6 +1,6 @@
 {
   "name": "@esiur/iui",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Interactive User Interface",
   "main": "iui.js",
   "type": "module",
