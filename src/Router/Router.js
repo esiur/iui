@@ -285,7 +285,7 @@ export default IUI.module(
         }
       }
 
-      this._emit("created");
+      this._emit("load");
       // this.navigate(this.origin);
       //console.log("Router created", this);
     }
@@ -328,7 +328,7 @@ export default IUI.module(
 
       this._register("navigate");
       this._register("route");
-      this._register("created");
+      this._register("load");
     }
   }
 );

@@ -56,6 +56,7 @@ export default class IUIElement extends HTMLElement {
 
     async setData(value, radix) {
         this._data = value;
+        this._radix = radix;
         this._emit("data", {data: value});
         await IUI.render(this, value, false, radix);
         

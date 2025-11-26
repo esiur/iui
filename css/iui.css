@@ -2611,10 +2611,16 @@ html[dir='rtl'] .multiselect-list-remove {
 }
 
 
+.app {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
 
 .router, i-router {
     display: block;
     position: relative;
+    height: 100%;
 }
 
 .route {
@@ -2627,6 +2633,7 @@ html[dir='rtl'] .multiselect-list-remove {
     left: 10px;
     top: 10px;
     width: calc(100% - 20px);
+    min-height: 20px;
 }
 
     .route:not([selected]) {
@@ -3144,4 +3151,27 @@ html[dir='rtl'] .navbar-item[level='3'] > .link {
     background: red;
     color: white;
     padding: 4px;
+}
+
+
+.radio-repeat{
+	display: flex;
+    gap: 10px;
+    border: 1px solid #dadada;
+    border-radius: 10px;
+    padding: 4px;
+}
+
+
+.radio-repeat > *
+{
+	border-radius: 10px;
+    padding: 4px;
+    cursor: pointer;
+    background: #e0e0e0;
+}
+
+.radio-repeat  > .radio-selected{
+	background: #487aba;
+    color: white;
 }

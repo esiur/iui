@@ -368,7 +368,11 @@ export class IUI {
         // render children
         for (var i = 0; i < element.children.length; i++) {
             let el = element.children[i];
-            if (el instanceof IUIElement) {
+
+			if (el.hasAttribute("i-skip-data"))
+				continue;
+
+            if (el instanceof IUIElement) {				
                 // @TODO should check if the element depends on parent or not
                 if (el.dataMap != null) {
                     // if map function failed to call setData, we will render without it

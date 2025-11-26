@@ -61,6 +61,7 @@ export default IUI.module(
 
       this._input = document.createElement(type == "multiline" ? "textarea" : "input");
       this._input.placeholder = this.getAttribute("placeholder") || "";
+      this._input.type = type;
 
       let self = this;
 

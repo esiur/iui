@@ -49,8 +49,11 @@ export default IUI.module(class Include extends IUIElement
                 await IUI.create(this);
                 IUI.bind(this, true, "include:" + src, this.scope);
                 this.refs._build();
+
                 await IUI.created(this);
-                await IUI.render(this, this._data, true);
+                await super.setData(this._data, this._radix);
+
+                //await IUI.render(this, this._data, true);
             }
             
             // // call create for the new elements

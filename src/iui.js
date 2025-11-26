@@ -40,6 +40,9 @@ import "./UI/Grid.js";
 
 import "./UI/Location.js";
 import "./UI/CodePreview.js";
+
+import './UI/Radio.js';
+
 import Modifiable from "./Data/Modifiable.js";
 
 window.addEventListener("beforeprint", e => {

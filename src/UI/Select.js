@@ -108,7 +108,7 @@ export default IUI.module(class Select extends IUIElement {
 
           
         this.repeat = new Repeat();
-        this.repeat.cssClass = "select-menu-repeat";
+        this.repeat.cssClass = this.cssClass + "-menu-repeat";
         //this.repeat.innerHTML = this.innerHTML;
 
         if (this.hasAttribute("menu")) {
@@ -127,7 +127,7 @@ export default IUI.module(class Select extends IUIElement {
         
         this.menu.on("click", async (e) => {
             
-            if (e.target != self.textbox && e.target != self.footer && e.target !== self.menu) {
+            if (e.target != self.textbox && e.target != self.footer && e.target !== self.menu && e.target != self.repeat) {
                 await self.setData(e.target.data);
 
                 self._emit("input", { value: e.target.data });
