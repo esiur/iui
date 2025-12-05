@@ -1231,69 +1231,77 @@ var IUI = /*#__PURE__*/function () {
 
               case 24:
                 if (!(i < element.children.length)) {
-                  _context4.next = 48;
+                  _context4.next = 50;
                   break;
                 }
 
                 el = element.children[i];
 
+                if (!el.hasAttribute("i-skip-data")) {
+                  _context4.next = 28;
+                  break;
+                }
+
+                return _context4.abrupt("continue", 47);
+
+              case 28:
                 if (!(el instanceof _IUIElement["default"])) {
-                  _context4.next = 37;
+                  _context4.next = 39;
                   break;
                 }
 
                 if (!(el.dataMap != null)) {
+                  _context4.next = 35;
+                  break;
+                }
+
+                _context4.next = 32;
+                return el.dataMap.render(data, radix);
+
+              case 32:
+                if (_context4.sent) {
                   _context4.next = 33;
                   break;
                 }
 
-                _context4.next = 30;
-                return el.dataMap.render(data, radix);
-
-              case 30:
-                if (_context4.sent) {
-                  _context4.next = 31;
-                  break;
-                }
-
-              case 31:
-                _context4.next = 35;
-                break;
-
               case 33:
-                _context4.next = 35;
-                return el.setData(data);
+                _context4.next = 37;
+                break;
 
               case 35:
-                _context4.next = 45;
-                break;
+                _context4.next = 37;
+                return el.setData(data);
 
               case 37:
+                _context4.next = 47;
+                break;
+
+              case 39:
                 if (!(el.dataMap != null)) {
-                  _context4.next = 42;
+                  _context4.next = 44;
                   break;
                 }
 
-                _context4.next = 40;
+                _context4.next = 42;
                 return el.dataMap.render(data, radix);
 
-              case 40:
-                _context4.next = 43;
+              case 42:
+                _context4.next = 45;
                 break;
 
-              case 42:
+              case 44:
                 el.data = data;
 
-              case 43:
-                _context4.next = 45;
+              case 45:
+                _context4.next = 47;
                 return IUI.render(el, el.data, textNodesOnly, data);
 
-              case 45:
+              case 47:
                 i++;
                 _context4.next = 24;
                 break;
 
-              case 48:
+              case 50:
               case "end":
                 return _context4.stop();
             }
@@ -1642,19 +1650,20 @@ var IUIElement = /*#__PURE__*/function (_HTMLElement) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 this._data = value;
+                this._radix = radix;
 
                 this._emit("data", {
                   data: value
                 });
 
-                _context2.next = 4;
+                _context2.next = 5;
                 return _IUI.IUI.render(this, value, false, radix);
 
-              case 4:
-                _context2.next = 6;
+              case 5:
+                _context2.next = 7;
                 return this.updated();
 
-              case 6:
+              case 7:
               case "end":
                 return _context2.stop();
             }
@@ -2308,6 +2317,10 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
@@ -2412,7 +2425,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
               case 20:
                 _context.next = 22;
-                return _IUI.IUI.render(this, this._data, true);
+                return _get(_getPrototypeOf(Include.prototype), "setData", this).call(this, this._data, this._radix);
 
               case 22:
                 this.classList.remove(this.cssClass + "-loading"); // if (window?.app?.loaded)
@@ -3747,6 +3760,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
     key: "navigate",
     value: function () {
       var _navigate = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(url, data, target, state) {
+        var _target;
+
         var dataToQuery,
             q,
             path,
@@ -3764,14 +3779,23 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
               case 0:
                 dataToQuery = _args.length > 4 && _args[4] !== undefined ? _args[4] : true;
 
+                if (!(this.isLoading || (_target = target) !== null && _target !== void 0 && _target.isLoading)) {
+                  _context.next = 4;
+                  break;
+                }
+
+                console.warn("Router in loading mode.");
+                return _context.abrupt("return");
+
+              case 4:
                 if (!(url == null)) {
-                  _context.next = 3;
+                  _context.next = 6;
                   break;
                 }
 
                 throw new Error("URL not specified.");
 
-              case 3:
+              case 6:
                 q = url.match(/^\/*(.*?)\?(.*)$|^\/*(.*)$/);
 
                 // do we have a query string ?
@@ -3791,14 +3815,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 _this$getRoute = this.getRoute(path, data), _this$getRoute2 = _slicedToArray(_this$getRoute, 2), stateRoute = _this$getRoute2[0], viewRoute = _this$getRoute2[1];
 
                 if (!(stateRoute == null)) {
-                  _context.next = 9;
+                  _context.next = 12;
                   break;
                 }
 
                 console.warn("State not found ", path);
                 return _context.abrupt("return");
 
-              case 9:
+              case 12:
                 ok = this._emit("navigate", {
                   url: url,
                   stateRoute: stateRoute,
@@ -3809,14 +3833,14 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 });
 
                 if (ok) {
-                  _context.next = 13;
+                  _context.next = 16;
                   break;
                 }
 
                 console.warn("Route not allowed", path);
                 return _context.abrupt("return");
 
-              case 13:
+              case 16:
                 // destination view not found
                 if (viewRoute == null) {
                   console.log("Destination route not found ".concat(stateRoute.dst));
@@ -3867,57 +3891,57 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
                 viewRoute.query = data || {};
                 stateRoute.query = viewRoute.query;
                 target.setLoading(true);
-                _context.prev = 24;
+                _context.prev = 27;
 
                 if (!(stateRoute.dataMap != null)) {
-                  _context.next = 34;
+                  _context.next = 37;
                   break;
                 }
 
-                _context.next = 28;
+                _context.next = 31;
                 return stateRoute.dataMap.render(data || {});
 
-              case 28:
+              case 31:
                 if (_context.sent) {
-                  _context.next = 29;
-                  break;
-                }
-
-              case 29:
-                if (!(viewRoute != stateRoute)) {
                   _context.next = 32;
                   break;
                 }
 
-                _context.next = 32;
+              case 32:
+                if (!(viewRoute != stateRoute)) {
+                  _context.next = 35;
+                  break;
+                }
+
+                _context.next = 35;
                 return viewRoute.setData(stateRoute.data);
 
-              case 32:
-                _context.next = 36;
+              case 35:
+                _context.next = 39;
                 break;
 
-              case 34:
-                _context.next = 36;
+              case 37:
+                _context.next = 39;
                 return viewRoute.setData(data);
 
-              case 36:
-                _context.next = 41;
+              case 39:
+                _context.next = 44;
                 break;
 
-              case 38:
-                _context.prev = 38;
-                _context.t0 = _context["catch"](24);
+              case 41:
+                _context.prev = 41;
+                _context.t0 = _context["catch"](27);
                 console.log("EXXXXXXXXXX", _context.t0);
 
-              case 41:
+              case 44:
                 target.setLoading(false);
 
-              case 42:
+              case 45:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[24, 38]]);
+        }, _callee, this, [[27, 41]]);
       }));
 
       function navigate(_x, _x2, _x3, _x4) {
@@ -3988,7 +4012,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
         }
       }
 
-      this._emit("created"); // this.navigate(this.origin);
+      this._emit("load"); // this.navigate(this.origin);
       //console.log("Router created", this);
 
     }
@@ -4032,7 +4056,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_Target) {
 
       this._register("route");
 
-      this._register("created");
+      this._register("load");
     }
   }]);
 
@@ -4105,6 +4129,8 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
     _defineProperty(_assertThisInitialized(_this), "$progressElement", void 0);
 
+    _defineProperty(_assertThisInitialized(_this), "$loadingMode", false);
+
     _this._register("show");
 
     _this._register("hide");
@@ -4115,7 +4141,13 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   _createClass(Target, [{
     key: "setLoading",
     value: function setLoading(value) {
+      this.$loadingMode = value;
       if (value) this.$loadingElement.classList.add(this.cssClass + "-loading-visible");else this.$loadingElement.classList.remove(this.cssClass + "-loading-visible");
+    }
+  }, {
+    key: "isLoading",
+    get: function get() {
+      return this.$loadingMode;
     }
   }, {
     key: "setMessage",
@@ -5501,7 +5533,7 @@ document.addEventListener("keydown", function (e) {
   }
 }); //IUI.module("dialog", IUIDialog, function(el, modal, properties){ return new IUIDialog(el, modal, properties);});
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Window.js":35}],24:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Window.js":36}],24:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -6149,6 +6181,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
       var type = this.hasAttribute("type") ? this.getAttribute("type").toLowerCase() : "text";
       this._input = document.createElement(type == "multiline" ? "textarea" : "input");
       this._input.placeholder = this.getAttribute("placeholder") || "";
+      this._input.type = type;
       var self = this;
 
       this._input.addEventListener("input", function () {
@@ -7266,6 +7299,430 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
+  _inherits(Radio, _IUIElement);
+
+  var _super = _createSuper(Radio);
+
+  function Radio() {
+    var _this;
+
+    _classCallCheck(this, Radio);
+
+    _this = _super.call(this, {
+      query: function query(x) {
+        return null;
+      }
+    });
+
+    _this._register("select");
+
+    _this._register("input");
+
+    _this._register("add"); //this.selected = null;
+
+
+    return _this;
+  }
+
+  _createClass(Radio, [{
+    key: "_checkValidity",
+    value: function _checkValidity() {
+      if (this.validate != null) {
+        try {
+          var valid = this.validate.apply(this);
+
+          if (!valid) {
+            this.setAttribute("invalid", "");
+            this.classList.add(this.cssClass + "-invalid");
+            return false;
+          } else {
+            this.removeAttribute("invalid");
+            this.classList.remove(this.cssClass + "-invalid");
+            return true;
+          }
+        } catch (ex) {
+          console.log("Validation Error", ex);
+          return false;
+        }
+      }
+
+      return true;
+    }
+  }, {
+    key: "hasAdd",
+    get: function get() {
+      return this.hasAttribute("add");
+    },
+    set: function set(value) {
+      if (value) this.setAttribute("add", "add");else this.removeAttribute("add");
+    }
+  }, {
+    key: "_selectIndex",
+    value: function _selectIndex(index) {
+      var found = null;
+
+      for (var i = 0; i < this.repeat.children.length; i++) {
+        var el = this.repeat.children[i];
+
+        if (i == index) {
+          found = el.data;
+          el.classList.add(this.cssClass + "-selected");
+        } else {
+          el.classList.remove(this.cssClass + "-selected");
+        }
+      }
+
+      return found;
+    }
+  }, {
+    key: "_select",
+    value: function _select(value) {
+      var found = false;
+
+      for (var i = 0; i < this.repeat.children.length; i++) {
+        var el = this.repeat.children[i];
+
+        if (el.data == value) {
+          found = true;
+          el.classList.add(this.cssClass + "-selected");
+        } else {
+          el.classList.remove(this.cssClass + "-selected");
+        }
+      }
+
+      return false;
+    }
+  }, {
+    key: "create",
+    value: function () {
+      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        var self, menuData, html, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2;
+
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                this.isAuto = this.hasAttribute("auto");
+                this.field = this.getAttribute("field");
+
+                if (this.field != null) {
+                  this.setAttribute(":data", "d['".concat(this.field, "']"));
+                  this.setAttribute(":revert", "d['".concat(this.field, "'] = this.data"));
+                }
+
+                self = this;
+                this.repeat = new _Repeat["default"]();
+                this.repeat.cssClass = this.cssClass + "-repeat";
+
+                if (this.hasAttribute("menu")) {
+                  menuData = this.getAttribute("menu");
+                  this.repeat.setAttribute(":data", menuData); // "d[1]");
+                }
+
+                this.repeat.setAttribute("i-skip-data", "skip");
+                this.repeat.on("click", /*#__PURE__*/function () {
+                  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e) {
+                    var i, el;
+                    return regeneratorRuntime.wrap(function _callee$(_context) {
+                      while (1) {
+                        switch (_context.prev = _context.next) {
+                          case 0:
+                            if (!(e.target == self.repeat)) {
+                              _context.next = 2;
+                              break;
+                            }
+
+                            return _context.abrupt("return");
+
+                          case 2:
+                            i = 0;
+
+                          case 3:
+                            if (!(i < self.repeat.children.length)) {
+                              _context.next = 23;
+                              break;
+                            }
+
+                            el = self.repeat.children[i];
+
+                            if (!el.contains(e.target)) {
+                              _context.next = 19;
+                              break;
+                            }
+
+                            el.classList.add(self.cssClass + "-selected");
+                            _context.prev = 7;
+
+                            self._emit("input", {
+                              value: el.data
+                            }); //self._emit("select", { value: el.data });
+
+
+                            self._skipQuery = true;
+                            _context.next = 12;
+                            return self.setData(el.data);
+
+                          case 12:
+                            self._skipQuery = false; //self.selected = el.data;
+
+                            _context.next = 17;
+                            break;
+
+                          case 15:
+                            _context.prev = 15;
+                            _context.t0 = _context["catch"](7);
+
+                          case 17:
+                            _context.next = 20;
+                            break;
+
+                          case 19:
+                            el.classList.remove(self.cssClass + "-selected");
+
+                          case 20:
+                            i++;
+                            _context.next = 3;
+                            break;
+
+                          case 23:
+                          case "end":
+                            return _context.stop();
+                        }
+                      }
+                    }, _callee, null, [[7, 15]]);
+                  }));
+
+                  return function (_x) {
+                    return _ref.apply(this, arguments);
+                  };
+                }());
+                html = this.innerHTML; // get repeated item
+
+                this.repeat.innerHTML = html;
+                this.innerHTML = "";
+                this.appendChild(this.repeat);
+
+                if (this.hasAdd) {
+                  this._add_button = document.createElement("div");
+                  this._add_button.className = this.cssClass + "-add";
+                  this.appendChild(this._add_button);
+
+                  this._add_button.addEventListener("click", function (e) {
+                    self._emit("add", {
+                      value: self.data
+                    });
+                  });
+                }
+
+                if (!app.loaded) {
+                  _context2.next = 21;
+                  break;
+                }
+
+                _context2.next = 17;
+                return _IUI.IUI.create(this.repeat);
+
+              case 17:
+                _IUI.IUI.bind(this.repeat, false, "radio", (_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, false); // update referencing
+
+
+                (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
+                _context2.next = 21;
+                return _IUI.IUI.created(this.repeat);
+
+              case 21:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function create() {
+        return _create.apply(this, arguments);
+      }
+
+      return create;
+    }()
+  }, {
+    key: "disabled",
+    get: function get() {
+      return this.hasAttribute("disabled");
+    },
+    set: function set(value) {
+      if (value) {
+        this.setAttribute("disabled", value);
+      } else {
+        this.removeAttribute("disabled");
+      }
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      this.response.start = 0;
+      this.selected = null;
+    }
+  }, {
+    key: "_query",
+    value: function () {
+      var _query2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var self, res;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                self = this;
+
+                if (!(this.query instanceof Array)) {
+                  _context3.next = 5;
+                  break;
+                }
+
+                res = this.query;
+                _context3.next = 11;
+                break;
+
+              case 5:
+                if (!(this.query instanceof Function)) {
+                  _context3.next = 11;
+                  break;
+                }
+
+                res = this.query(0);
+
+                if (!(res instanceof Promise)) {
+                  _context3.next = 11;
+                  break;
+                }
+
+                _context3.next = 10;
+                return res;
+
+              case 10:
+                res = _context3.sent;
+
+              case 11:
+                _context3.next = 13;
+                return this.repeat.setData(res);
+
+              case 13:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function _query() {
+        return _query2.apply(this, arguments);
+      }
+
+      return _query;
+    }()
+  }, {
+    key: "setData",
+    value: function () {
+      var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(value, radix) {
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return _get(_getPrototypeOf(Radio.prototype), "setData", this).call(this, value, radix);
+
+              case 2:
+                if (this._skipQuery) {
+                  _context4.next = 6;
+                  break;
+                }
+
+                _context4.next = 5;
+                return this._query();
+
+              case 5:
+                if (!this._select(value)) _get(_getPrototypeOf(Radio.prototype), "setData", this).call(this, this._selectIndex(0), radix);
+
+              case 6:
+                try {
+                  this._emit("select", {
+                    value: value
+                  });
+                } catch (ex) {}
+
+                if (this._checkValidity() && this.isAuto) this.revert();
+
+              case 8:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function setData(_x2, _x3) {
+        return _setData.apply(this, arguments);
+      }
+
+      return setData;
+    }()
+  }]);
+
+  return Radio;
+}(_IUIElement2["default"]));
+
+exports["default"] = _default;
+
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],32:[function(require,module,exports){
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+var _IUI = require("../Core/IUI.js");
+
+var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
+
+var _Menu = _interopRequireDefault(require("../UI/Menu.js"));
+
+var _Layout = _interopRequireDefault(require("../Data/Layout.js"));
+
+var _Repeat = _interopRequireDefault(require("../Data/Repeat.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
   _inherits(Select, _IUIElement);
 
   var _super = _createSuper(Select);
@@ -7378,7 +7835,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                 //  this.cssClass += "-autocomplete";
 
                 this.repeat = new _Repeat["default"]();
-                this.repeat.cssClass = "select-menu-repeat"; //this.repeat.innerHTML = this.innerHTML;
+                this.repeat.cssClass = this.cssClass + "-menu-repeat"; //this.repeat.innerHTML = this.innerHTML;
 
                 if (this.hasAttribute("menu")) {
                   menuData = this.getAttribute("menu");
@@ -7402,7 +7859,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
                       while (1) {
                         switch (_context.prev = _context.next) {
                           case 0:
-                            if (!(e.target != self.textbox && e.target != self.footer && e.target !== self.menu)) {
+                            if (!(e.target != self.textbox && e.target != self.footer && e.target !== self.menu && e.target != self.repeat)) {
                               _context.next = 5;
                               break;
                             }
@@ -7768,7 +8225,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],32:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],33:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -7835,7 +8292,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],33:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],34:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -9111,7 +9568,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10}],34:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10}],35:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -9329,7 +9786,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Check.js":20,"./Tab.js":32}],35:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Check.js":20,"./Tab.js":33}],36:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -9727,7 +10184,7 @@ window.addEventListener("hashchange", function(e){
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],36:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],37:[function(require,module,exports){
 "use strict";
 
 var _IUI = require("./Core/IUI.js");
@@ -9792,6 +10249,8 @@ require("./UI/Location.js");
 
 require("./UI/CodePreview.js");
 
+require("./UI/Radio.js");
+
 var _Modifiable = _interopRequireDefault(require("./Data/Modifiable.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -9833,4 +10292,4 @@ window.iui = _IUI.iui;
 window.IUI = _IUI.IUI;
 window.Modifiable = _Modifiable["default"];
 
-},{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":7,"./Data/Form.js":8,"./Data/Include.js":9,"./Data/Layout.js":10,"./Data/Modifiable.js":11,"./Data/Repeat.js":12,"./Data/TableRow.js":13,"./Router/Link.js":14,"./Router/Route.js":15,"./Router/Router.js":16,"./Router/Target.js":17,"./UI/Background.js":18,"./UI/Button.js":19,"./UI/Check.js":20,"./UI/CodePreview.js":21,"./UI/DateTimePicker.js":22,"./UI/Dialog.js":23,"./UI/DropDown.js":24,"./UI/Grid.js":25,"./UI/Input.js":26,"./UI/Location.js":27,"./UI/Login.js":28,"./UI/Menu.js":29,"./UI/Navbar.js":30,"./UI/Select.js":31,"./UI/Tab.js":32,"./UI/Table.js":33,"./UI/Tabs.js":34,"./UI/Window.js":35}]},{},[36]);
+},{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":7,"./Data/Form.js":8,"./Data/Include.js":9,"./Data/Layout.js":10,"./Data/Modifiable.js":11,"./Data/Repeat.js":12,"./Data/TableRow.js":13,"./Router/Link.js":14,"./Router/Route.js":15,"./Router/Router.js":16,"./Router/Target.js":17,"./UI/Background.js":18,"./UI/Button.js":19,"./UI/Check.js":20,"./UI/CodePreview.js":21,"./UI/DateTimePicker.js":22,"./UI/Dialog.js":23,"./UI/DropDown.js":24,"./UI/Grid.js":25,"./UI/Input.js":26,"./UI/Location.js":27,"./UI/Login.js":28,"./UI/Menu.js":29,"./UI/Navbar.js":30,"./UI/Radio.js":31,"./UI/Select.js":32,"./UI/Tab.js":33,"./UI/Table.js":34,"./UI/Tabs.js":35,"./UI/Window.js":36}]},{},[37]);
