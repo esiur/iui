@@ -1935,7 +1935,7 @@ _:-moz-tree-row(hover), html[dir='rtl'] .autocomplete-menu, html[dir='rtl'] .sel
 }
 
 .input > input {
-    width: 100%;
+    width: calc(100% - 10px);
 }
 
 .input > input, .input > textarea, .select, .textbox {

@@ -13,6 +13,8 @@ export default IUI.module(class Radio extends IUIElement {
         this._register("select");
         this._register("input");
         this._register("add");
+		
+		//this.selected = null;
     }
     
     _checkValidity() {
@@ -51,6 +53,46 @@ export default IUI.module(class Radio extends IUIElement {
         return this.hasAttribute("add");
     }
 
+	_selectIndex(index){
+		let found = null;
+		
+		for(let i = 0; i < this.repeat.children.length; i++)
+		{
+			let el = this.repeat.children[i];
+
+			if (i == index)
+			{
+				found = el.data;
+				el.classList.add(this.cssClass + "-selected");
+			}
+			else {
+				el.classList.remove(this.cssClass + "-selected");
+			}
+		}
+		
+		return found;
+	}
+ 
+ 	_select(value){
+		
+		let found = false;
+		
+		for(let i = 0; i < this.repeat.children.length; i++)
+		{
+			let el = this.repeat.children[i];
+
+			if (el.data == value)
+			{
+				found = true;
+				el.classList.add(this.cssClass + "-selected");
+			}
+			else {
+				el.classList.remove(this.cssClass + "-selected");
+			}
+		}
+		return false;
+	}
+	
     async create() {
 
         this.isAuto = this.hasAttribute("auto");
@@ -68,10 +110,16 @@ export default IUI.module(class Radio extends IUIElement {
           
         this.repeat = new Repeat();
         this.repeat.cssClass = this.cssClass + "-repeat";
-        
+		if (this.hasAttribute("menu")) {
+            let menuData = this.getAttribute("menu");
+            this.repeat.setAttribute(":data", menuData);// "d[1]");
+        }
+
+		this.repeat.setAttribute("i-skip-data", "skip");
+
         this.repeat.on("click", async (e) => {
-            
-            if (e.target !== self.repeat)
+            			
+            if (e.target == self.repeat)
                 return;
 
             for(let i = 0; i < self.repeat.children.length; i++)
@@ -80,10 +128,21 @@ export default IUI.module(class Radio extends IUIElement {
 
                 if (el.contains(e.target))
                 {
+					
                     el.classList.add(self.cssClass + "-selected");
-                    await self.setData(el.data);
-                    self._emit("input", { value: el.data });
+					
+					try {
+						self._emit("input", { value: el.data });
+						//self._emit("select", { value: el.data });
+						self._skipQuery = true;
+						await self.setData(el.data);
+						self._skipQuery = false;
 
+						//self.selected = el.data;
+					}
+					catch {
+					
+					}
                 }
                 else {
                     el.classList.remove(self.cssClass + "-selected");
@@ -91,8 +150,11 @@ export default IUI.module(class Radio extends IUIElement {
             }
         });
 
+		let html = this.innerHTML;
+		
         // get repeated item
-        this.repeat.innerHTML = this.innerHTML;
+        this.repeat.innerHTML = html;
+		this.innerHTML = "";
 
         this.appendChild(this.repeat);
     
@@ -119,7 +181,6 @@ export default IUI.module(class Radio extends IUIElement {
             await IUI.created(this.repeat);
         }
 
-        await this._query();
     }
 
     get disabled() {
@@ -153,32 +214,32 @@ export default IUI.module(class Radio extends IUIElement {
             if (res instanceof Promise)
                 res = await res;
         }
-        
+		        		
         await this.repeat.setData(res);
 
-        if (this.repeat.data.length == 0)
-            await self.setData(null);
+        //if (this.repeat.data.length == 0)
+          //  await self.setData(null);
     }
 
 
     async setData(value, radix) {
 
-        // this.label.innerHTML = "";
-            
         await super.setData(value, radix);
 
-        try {
-            //let text = this.formatter(value);
-            // this.label.innerHTML = text == null ? "" : text;
+		if (!this._skipQuery) {
+			await this._query();
+					
+			if (!this._select(value))
+				super.setData(this._selectIndex(0), radix);
 
+		}
+		
+        try {
             this._emit("select", { value });
         }
         catch (ex) {
-            //console.log(ex);
-            this._emit("select", { value });
-        }
 
-        //this._checkValidity();
+        }
 
 
         if (this._checkValidity() && this.isAuto)

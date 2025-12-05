@@ -115,6 +115,11 @@ export default IUI.module(
 
     async navigate(url, data, target, state, dataToQuery = true) {
 
+      if (this.isLoading || target?.isLoading){
+        console.warn("Router in loading mode.");
+        return;
+      }
+
       if (url == null)
         throw new Error("URL not specified.");
         

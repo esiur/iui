@@ -7,6 +7,7 @@ export default IUI.module(class Target extends IUIElement {
 
     $messageElement;
     $progressElement;
+    $loadingMode = false;
 
     constructor(properties) {
         super(IUI.extend(properties, { cssClass: 'target' }));
@@ -16,12 +17,18 @@ export default IUI.module(class Target extends IUIElement {
     }
 
     setLoading(value) {
+        this.$loadingMode = value;
+
         if (value)
             this.$loadingElement.classList.add(this.cssClass + "-loading-visible");
         else
             this.$loadingElement.classList.remove(this.cssClass + "-loading-visible");
     }
 
+    get isLoading()
+    {
+        return this.$loadingMode;
+    }
 
     async setMessage(message) {
         await this.$messageElement.setData({ message });
