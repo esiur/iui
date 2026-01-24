@@ -164,8 +164,8 @@
     --multiselect-add-background-image: var(--add);
     --multiselect-add-background-image-hover: var(--add-active);
     --multiselect-list-li-border-bottom: 2px dotted #dadada;
-    --multiselect-list-remove-background-image: url(img/remove.png);
-    --multiselect-list-remove-background-image-hover: url(img/remove-hover.png);
+    --multiselect-list-remove-background-image: var(--remove);
+    --multiselect-list-remove-background-image-hover: var(--remove-active);
     --grid-window-over-border: #e13946 dotted 3px;
     --grid-window-drag-border: #46b7e6 dotted 3px;
     --datetimepicker-calendar-border-right: 3px solid pink;
@@ -1693,8 +1693,12 @@ html[dir='rtl'] .select-label, html[dir='rtl'] .select-autocomplete-textbox, htm
     max-height: 16em;
 }
 
+.multiselect-autocomplete-textbox:focus
+{
+        outline: none;
+}
 
-.select-autocomplete-textbox:focus, .searchlist-textbox:focus, .select-label:focus, .multiselect-autocomplete-textbox:focus {
+.select-autocomplete-textbox:focus, .searchlist-textbox:focus, .select-label:focus {
     outline: none;
     border-color: var(--textbox-border-color-focus);
     box-shadow: var(--textbox-box-shadow-focus);
@@ -1708,13 +1712,18 @@ html[dir='rtl'] .select-label, html[dir='rtl'] .select-autocomplete-textbox, htm
 }
 
 
-.select-autocomplete-textbox:focus + .select-autocomplete-arrow, .searchlist-textbox:focus + .searchlist-arrow, .select:focus + .select-arrow, .multiselect-autocomplete-textbox:focus + .multiselect-autocomplete-arrow, .multiselect-autocomplete-textbox:focus ~ .multiselect-add {
+/* .select-autocomplete-textbox:focus + .select-autocomplete-arrow, .searchlist-textbox:focus + .searchlist-arrow, .select:focus + .select-arrow, .multiselect-autocomplete-textbox:focus + .multiselect-autocomplete-arrow, .multiselect-autocomplete-textbox:focus ~ .multiselect-add { */
+
+.select-autocomplete-textbox:focus + .select-autocomplete-arrow, .searchlist-textbox:focus + .searchlist-arrow, .select:focus + .select-arrow {
+
     outline: none;
     border-color: var(--textbox-border-color-focus);
     box-shadow: var(--textbox-box-shadow-focus);
 }
+/* 
+.select-autocomplete-textbox-invalid + .select-autocomplete-arrow, .searchlist-textbox:focus + .searchlist-arrow, .select:focus + .select-arrow, .multiselect-autocomplete-textbox:focus + .multiselect-autocomplete-arrow, .multiselect-autocomplete-textbox:focus ~ .multiselect-add { */
 
-.select-autocomplete-textbox-invalid + .select-autocomplete-arrow, .searchlist-textbox:focus + .searchlist-arrow, .select:focus + .select-arrow, .multiselect-autocomplete-textbox:focus + .multiselect-autocomplete-arrow, .multiselect-autocomplete-textbox:focus ~ .multiselect-add {
+.select-autocomplete-textbox-invalid + .select-autocomplete-arrow, .searchlist-textbox:focus + .searchlist-arrow, .select:focus + .select-arrow {
     outline: none;
     border-color: var(--textbox-border-color-focus);
     box-shadow: var(--textbox-box-shadow-focus);
@@ -1737,6 +1746,7 @@ html[dir='rtl'] .select-label, html[dir='rtl'] .select-autocomplete-textbox, htm
     background-position: calc(100% / 2) calc(100% / 2);
     transition: var(--selectlist-transition);
     border-radius: 10px;
+    height: 24px;
 }
 
 
@@ -2291,11 +2301,11 @@ html[dir='rtl'] .bar, html[dir='rtl'] .datetimepicker-month, html[dir='rtl'] .da
     cursor: text;
 }
 
-.multiselect-input:focus-within {
+/* .multiselect-input:focus-within {
     outline: none;
     border-color: var(--textbox-border-color-focus);
     box-shadow: var(--textbox-box-shadow-focus);
-}
+} */
 
 .multiselect-input .multiselect-autocomplete-textbox {
     background: transparent;

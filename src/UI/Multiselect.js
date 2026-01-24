@@ -222,7 +222,7 @@ export default IUI.module(class Multiselect extends IUIElement {
         if (this.hasArrow) {
             this.arrow = document.createElement("div");
             this.arrow.className = this.cssClass + "-autocomplete-arrow";
-            this.header.appendChild(this.arrow);
+            this.wrap.appendChild(this.arrow);
 
             this.arrow.addEventListener("click", function () {
                 if (self.visible)
