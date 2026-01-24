@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+
+    <link href="../css/iui.css" rel="stylesheet" />
+    <script src="../src/iui.js" type="module"></script>
+
+    <style>
+        body {
+            font-family: Segoe UI;
+            padding: 20px;
+        }
+
+        .demo-card {
+            max-width: 520px;
+            padding: 16px;
+            border: 1px solid #d6d6d6;
+            border-radius: 12px;
+            background: #fafafa;
+        }
+
+        .demo-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .demo-note {
+            color: #555;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <i-app>
+        <div class="demo-card">
+            <div class="demo-title">Multiselect Demo</div>
+            <div class="demo-note">Type to filter, click items to add, use the x to remove.</div>
+
+            <i-multiselect id="demo-multi" placeholder="Search cities..." distinct key="id">
+                <i-layout>
+                    <i-field name="label">${d.name}</i-field>
+                    <i-field name="menu">${d.name}</i-field>
+                </i-layout>
+            </i-multiselect>
+        </div>
+    </i-app>
+
+    <script>
+        window.addEventListener("load", function () {
+            const items = [
+                { id: 1, name: "Cairo" },
+                { id: 2, name: "Alexandria" },
+                { id: 3, name: "Giza" },
+                { id: 4, name: "Aswan" },
+                { id: 5, name: "Luxor" },
+                { id: 6, name: "Fayoum" },
+                { id: 7, name: "Sohag" },
+                { id: 8, name: "Hurghada" }
+            ];
+
+            const ms = document.getElementById("demo-multi");
+            ms.query = function (offset, text) {
+                const q = (text || "").toLowerCase();
+                if (!q)
+                    return items;
+                return items.filter(x => x.name.toLowerCase().indexOf(q) >= 0);
+            };
+
+            ms.setData([items[0], items[3]]);
+        });
+    </script>
+</body>
+</html>

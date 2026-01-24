@@ -1686,7 +1686,7 @@ html[dir='rtl'] .select-label, html[dir='rtl'] .select-autocomplete-textbox, htm
     font-size: small;
 }
 
-.select-menu-repeat {
+.select-menu-repeat, .multiselect-menu-repeat, .multiselect-autocomplete-menu-repeat {
     background: var(--menu-background);
     overflow-y: auto;
     overflow-x: hidden;
@@ -1916,12 +1916,12 @@ _:-moz-tree-row(hover), html[dir='rtl'] .autocomplete-menu, html[dir='rtl'] .sel
     opacity: 1;
 }
 
-.select-menu-repeat > div {
+.select-menu-repeat > div, .multiselect-menu-repeat > div, .multiselect-autocomplete-menu-repeat > div {
     padding: 0 3px;
     cursor: pointer;
 }
 
-    .select-menu-repeat > div:hover {
+    .select-menu-repeat > div:hover, .multiselect-menu-repeat > div:hover, .multiselect-autocomplete-menu-repeat > div:hover {
         background: var(--menu-item-hover-background);
         box-shadow: var(--menu-item-hover-box-shadow);
         color: var(--menu-item-hover-color);
@@ -2276,6 +2276,72 @@ html[dir='rtl'] .bar, html[dir='rtl'] .datetimepicker-month, html[dir='rtl'] .da
     width: 100%;
 }
 
+.multiselect-input {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    min-height: 1.2em;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background: var(--selectlist-label-background);
+    border: var(--textbox-border);
+    transition: var(--selectlist-transition);
+    cursor: text;
+}
+
+.multiselect-input:focus-within {
+    outline: none;
+    border-color: var(--textbox-border-color-focus);
+    box-shadow: var(--textbox-box-shadow-focus);
+}
+
+.multiselect-input .multiselect-autocomplete-textbox {
+    background: transparent;
+    border: 0;
+    min-width: 120px;
+    flex: 1;
+    padding: 2px 4px;
+    user-select: auto;
+}
+
+.multiselect-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+
+.multiselect-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #e8f3ff;
+    color: #2a4b65;
+    border: 1px solid #c7dff5;
+    border-radius: 999px;
+    padding: 1px 6px;
+}
+
+.multiselect-chip-text {
+    padding-right: 2px;
+}
+
+.multiselect-chip-remove {
+    width: 14px;
+    height: 14px;
+    background-image: var(--multiselect-list-remove-background-image);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.multiselect-chip-remove:hover {
+    background-image: var(--multiselect-list-remove-background-image-hover);
+}
+
 .multiselect-add, .select-autocomplete-add, .select-add {
     background: var(--selectlist-label-background);
     width: 27px;
@@ -2348,6 +2414,11 @@ html[dir='rtl'] .multiselect-list-remove {
 .multiselect-list li:hover {
     background: var(--menu-item-hover-background);
     box-shadow: var(--menu-item-hover-box-shadow);
+}
+
+.multiselect-invalid .multiselect-input {
+    border-color: var(--textbox-border-color-invalid) !important;
+    box-shadow: var(--textbox-box-shadow-invalid) !important;
 }
 
 .grid {

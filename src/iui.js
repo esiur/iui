@@ -34,6 +34,7 @@ import "./UI/Menu.js";
 import "./Data/TableRow.js";
 
 import "./UI/Select.js";
+import "./UI/Multiselect.js";
 
 import "./UI/DropDown.js";
 import "./UI/Grid.js";
