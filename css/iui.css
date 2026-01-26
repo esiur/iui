@@ -1956,7 +1956,6 @@ _:-moz-tree-row(hover), html[dir='rtl'] .autocomplete-menu, html[dir='rtl'] .sel
     border-radius: 8px / 10px;
     -webkit-appearance: none;
     transition: all 0.2s;
-    font-family: "default";
     font-size: 1em;
 }
 
@@ -2286,7 +2285,7 @@ html[dir='rtl'] .bar, html[dir='rtl'] .datetimepicker-month, html[dir='rtl'] .da
     width: 100%;
 }
 
-.multiselect-input {
+.multiselect-autocomplete-header {
     display: flex;
     flex: 1;
     flex-wrap: wrap;
@@ -2307,10 +2306,10 @@ html[dir='rtl'] .bar, html[dir='rtl'] .datetimepicker-month, html[dir='rtl'] .da
     box-shadow: var(--textbox-box-shadow-focus);
 } */
 
-.multiselect-input .multiselect-autocomplete-textbox {
+.multiselect-autocomplete-textbox {
     background: transparent;
     border: 0;
-    min-width: 120px;
+    min-width: 70px;
     flex: 1;
     padding: 2px 4px;
     user-select: auto;
@@ -2321,6 +2320,14 @@ html[dir='rtl'] .bar, html[dir='rtl'] .datetimepicker-month, html[dir='rtl'] .da
     flex-wrap: wrap;
     gap: 4px;
     align-items: center;
+
+    min-height: 1.2em;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background: var(--selectlist-label-background);
+    border: var(--textbox-border);
+    transition: var(--selectlist-transition);
+    cursor: text;
 }
 
 .multiselect-chip {
@@ -2426,7 +2433,7 @@ html[dir='rtl'] .multiselect-list-remove {
     box-shadow: var(--menu-item-hover-box-shadow);
 }
 
-.multiselect-invalid .multiselect-input {
+.multiselect-invalid .multiselect-header {
     border-color: var(--textbox-border-color-invalid) !important;
     box-shadow: var(--textbox-box-shadow-invalid) !important;
 }

@@ -5533,7 +5533,7 @@ document.addEventListener("keydown", function (e) {
   }
 }); //IUI.module("dialog", IUIDialog, function(el, modal, properties){ return new IUIDialog(el, modal, properties);});
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Window.js":36}],24:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Window.js":37}],24:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -6980,6 +6980,665 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _IUI = require("../Core/IUI.js");
+
+var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
+
+var _Menu = _interopRequireDefault(require("../UI/Menu.js"));
+
+var _Layout = _interopRequireDefault(require("../Data/Layout.js"));
+
+var _Repeat = _interopRequireDefault(require("../Data/Repeat.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
+  _inherits(Multiselect, _IUIElement);
+
+  var _super = _createSuper(Multiselect);
+
+  function Multiselect() {
+    var _this;
+
+    _classCallCheck(this, Multiselect);
+
+    _this = _super.call(this, {
+      visible: false,
+      searchlist: false,
+      hasArrow: true,
+      distinct: false,
+      query: function query(x) {
+        return null;
+      }
+    });
+
+    _this._register("select");
+
+    _this._register("input");
+
+    _this._register("add");
+
+    _this._register("remove");
+
+    return _this;
+  }
+
+  _createClass(Multiselect, [{
+    key: "disconnectedCallback",
+    value: function disconnectedCallback() {
+      if (!this.searchlist && this.menu) app.removeChild(this.menu);
+    }
+  }, {
+    key: "connectedCallback",
+    value: function connectedCallback() {
+      _get(_getPrototypeOf(Multiselect.prototype), "connectedCallback", this).call(this);
+
+      if (!this.searchlist && this.menu) app.appendChild(this.menu);
+    }
+  }, {
+    key: "_parseBoolAttr",
+    value: function _parseBoolAttr(name, fallback) {
+      var value = this.getAttribute(name);
+      if (value == null) return fallback;
+      return !(value === "false" || value === "0" || value === "no");
+    }
+  }, {
+    key: "_checkValidity",
+    value: function _checkValidity() {
+      if (this.validate != null) {
+        try {
+          var valid = this.validate.apply(this);
+
+          if (!valid) {
+            this.setAttribute("invalid", "");
+            this.classList.add(this.cssClass + "-invalid");
+            return false;
+          } else {
+            this.removeAttribute("invalid");
+            this.classList.remove(this.cssClass + "-invalid");
+            return true;
+          }
+        } catch (ex) {
+          console.log("Validation Error", ex);
+          return false;
+        }
+      }
+
+      return true;
+    }
+  }, {
+    key: "_getItemKey",
+    value: function _getItemKey(item) {
+      if (!this._keyField) return item;
+      return item == null ? item : item[this._keyField];
+    }
+  }, {
+    key: "_hasItem",
+    value: function _hasItem(item, list) {
+      var key = this._getItemKey(item);
+
+      for (var i = 0; i < list.length; i++) {
+        if (this._getItemKey(list[i]) === key) return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "_getItemFromTarget",
+    value: function _getItemFromTarget(target) {
+      var node = target;
+
+      while (node && node !== this.menu && node !== this.repeat) {
+        if (node.data !== undefined) return node.data;
+        node = node.parentElement;
+      }
+
+      return undefined;
+    }
+  }, {
+    key: "create",
+    value: function () {
+      var _create = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        var self, menuData, footer, layout, menuTemplate, chipTemplate, chip, chipText, chipRemove, _this$__i_bindings, _this$__i_bindings2, _this$__i_bindings2$s, _this$__i_bindings2$s2;
+
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                this.isAuto = this.hasAttribute("auto");
+                this.field = this.getAttribute("field");
+
+                if (this.field != null) {
+                  this.setAttribute(":data", "d['".concat(this.field, "']"));
+                  this.setAttribute(":revert", "d['".concat(this.field, "'] = this.data"));
+                }
+
+                this.distinct = this._parseBoolAttr("distinct", this.distinct);
+                this._keyField = this.getAttribute("key") || this.getAttribute("key-field");
+                self = this;
+                this.repeat = new _Repeat["default"]();
+                this.repeat.cssClass = this.cssClass + "-menu-repeat";
+
+                if (this.hasAttribute("menu")) {
+                  menuData = this.getAttribute("menu");
+                  this.repeat.setAttribute(":data", menuData);
+                }
+
+                if (this.hasAttribute("footer")) {
+                  footer = this.getAttribute("footer");
+                  this.footer = document.createElement("div");
+                  this.footer.className = this.cssClass + "-footer";
+                  this.footer.innerHTML = footer;
+                }
+
+                this.menu = new _Menu["default"]({
+                  cssClass: this.cssClass + "-autocomplete-menu",
+                  "target-class": ""
+                });
+                this.menu.on("click", /*#__PURE__*/function () {
+                  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(e) {
+                    var item;
+                    return regeneratorRuntime.wrap(function _callee$(_context) {
+                      while (1) {
+                        switch (_context.prev = _context.next) {
+                          case 0:
+                            if (!(e.target != self.textbox && e.target != self.footer && e.target !== self.menu && e.target != self.repeat)) {
+                              _context.next = 5;
+                              break;
+                            }
+
+                            item = self._getItemFromTarget(e.target);
+
+                            if (!(item !== undefined)) {
+                              _context.next = 5;
+                              break;
+                            }
+
+                            _context.next = 5;
+                            return self._addItem(item);
+
+                          case 5:
+                          case "end":
+                            return _context.stop();
+                        }
+                      }
+                    }, _callee);
+                  }));
+
+                  return function (_x) {
+                    return _ref.apply(this, arguments);
+                  };
+                }()).on("visible", function (x) {
+                  if (!x.visible) self.hide();
+                });
+                this.textbox = document.createElement("input");
+                this.textbox.type = "search";
+                this.textbox.className = this.cssClass + "-autocomplete-textbox";
+                if (this.placeholder) this.textbox.placeholder = this.placeholder;
+                this.textbox.addEventListener("keyup", function (e) {
+                  if (e.keyCode != 13) {
+                    self._query(0, self.textbox.value);
+                  }
+                });
+                this.textbox.addEventListener("focus", function () {
+                  self.show();
+                }); // get collection
+
+                layout = _Layout["default"].get(this, "div", true, true);
+                menuTemplate = null;
+                chipTemplate = null;
+
+                if (layout != null && layout.label != undefined && layout.menu != undefined) {
+                  chipTemplate = layout.label.node;
+                  menuTemplate = layout.menu.node;
+                } else if (layout != null && layout["null"] != null) {
+                  chipTemplate = layout["null"].node;
+                  menuTemplate = layout["null"].node.cloneNode(true);
+                } else {
+                  chipTemplate = document.createElement("div");
+                  chipTemplate.innerHTML = this.innerHTML;
+                  menuTemplate = document.createElement("div");
+                  menuTemplate.innerHTML = this.innerHTML;
+                }
+
+                this.repeat.appendChild(menuTemplate);
+                this.chips = new _Repeat["default"]();
+                this.chips.cssClass = this.cssClass + "-chips";
+                chip = document.createElement("div");
+                chip.className = this.cssClass + "-chip";
+                chip.setAttribute("repeat", "");
+                chipText = document.createElement("div");
+                chipText.className = this.cssClass + "-chip-text";
+                chipText.appendChild(chipTemplate);
+                chipRemove = document.createElement("div");
+                chipRemove.className = this.cssClass + "-chip-remove";
+                chip.appendChild(chipText);
+                chip.appendChild(chipRemove);
+                this.chips.appendChild(chip);
+                this.wrap = document.createElement("div");
+                this.wrap.className = this.cssClass + "-input";
+                this.wrap.appendChild(this.chips);
+                this.wrap.appendChild(this.textbox);
+                this.header = document.createElement("div");
+                this.header.className = this.cssClass + "-autocomplete-header";
+                this.header.appendChild(this.wrap);
+                this.appendChild(this.header);
+                this.wrap.addEventListener("click", function (e) {
+                  if (e.target && e.target.classList.contains(self.cssClass + "-chip-remove")) return;
+                  self.textbox.focus();
+                  self.show();
+                });
+                this.chips.addEventListener("click", function (e) {
+                  var _e$target;
+
+                  var remove = (_e$target = e.target) === null || _e$target === void 0 ? void 0 : _e$target.closest("." + self.cssClass + "-chip-remove");
+                  if (!remove) return;
+                  var chip = remove.closest("." + self.cssClass + "-chip");
+                  if (!chip) return;
+                  var index = parseInt(chip.dataset.index, 10);
+                  if (!Number.isNaN(index)) self._removeItemAt(index);
+                });
+                this.menu.appendChild(this.repeat);
+                if (this.footer != null) this.menu.appendChild(this.footer);
+
+                if (this.hasArrow) {
+                  this.arrow = document.createElement("div");
+                  this.arrow.className = this.cssClass + "-autocomplete-arrow";
+                  this.wrap.appendChild(this.arrow);
+                  this.arrow.addEventListener("click", function () {
+                    if (self.visible) self.hide();else self.show();
+                  });
+                }
+
+                if (!this.searchlist) {
+                  _context2.next = 53;
+                  break;
+                }
+
+                this.appendChild(this.menu);
+                _context2.next = 61;
+                break;
+
+              case 53:
+                app.appendChild(this.menu);
+
+                if (!app.loaded) {
+                  _context2.next = 61;
+                  break;
+                }
+
+                _context2.next = 57;
+                return _IUI.IUI.create(this.menu);
+
+              case 57:
+                _IUI.IUI.bind(this.menu, false, "menu", (_this$__i_bindings = this.__i_bindings) === null || _this$__i_bindings === void 0 ? void 0 : _this$__i_bindings.scope, false);
+
+                (_this$__i_bindings2 = this.__i_bindings) === null || _this$__i_bindings2 === void 0 ? void 0 : (_this$__i_bindings2$s = _this$__i_bindings2.scope) === null || _this$__i_bindings2$s === void 0 ? void 0 : (_this$__i_bindings2$s2 = _this$__i_bindings2$s.refs) === null || _this$__i_bindings2$s2 === void 0 ? void 0 : _this$__i_bindings2$s2._build();
+                _context2.next = 61;
+                return _IUI.IUI.created(this.menu);
+
+              case 61:
+                this.addEventListener("click", function (e) {
+                  if (e.target == self.textbox) self.show();
+                });
+
+              case 62:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function create() {
+        return _create.apply(this, arguments);
+      }
+
+      return create;
+    }()
+  }, {
+    key: "disabled",
+    get: function get() {
+      return this.hasAttribute("disabled");
+    },
+    set: function set(value) {
+      if (this.textbox) this.textbox.disabled = value;
+      if (value) this.setAttribute("disabled", value);else this.removeAttribute("disabled");
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      this.setVisible(true);
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.setVisible(false);
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      if (this.textbox) this.textbox.value = "";
+      return this.setData([]);
+    }
+  }, {
+    key: "_query",
+    value: function () {
+      var _query2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var text, res;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!this.disabled) {
+                  _context3.next = 2;
+                  break;
+                }
+
+                return _context3.abrupt("return");
+
+              case 2:
+                text = this.textbox ? this.textbox.value : null;
+
+                if (!(this.query instanceof Array)) {
+                  _context3.next = 7;
+                  break;
+                }
+
+                res = this.query;
+                _context3.next = 13;
+                break;
+
+              case 7:
+                if (!(this.query instanceof Function)) {
+                  _context3.next = 13;
+                  break;
+                }
+
+                res = this.query(0, text);
+
+                if (!(res instanceof Promise)) {
+                  _context3.next = 13;
+                  break;
+                }
+
+                _context3.next = 12;
+                return res;
+
+              case 12:
+                res = _context3.sent;
+
+              case 13:
+                _context3.next = 15;
+                return this.menu.setData(res);
+
+              case 15:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function _query() {
+        return _query2.apply(this, arguments);
+      }
+
+      return _query;
+    }()
+  }, {
+    key: "_addItem",
+    value: function () {
+      var _addItem2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(item) {
+        var next;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                if (!(item == null)) {
+                  _context4.next = 2;
+                  break;
+                }
+
+                return _context4.abrupt("return");
+
+              case 2:
+                next = Array.isArray(this._data) ? this._data.slice() : [];
+
+                if (!(this.distinct && this._hasItem(item, next))) {
+                  _context4.next = 5;
+                  break;
+                }
+
+                return _context4.abrupt("return");
+
+              case 5:
+                next.push(item);
+                _context4.next = 8;
+                return this.setData(next);
+
+              case 8:
+                this._emit("input", {
+                  value: next
+                });
+
+                this._emit("add", {
+                  value: item
+                });
+
+                if (this.textbox) {
+                  this.textbox.value = "";
+
+                  this._query(0);
+
+                  this.textbox.focus();
+                }
+
+              case 11:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function _addItem(_x2) {
+        return _addItem2.apply(this, arguments);
+      }
+
+      return _addItem;
+    }()
+  }, {
+    key: "_removeItemAt",
+    value: function () {
+      var _removeItemAt2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(index) {
+        var list, removed;
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                list = Array.isArray(this._data) ? this._data.slice() : [];
+
+                if (!(index < 0 || index >= list.length)) {
+                  _context5.next = 3;
+                  break;
+                }
+
+                return _context5.abrupt("return");
+
+              case 3:
+                removed = list.splice(index, 1)[0];
+                _context5.next = 6;
+                return this.setData(list);
+
+              case 6:
+                this._emit("input", {
+                  value: list
+                });
+
+                this._emit("remove", {
+                  value: removed
+                });
+
+              case 8:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+
+      function _removeItemAt(_x3) {
+        return _removeItemAt2.apply(this, arguments);
+      }
+
+      return _removeItemAt;
+    }()
+  }, {
+    key: "_syncChipIndices",
+    value: function _syncChipIndices() {
+      if (!this.chips || !this.chips.list) return;
+
+      for (var i = 0; i < this.chips.list.length; i++) {
+        this.chips.list[i].dataset.index = i;
+      }
+    }
+  }, {
+    key: "setData",
+    value: function () {
+      var _setData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(value, radix) {
+        var _value;
+
+        var seen, deduped, i, key;
+        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                if (((_value = value) === null || _value === void 0 ? void 0 : _value.toArray) instanceof Function) value = value.toArray();else if (!(value instanceof Array || value instanceof Int32Array)) value = value == null ? [] : [value];
+
+                if (this.distinct) {
+                  seen = new Set();
+                  deduped = [];
+
+                  for (i = 0; i < value.length; i++) {
+                    key = this._getItemKey(value[i]);
+
+                    if (!seen.has(key)) {
+                      seen.add(key);
+                      deduped.push(value[i]);
+                    }
+                  }
+
+                  value = deduped;
+                }
+
+                _context6.next = 4;
+                return _get(_getPrototypeOf(Multiselect.prototype), "setData", this).call(this, value, radix);
+
+              case 4:
+                this._syncChipIndices();
+
+                try {
+                  this._emit("select", {
+                    value: value
+                  });
+                } catch (ex) {
+                  this._emit("select", {
+                    value: value
+                  });
+                }
+
+                if (this._checkValidity() && this.isAuto) this.revert();
+
+              case 7:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+
+      function setData(_x4, _x5) {
+        return _setData.apply(this, arguments);
+      }
+
+      return setData;
+    }()
+  }, {
+    key: "setVisible",
+    value: function setVisible(visible) {
+      var _this2 = this;
+
+      if (visible == this.visible) return;
+
+      if (visible) {
+        this._query(0);
+
+        var rect = this.getBoundingClientRect();
+        this.menu.style.width = this.clientWidth - this._computeMenuOuterWidth() + "px";
+        this.menu.style.paddingTop = rect.height + "px";
+        this.menu.setVisible(true, rect.left, rect.top);
+        this.visible = true;
+        this.classList.add(this.cssClass + "-visible");
+        if (this.textbox) setTimeout(function () {
+          _this2.textbox.focus();
+        }, 100);
+      } else {
+        this.visible = false;
+        this.classList.remove(this.cssClass + "-visible");
+        this.menu.hide();
+      }
+    }
+  }, {
+    key: "_computeMenuOuterWidth",
+    value: function _computeMenuOuterWidth() {
+      return this.menu.offsetWidth - this.menu.clientWidth;
+    }
+  }]);
+
+  return Multiselect;
+}(_IUIElement2["default"]));
+
+exports["default"] = _default;
+
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],31:[function(require,module,exports){
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
 var _IUIElement2 = _interopRequireDefault(require("../Core/IUIElement.js"));
 
 var _IUI = require("../Core/IUI.js");
@@ -7248,7 +7907,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Router/Link.js":14,"./Check.js":20}],31:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Router/Link.js":14,"./Check.js":20}],32:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -7672,7 +8331,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],32:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],33:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -8225,7 +8884,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],33:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10,"../Data/Repeat.js":12,"../UI/Menu.js":29}],34:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -8292,7 +8951,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],34:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],35:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -9568,7 +10227,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10}],35:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"../Data/Layout.js":10}],36:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -9786,7 +10445,7 @@ var _default = _IUI.IUI.module( /*#__PURE__*/function (_IUIElement) {
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Check.js":20,"./Tab.js":33}],36:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5,"./Check.js":20,"./Tab.js":34}],37:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -10184,7 +10843,7 @@ window.addEventListener("hashchange", function(e){
 
 exports["default"] = _default;
 
-},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],37:[function(require,module,exports){
+},{"../Core/IUI.js":4,"../Core/IUIElement.js":5}],38:[function(require,module,exports){
 "use strict";
 
 var _IUI = require("./Core/IUI.js");
@@ -10241,6 +10900,8 @@ require("./Data/TableRow.js");
 
 require("./UI/Select.js");
 
+require("./UI/Multiselect.js");
+
 require("./UI/DropDown.js");
 
 require("./UI/Grid.js");
@@ -10292,4 +10953,4 @@ window.iui = _IUI.iui;
 window.IUI = _IUI.IUI;
 window.Modifiable = _Modifiable["default"];
 
-},{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":7,"./Data/Form.js":8,"./Data/Include.js":9,"./Data/Layout.js":10,"./Data/Modifiable.js":11,"./Data/Repeat.js":12,"./Data/TableRow.js":13,"./Router/Link.js":14,"./Router/Route.js":15,"./Router/Router.js":16,"./Router/Target.js":17,"./UI/Background.js":18,"./UI/Button.js":19,"./UI/Check.js":20,"./UI/CodePreview.js":21,"./UI/DateTimePicker.js":22,"./UI/Dialog.js":23,"./UI/DropDown.js":24,"./UI/Grid.js":25,"./UI/Input.js":26,"./UI/Location.js":27,"./UI/Login.js":28,"./UI/Menu.js":29,"./UI/Navbar.js":30,"./UI/Radio.js":31,"./UI/Select.js":32,"./UI/Tab.js":33,"./UI/Table.js":34,"./UI/Tabs.js":35,"./UI/Window.js":36}]},{},[37]);
+},{"./Core/App.js":1,"./Core/IUI.js":4,"./Core/IUIElement.js":5,"./Data/Field.js":7,"./Data/Form.js":8,"./Data/Include.js":9,"./Data/Layout.js":10,"./Data/Modifiable.js":11,"./Data/Repeat.js":12,"./Data/TableRow.js":13,"./Router/Link.js":14,"./Router/Route.js":15,"./Router/Router.js":16,"./Router/Target.js":17,"./UI/Background.js":18,"./UI/Button.js":19,"./UI/Check.js":20,"./UI/CodePreview.js":21,"./UI/DateTimePicker.js":22,"./UI/Dialog.js":23,"./UI/DropDown.js":24,"./UI/Grid.js":25,"./UI/Input.js":26,"./UI/Location.js":27,"./UI/Login.js":28,"./UI/Menu.js":29,"./UI/Multiselect.js":30,"./UI/Navbar.js":31,"./UI/Radio.js":32,"./UI/Select.js":33,"./UI/Tab.js":34,"./UI/Table.js":35,"./UI/Tabs.js":36,"./UI/Window.js":37}]},{},[38]);

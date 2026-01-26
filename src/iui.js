@@ -10,6 +10,7 @@ import "./Router/Target.js";
 
 import "./Data/Repeat.js";
 import "./Data/Include.js";
+import "./Data/If.js";
 import "./Data/Form.js";
 import "./UI/Login.js";
 import "./UI/Window.js";

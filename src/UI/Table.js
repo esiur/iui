@@ -810,7 +810,7 @@ export default IUI.module(class Table extends IUIElement {
 		row.cells[0].insertAdjacentElement("afterbegin", button);
 	}
 
-	add(item, dynamicLoading)//fast)
+	async add(item, dynamicLoading)//fast)
 	{
 
 		this.list.push(item);
@@ -835,11 +835,11 @@ export default IUI.module(class Table extends IUIElement {
 					if (treeButton.length == 0)
 					{
 						this._createTreeButton(parentRow); 
-						newRow = this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, false, parentRow.rowIndex);
+						newRow = await this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, false, parentRow.rowIndex);
 					}
 					else
 					{
-  						newRow = this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, treeButton[0].getAttribute("data-expand") == '1', parentRow.rowIndex);
+  						newRow = await this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, treeButton[0].getAttribute("data-expand") == '1', parentRow.rowIndex);
  					}
 				}
 
@@ -849,7 +849,7 @@ export default IUI.module(class Table extends IUIElement {
 		}
 		else
 		{
-			newRow = this._addRow(item, 0, true);
+			newRow = await this._addRow(item, 0, true);
 		}
 		
 		if (dynamicLoading)
@@ -888,7 +888,7 @@ export default IUI.module(class Table extends IUIElement {
 		return rt;
 	};
 
-	_addRow(item, level, visible, index)
+	async _addRow(item, level, visible, index)
 	{
 		var self = this;
 		// add item
@@ -909,16 +909,25 @@ export default IUI.module(class Table extends IUIElement {
 
 			//this._make_bindings(cl)
 
-			IUI.bind(cl, false, "table",
-					 IUI.extend(this.__i_bindings, {index: i}, true));
+			const scope = IUI.extend(this.__i_bindings?.scope, { index: i }, true);
 
 			tr.appendChild(cl);
 
-			if (cl.dataMap != null)
-				cl.dataMap.render(item).then(() => self._renderElement(cl, cl.data));
+			try {
+				await IUI.create(cl, true);
+				IUI.bind(cl, false, "table", scope);
+				await IUI.created(cl, true);
+			} catch (ex) {
+				console.log(ex);
+			}
+
+			if (cl.dataMap != null) {
+				await cl.dataMap.render(item);
+				await IUI.render(cl, cl.data, false, item);
+			}
 			else {
 				cl.data = item;
-				this._renderElement(cl, cl.data);
+				await IUI.render(cl, cl.data, false, item);
 			}
 			//if (column.formatter)
 			//{
@@ -1288,7 +1297,7 @@ export default IUI.module(class Table extends IUIElement {
 		}
 	}
 	
-	_renderItem(item, propertyName = null)
+	async _renderItem(item, propertyName = null)
 	{
 		var rows = this.getRows(this.indexer(item));
 		var removedRows = [];
@@ -1343,11 +1352,11 @@ export default IUI.module(class Table extends IUIElement {
 							if (treeButton.length == 0)
 							{
 								this._createTreeButton(parentRow);
-								this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, false, parentRow.rowIndex);
+								await this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, false, parentRow.rowIndex);
 							}
 							else
 							{
-								this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, treeButton[0].getAttribute("data-expand") == '1', parentRow.rowIndex);
+								await this._addRow(item, parseInt(parentRow.getAttribute("data-level")) + 1, treeButton[0].getAttribute("data-expand") == '1', parentRow.rowIndex);
 							}
 						}
 					}
@@ -1391,6 +1400,9 @@ export default IUI.module(class Table extends IUIElement {
 
 	async setData(value, radix) 
 	{
+		if (!Array.isArray(value))
+			return;
+
 		await super.setData(value, radix);
 
 		this.clear();
@@ -1398,14 +1410,14 @@ export default IUI.module(class Table extends IUIElement {
 		if (this.tree)
 		{
 			var self = this;
-			var loadFunction = function(items, level)
+			var loadFunction = async function(items, level)
 			{
 				for(var i = 0; i < items.length; i++)
 				{
 					var item = items[i];
 					self.list.push(item);
 
-					var row = self._addRow(item, level, level==0);
+					var row = await self._addRow(item, level, level==0);
 					if (item.children && item.children.length > 0)
 					{
 						self._createTreeButton(row);
@@ -1416,12 +1428,12 @@ export default IUI.module(class Table extends IUIElement {
 			}
 
 			// recursively load items
-			loadFunction(value, 0);
+			await loadFunction(value, 0);
 		}
 		else
 		{
 			for (var i = 0; i < value.length; i++)
-				this.add(value[i]);
+				await this.add(value[i]);
 		}
 	}
 });

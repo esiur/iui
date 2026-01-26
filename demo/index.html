@@ -34,7 +34,7 @@
     </style>
 </head>
 <body>
-    <i-app>
+    <i-app onload="init()">
         <div class="demo-card">
             <div class="demo-title">Multiselect Demo</div>
             <div class="demo-note">Type to filter, click items to add, use the x to remove.</div>
@@ -46,10 +46,69 @@
                 </i-layout>
             </i-multiselect>
         </div>
+
+        <div class="demo-card" style="margin-top: 16px;">
+            <div class="demo-title">i-if Demo</div>
+            <div class="demo-note">Toggles DOM insertion/removal based on a condition.</div>
+
+            <button id="demo-if-toggle" type="button">Toggle</button>
+
+            <div :data="d">
+                <i-if :condition="d?.show">
+                    <div style="margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: #fff2cc; border: 1px solid #f0d58c;">
+                        Now you see me.
+                    </div>
+                </i-if>
+            </div>
+        </div>
+
+        <div class="demo-card" style="margin-top: 16px;">
+            <div class="demo-title">Table Tree + Multi-Group Demo</div>
+            <div class="demo-note">Items can belong to multiple groups via parents.</div>
+
+            <i-table id="demo-table">
+                <i-layout>
+                    <i-field name="name" width="60%"> ${d.name} </i-field>
+                    <i-field name="type" width="40%"> ${d.type} </i-field>
+                </i-layout>
+            </i-table>
+        </div>
     </i-app>
 
     <script>
-        window.addEventListener("load", function () {
+        function init(){
+            const app = document.querySelector("i-app");
+            const ifData = { show: true };
+            //app.setData(ifData);
+
+            const toggle = document.getElementById("demo-if-toggle");
+            toggle.addEventListener("click", function () {
+                ifData.show = !ifData.show;
+                app.setData(ifData);
+            });
+
+            const groupA = { id: 1, name: "Group A", type: "group" };
+            const groupB = { id: 2, name: "Group B", type: "group" };
+            const subgroupA1 = { id: 3, name: "Subgroup A1", type: "group", parents: [groupA] };
+            const itemShared = { id: 4, name: "Shared Item", type: "item", parents: [groupA, groupB] };
+            const itemA = { id: 5, name: "Item A", type: "item", parents: [groupA] };
+            const itemB = { id: 6, name: "Item B", type: "item", parents: [groupB] };
+            const itemA1 = { id: 7, name: "Item A1", type: "item", parents: [subgroupA1] };
+
+            const table = document.getElementById("demo-table");
+            table.indexer = (item) => item.id;
+            table.parents_getter = (item) => item.parents || [];
+
+            table.setData([
+                groupA,
+                groupB,
+                subgroupA1,
+                itemShared,
+                itemA,
+                itemB,
+                itemA1
+            ]);
+
             const items = [
                 { id: 1, name: "Cairo" },
                 { id: 2, name: "Alexandria" },
@@ -70,7 +129,7 @@
             };
 
             ms.setData([items[0], items[3]]);
-        });
+        }
     </script>
 </body>
 </html>

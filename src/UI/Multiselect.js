@@ -185,23 +185,26 @@ export default IUI.module(class Multiselect extends IUIElement {
         chip.appendChild(chipRemove);
         this.chips.appendChild(chip);
 
-        this.wrap = document.createElement("div");
-        this.wrap.className = this.cssClass + "-input";
-        this.wrap.appendChild(this.chips);
-        this.wrap.appendChild(this.textbox);
+        //this.wrap = document.createElement("div");
+        //this.wrap.className = this.cssClass + "-input";
 
-        this.header = document.createElement("div");
-        this.header.className = this.cssClass + "-autocomplete-header";
-        this.header.appendChild(this.wrap);
+        //this.header = document.createElement("div");
+        //this.header.className = this.cssClass + "-autocomplete-header";
+        //this.header.appendChild(this.wrap);
+        //this.header.appendChild(this.chips);
 
-        this.appendChild(this.header);
+        this.append(this.chips);
+        
+        this.chips.appendChild(this.textbox);
 
-        this.wrap.addEventListener("click", function (e) {
-            if (e.target && e.target.classList.contains(self.cssClass + "-chip-remove"))
-                return;
-            self.textbox.focus();
-            self.show();
-        });
+        //this.appendChild(this.header);
+
+        // this.header.addEventListener("click", function (e) {
+        //     if (e.target && e.target.classList.contains(self.cssClass + "-chip-remove"))
+        //         return;
+        //     self.textbox.focus();
+        //     self.show();
+        // });
 
         this.chips.addEventListener("click", function (e) {
             let remove = e.target?.closest("." + self.cssClass + "-chip-remove");
@@ -222,7 +225,7 @@ export default IUI.module(class Multiselect extends IUIElement {
         if (this.hasArrow) {
             this.arrow = document.createElement("div");
             this.arrow.className = this.cssClass + "-autocomplete-arrow";
-            this.wrap.appendChild(this.arrow);
+            this.chips.appendChild(this.arrow);
 
             this.arrow.addEventListener("click", function () {
                 if (self.visible)
