@@ -2730,6 +2730,7 @@ html[dir='rtl'] .multiselect-list-remove {
         visibility: hidden;
         /* overflow: auto; */
         transform: scale(0.7);
+        pointer-events: none;
     }
 
 
